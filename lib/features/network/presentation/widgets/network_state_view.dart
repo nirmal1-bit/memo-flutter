@@ -15,6 +15,8 @@ class NetworkStateView extends StatelessWidget {
     this.onConnectionTap,
     this.onChatTap,
     this.onCallTap,
+    this.onSentTap,
+    this.onReceivedTap,
     this.cardStyle = NetworkCardStyle.connections,
   });
 
@@ -23,6 +25,8 @@ class NetworkStateView extends StatelessWidget {
   final ValueChanged<ConnectionResponse>? onConnectionTap;
   final ValueChanged<ConnectionResponse>? onChatTap;
   final ValueChanged<ConnectionResponse>? onCallTap;
+  final ValueChanged<ConnectionResponse>? onSentTap;
+  final ValueChanged<ConnectionResponse>? onReceivedTap;
   final NetworkCardStyle cardStyle;
 
   @override
@@ -49,9 +53,17 @@ class NetworkStateView extends StatelessWidget {
                           ? null
                           : () => onCallTap!(connection),
                     ),
-                    NetworkCardStyle.sent => _SentCard(connection: connection),
+                    NetworkCardStyle.sent => _SentCard(
+                      connection: connection,
+                      onTap: onSentTap == null
+                          ? null
+                          : () => onSentTap!(connection),
+                    ),
                     NetworkCardStyle.received => _ReceivedCard(
                       connection: connection,
+                      onTap: onReceivedTap == null
+                          ? null
+                          : () => onReceivedTap!(connection),
                     ),
                   },
                 );
@@ -79,91 +91,30 @@ class NetworkStateView extends StatelessWidget {
 }
 
 class _SentCard extends StatelessWidget {
-  const _SentCard({required this.connection});
+  const _SentCard({required this.connection, this.onTap});
 
   final ConnectionResponse connection;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final details = connection.otherUserDetails;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      padding: const EdgeInsets.all(14),
-      child: Row(
-        children: [
-          AvatarBadge(label: _initials(details.name), size: 44),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  details.name,
-                  style: AppTextStyles.rubik.copyWith(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.softBlack,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  details.role,
-                  style: AppTextStyles.rubik.copyWith(
-                    fontSize: 12,
-                    color: AppColors.ironGrey,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Pending response',
-                  style: AppTextStyles.rubik.copyWith(
-                    fontSize: 11,
-                    color: AppColors.textLight,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: 8,
-            height: 8,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFF8C42),
-              shape: BoxShape.circle,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReceivedCard extends StatelessWidget {
-  const _ReceivedCard({required this.connection});
-
-  final ConnectionResponse connection;
-
-  @override
-  Widget build(BuildContext context) {
-    final details = connection.otherUserDetails;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Material(
+      color: AppColors.white,
+      elevation: 6,
+      shadowColor: AppColors.softBlack.withValues(alpha: 0.16),
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
             children: [
-              AvatarBadge(label: _initials(details.name), size: 44),
-              const SizedBox(width: 12),
+              AvatarBadge(label: _initials(details.name), size: 52),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,51 +122,128 @@ class _ReceivedCard extends StatelessWidget {
                     Text(
                       details.name,
                       style: AppTextStyles.rubik.copyWith(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: AppColors.softBlack,
                       ),
                     ),
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 4),
                     Text(
                       details.role,
                       style: AppTextStyles.rubik.copyWith(
-                        fontSize: 12,
+                        fontSize: 12.5,
                         color: AppColors.ironGrey,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Pending response',
+                      style: AppTextStyles.rubik.copyWith(
+                        fontSize: 11.5,
+                        color: AppColors.textLight,
                       ),
                     ),
                   ],
                 ),
               ),
+              Container(
+                width: 10,
+                height: 10,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFF8C42),
+                  shape: BoxShape.circle,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 12),
-          Row(
+        ),
+      ),
+    );
+  }
+}
+
+class _ReceivedCard extends StatelessWidget {
+  const _ReceivedCard({required this.connection, this.onTap});
+
+  final ConnectionResponse connection;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final details = connection.otherUserDetails;
+
+    return Material(
+      color: AppColors.white,
+      elevation: 6,
+      shadowColor: AppColors.softBlack.withValues(alpha: 0.16),
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: _ActionButton(
-                  label: 'Accept',
-                  icon: Icons.check_rounded,
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.white,
-                  borderColor: AppColors.primary,
-                  onPressed: () {},
-                ),
+              Row(
+                children: [
+                  AvatarBadge(label: _initials(details.name), size: 52),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          details.name,
+                          style: AppTextStyles.rubik.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.softBlack,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          details.role,
+                          style: AppTextStyles.rubik.copyWith(
+                            fontSize: 12.5,
+                            color: AppColors.ironGrey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _ActionButton(
-                  label: 'Decline',
-                  icon: Icons.close_rounded,
-                  backgroundColor: AppColors.white,
-                  foregroundColor: AppColors.primary,
-                  borderColor: AppColors.brandBackgroundLight,
-                  onPressed: () {},
-                ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: _ActionButton(
+                      label: 'Accept',
+                      icon: Icons.check_rounded,
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
+                      borderColor: AppColors.primary,
+                      onPressed: () {},
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _ActionButton(
+                      label: 'Decline',
+                      icon: Icons.close_rounded,
+                      backgroundColor: AppColors.white,
+                      foregroundColor: AppColors.primary,
+                      borderColor: AppColors.brandBackgroundLight,
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -241,7 +269,7 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 38,
+      height: 44,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
@@ -339,13 +367,13 @@ class _SkeletonCard extends StatelessWidget {
           children: [
             AnimatedBuilder(
               animation: animation,
-              builder: (_, __) => Opacity(
+              builder: (context, child) => Opacity(
                 opacity: animation.value - (index * 0.05),
                 child: Container(
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: AppColors.border.withOpacity(0.3),
+                    color: AppColors.border.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(13),
                   ),
                 ),
@@ -358,13 +386,13 @@ class _SkeletonCard extends StatelessWidget {
                 children: [
                   AnimatedBuilder(
                     animation: animation,
-                    builder: (_, __) => Opacity(
+                    builder: (context, child) => Opacity(
                       opacity: animation.value,
                       child: Container(
                         width: 130,
                         height: 14,
                         decoration: BoxDecoration(
-                          color: AppColors.border.withOpacity(0.3),
+                          color: AppColors.border.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(7),
                         ),
                       ),
@@ -373,13 +401,13 @@ class _SkeletonCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   AnimatedBuilder(
                     animation: animation,
-                    builder: (_, __) => Opacity(
+                    builder: (context, child) => Opacity(
                       opacity: animation.value * 0.7,
                       child: Container(
                         width: 90,
                         height: 11,
                         decoration: BoxDecoration(
-                          color: AppColors.border.withOpacity(0.25),
+                          color: AppColors.border.withValues(alpha: 0.25),
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
@@ -388,13 +416,13 @@ class _SkeletonCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   AnimatedBuilder(
                     animation: animation,
-                    builder: (_, __) => Opacity(
+                    builder: (context, child) => Opacity(
                       opacity: animation.value * 0.5,
                       child: Container(
                         width: double.infinity,
                         height: 10,
                         decoration: BoxDecoration(
-                          color: AppColors.border.withOpacity(0.2),
+                          color: AppColors.border.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),

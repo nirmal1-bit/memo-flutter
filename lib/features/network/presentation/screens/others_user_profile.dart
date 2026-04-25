@@ -3,24 +3,33 @@ import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 
-enum _OtherUserTab { chat, profile }
+class OtherUserProfileArguments {
+  const OtherUserProfileArguments({
+    required this.details,
+    this.isFromReceived = false,
+    this.isFromSent = false,
+  });
 
-class OthersUserProfileScreen extends StatefulWidget {
-  const OthersUserProfileScreen({super.key, required this.details});
-
-  final OtherUserDetails? details;
-
-  @override
-  State<OthersUserProfileScreen> createState() =>
-      _OthersUserProfileScreenState();
+  final OtherUserDetails details;
+  final bool isFromReceived;
+  final bool isFromSent;
 }
 
-class _OthersUserProfileScreenState extends State<OthersUserProfileScreen> {
-  _OtherUserTab _selectedTab = _OtherUserTab.profile;
+class OthersUserProfileScreen extends StatelessWidget {
+  const OthersUserProfileScreen({
+    super.key,
+    required this.details,
+    this.isFromReceived = false,
+    this.isFromSent = false,
+  });
+
+  final OtherUserDetails? details;
+  final bool isFromReceived;
+  final bool isFromSent;
 
   @override
   Widget build(BuildContext context) {
-    final user = widget.details;
+    final user = details;
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -28,15 +37,14 @@ class _OthersUserProfileScreenState extends State<OthersUserProfileScreen> {
         backgroundColor: AppColors.scaffoldBackground,
         elevation: 0,
         foregroundColor: AppColors.softPrimary,
-        actions: user != null && _selectedTab == _OtherUserTab.chat
-            ? [
-                IconButton(
-                  tooltip: 'Start video call',
-                  onPressed: () => _startVideoCall(context, user),
-                  icon: const Icon(Icons.videocam_rounded),
-                ),
-              ]
-            : null,
+        title: Text(
+          'Profile',
+          style: AppTextStyles.libre.copyWith(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: AppColors.softPrimary,
+          ),
+        ),
       ),
       body: SafeArea(
         child: user == null
@@ -46,27 +54,101 @@ class _OthersUserProfileScreenState extends State<OthersUserProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _HeaderCard(user: user),
-                    const SizedBox(height: 18),
-                    _TabStrip(
-                      selectedTab: _selectedTab,
-                      onChanged: (tab) {
-                        setState(() {
-                          _selectedTab = tab;
-                        });
-                      },
+                    _HeaderCard(
+                      user: user,
+                      isFromReceived: isFromReceived,
+                      isFromSent: isFromSent,
                     ),
-                    const SizedBox(height: 18),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 220),
-                      child: _selectedTab == _OtherUserTab.profile
-                          ? _ProfileTab(
-                              key: const ValueKey('profile-tab'),
-                              user: user,
+                    const SizedBox(height: 16),
+                    if (isFromReceived) ...[
+                      _RequestActionRow(
+                        primaryLabel: 'Accept',
+                        primaryIcon: Icons.check_rounded,
+                        primaryFilled: true,
+                        onPrimaryPressed: () => _showFeedback(
+                          context,
+                          'Accepted request from ${user.name}',
+                        ),
+                        secondaryLabel: 'Decline',
+                        secondaryIcon: Icons.close_rounded,
+                        secondaryFilled: false,
+                        onSecondaryPressed: () => _showFeedback(
+                          context,
+                          'Declined request from ${user.name}',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ] else if (isFromSent) ...[
+                      SizedBox(
+                        width: double.infinity,
+                        child: _ActionButton(
+                          label: 'Cancel',
+                          icon: Icons.cancel_outlined,
+                          filled: false,
+                          onPressed: () => _showFeedback(
+                            context,
+                            'Cancelled request to ${user.name}',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    _DetailCard(
+                      title: 'About',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _DetailRow(label: 'Email', value: user.email),
+                          _DetailRow(
+                            label: 'Activated',
+                            value: user.activated ? 'Yes' : 'No',
+                          ),
+                          _DetailRow(
+                            label: 'Joined',
+                            value: _formatDate(user.createdAt),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _DetailCard(
+                      title: 'Profile',
+                      child: user.profile == null
+                          ? Text(
+                              'No profile details available yet.',
+                              style: AppTextStyles.rubik.copyWith(
+                                fontSize: 13.5,
+                                color: AppColors.softTextGrey,
+                              ),
                             )
-                          : _ChatTab(
-                              key: const ValueKey('chat-tab'),
-                              user: user,
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _DetailRow(
+                                  label: 'Headline',
+                                  value: user.profile!.headline,
+                                ),
+                                _DetailRow(
+                                  label: 'Bio',
+                                  value: user.profile!.bio,
+                                ),
+                                _DetailRow(
+                                  label: 'Company',
+                                  value: user.profile!.companyName,
+                                ),
+                                _DetailRow(
+                                  label: 'Location',
+                                  value: user.profile!.location,
+                                ),
+                                _DetailRow(
+                                  label: 'Website',
+                                  value: user.profile!.website,
+                                ),
+                                _DetailRow(
+                                  label: 'Profile Link',
+                                  value: user.profile!.profileUrl,
+                                ),
+                              ],
                             ),
                     ),
                   ],
@@ -76,17 +158,23 @@ class _OthersUserProfileScreenState extends State<OthersUserProfileScreen> {
     );
   }
 
-  void _startVideoCall(BuildContext context, OtherUserDetails user) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Starting video call with ${user.name}...')),
-    );
+  void _showFeedback(BuildContext context, String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }
 
 class _HeaderCard extends StatelessWidget {
-  const _HeaderCard({required this.user});
+  const _HeaderCard({
+    required this.user,
+    required this.isFromReceived,
+    required this.isFromSent,
+  });
 
   final OtherUserDetails user;
+  final bool isFromReceived;
+  final bool isFromSent;
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +190,7 @@ class _HeaderCard extends StatelessWidget {
         border: Border.all(color: AppColors.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: AppColors.softBlack.withOpacity(0.05),
+            color: AppColors.softBlack.withValues(alpha: 0.05),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -113,17 +201,39 @@ class _HeaderCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              width: 72,
-              height: 72,
+              width: 68,
+              height: 68,
               color: AppColors.brandBackground,
               child: profile?.avatarUrl.isNotEmpty ?? false
                   ? Image.network(
                       profile!.avatarUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          _AvatarFallback(initials: initials),
+                      errorBuilder: (context, error, stackTrace) =>
+                          CircleAvatar(
+                            radius: 34,
+                            backgroundColor: AppColors.primary,
+                            child: Text(
+                              initials,
+                              style: AppTextStyles.rubik.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.white,
+                              ),
+                            ),
+                          ),
                     )
-                  : _AvatarFallback(initials: initials),
+                  : CircleAvatar(
+                      radius: 34,
+                      backgroundColor: AppColors.primary,
+                      child: Text(
+                        initials,
+                        style: AppTextStyles.rubik.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
             ),
           ),
           const SizedBox(width: 16),
@@ -155,6 +265,10 @@ class _HeaderCard extends StatelessWidget {
                   children: [
                     _InfoChip(text: user.activated ? 'Active' : 'Pending'),
                     _InfoChip(text: user.isPremium ? 'Premium' : 'Standard'),
+                    if (isFromReceived)
+                      const _InfoChip(text: 'Request received')
+                    else if (isFromSent)
+                      const _InfoChip(text: 'Request sent'),
                   ],
                 ),
               ],
@@ -177,283 +291,46 @@ class _HeaderCard extends StatelessWidget {
   }
 }
 
-class _ProfileTab extends StatelessWidget {
-  const _ProfileTab({super.key, required this.user});
+class _RequestActionRow extends StatelessWidget {
+  const _RequestActionRow({
+    required this.primaryLabel,
+    required this.primaryIcon,
+    required this.primaryFilled,
+    required this.onPrimaryPressed,
+    required this.secondaryLabel,
+    required this.secondaryIcon,
+    required this.secondaryFilled,
+    required this.onSecondaryPressed,
+  });
 
-  final OtherUserDetails user;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _DetailCard(
-          title: 'About',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _DetailRow(label: 'Email', value: user.email),
-              _DetailRow(
-                label: 'Activated',
-                value: user.activated ? 'Yes' : 'No',
-              ),
-              _DetailRow(label: 'Joined', value: _formatDate(user.createdAt)),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        _DetailCard(
-          title: 'Profile',
-          child: user.profile == null
-              ? Text(
-                  'No profile details available yet.',
-                  style: AppTextStyles.rubik.copyWith(
-                    fontSize: 13.5,
-                    color: AppColors.softTextGrey,
-                  ),
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _DetailRow(
-                      label: 'Headline',
-                      value: user.profile!.headline,
-                    ),
-                    _DetailRow(label: 'Bio', value: user.profile!.bio),
-                    _DetailRow(
-                      label: 'Company',
-                      value: user.profile!.companyName,
-                    ),
-                    _DetailRow(
-                      label: 'Location',
-                      value: user.profile!.location,
-                    ),
-                    _DetailRow(label: 'Website', value: user.profile!.website),
-                    _DetailRow(
-                      label: 'Profile Link',
-                      value: user.profile!.profileUrl,
-                    ),
-                  ],
-                ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ChatTab extends StatefulWidget {
-  const _ChatTab({super.key, required this.user});
-
-  final OtherUserDetails user;
-
-  @override
-  State<_ChatTab> createState() => _ChatTabState();
-}
-
-class _ChatTabState extends State<_ChatTab> {
-  final TextEditingController _messageController = TextEditingController();
-  final ScrollController _messagesController = ScrollController();
-  final List<_ChatMessage> _messages = [
-    const _ChatMessage(
-      text: 'Hey, good to connect here.',
-      isMe: false,
-      timeLabel: '9:20',
-    ),
-    const _ChatMessage(
-      text: 'Likewise. This chat view is ready for real messages.',
-      isMe: true,
-      timeLabel: '9:21',
-    ),
-    const _ChatMessage(
-      text: 'Use the composer below to send another message.',
-      isMe: false,
-      timeLabel: '9:22',
-    ),
-  ];
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    _messagesController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final profile = widget.user.profile;
-    final firstName = _firstName(widget.user.name);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _DetailCard(
-          title: 'Chat',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: const BoxDecoration(
-                      color: AppColors.statusGreen,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.user.name,
-                          style: AppTextStyles.rubik.copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.softBlack,
-                          ),
-                        ),
-                        Text(
-                          profile?.headline ?? 'Available for chat',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.rubik.copyWith(
-                            fontSize: 11.5,
-                            color: AppColors.softTextGrey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: 'Start video call',
-                    onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Starting video call with ${widget.user.name}...',
-                        ),
-                      ),
-                    ),
-                    icon: const Icon(Icons.videocam_rounded),
-                    color: AppColors.primary,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              SizedBox(
-                height: 320,
-                child: ListView.separated(
-                  controller: _messagesController,
-                  itemCount: _messages.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    final message = _messages[index];
-                    return _ChatBubble(
-                      alignEnd: message.isMe,
-                      text: message.text,
-                      timeLabel: message.timeLabel,
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 14),
-              _ChatComposer(
-                controller: _messageController,
-                onSend: _sendMessage,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  void _sendMessage() {
-    final text = _messageController.text.trim();
-    if (text.isEmpty) {
-      return;
-    }
-
-    setState(() {
-      _messages.add(
-        _ChatMessage(text: text, isMe: true, timeLabel: _currentTimeLabel()),
-      );
-    });
-
-    _messageController.clear();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_messagesController.hasClients) {
-        return;
-      }
-
-      _messagesController.animateTo(
-        _messagesController.position.maxScrollExtent + 80,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-      );
-    });
-  }
-
-  String _currentTimeLabel() {
-    final now = TimeOfDay.now();
-    final hour = now.hourOfPeriod == 0 ? 12 : now.hourOfPeriod;
-    final minute = now.minute.toString().padLeft(2, '0');
-    final suffix = now.period == DayPeriod.am ? 'AM' : 'PM';
-    return '$hour:$minute $suffix';
-  }
-}
-
-class _ChatComposer extends StatelessWidget {
-  const _ChatComposer({required this.controller, required this.onSend});
-
-  final TextEditingController controller;
-  final VoidCallback onSend;
+  final String primaryLabel;
+  final IconData primaryIcon;
+  final bool primaryFilled;
+  final VoidCallback onPrimaryPressed;
+  final String secondaryLabel;
+  final IconData secondaryIcon;
+  final bool secondaryFilled;
+  final VoidCallback onSecondaryPressed;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
-          child: TextField(
-            controller: controller,
-            minLines: 1,
-            maxLines: 4,
-            textInputAction: TextInputAction.send,
-            onSubmitted: (_) => onSend(),
-            decoration: InputDecoration(
-              hintText: 'Write a message...',
-              filled: true,
-              fillColor: AppColors.brandBackground,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none,
-              ),
-            ),
+          child: _ActionButton(
+            label: primaryLabel,
+            icon: primaryIcon,
+            filled: primaryFilled,
+            onPressed: onPrimaryPressed,
           ),
         ),
         const SizedBox(width: 10),
-        Material(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(16),
-          child: InkWell(
-            onTap: onSend,
-            borderRadius: BorderRadius.circular(16),
-            child: const SizedBox(
-              width: 52,
-              height: 52,
-              child: Icon(Icons.send_rounded, color: AppColors.white, size: 20),
-            ),
+        Expanded(
+          child: _ActionButton(
+            label: secondaryLabel,
+            icon: secondaryIcon,
+            filled: secondaryFilled,
+            onPressed: onSecondaryPressed,
           ),
         ),
       ],
@@ -461,122 +338,54 @@ class _ChatComposer extends StatelessWidget {
   }
 }
 
-class _TabStrip extends StatelessWidget {
-  const _TabStrip({required this.selectedTab, required this.onChanged});
-
-  final _OtherUserTab selectedTab;
-  final ValueChanged<_OtherUserTab> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.dividerColor),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _TabButton(
-              label: 'Chat',
-              active: selectedTab == _OtherUserTab.chat,
-              onTap: () => onChanged(_OtherUserTab.chat),
-            ),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: _TabButton(
-              label: 'Profile',
-              active: selectedTab == _OtherUserTab.profile,
-              onTap: () => onChanged(_OtherUserTab.profile),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TabButton extends StatelessWidget {
-  const _TabButton({
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
     required this.label,
-    required this.active,
-    required this.onTap,
+    required this.icon,
+    required this.filled,
+    required this.onPressed,
   });
 
   final String label;
-  final bool active;
-  final VoidCallback onTap;
+  final IconData icon;
+  final bool filled;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          height: 42,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: active ? AppColors.primary : AppColors.transparent,
+    return SizedBox(
+      height: 42,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: filled ? AppColors.primary : AppColors.white,
+          foregroundColor: filled ? AppColors.white : AppColors.primary,
+          side: BorderSide(
+            color: filled ? AppColors.primary : AppColors.brandBackgroundLight,
+          ),
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Text(
-            label,
-            style: AppTextStyles.rubik.copyWith(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w700,
-              color: active ? AppColors.white : AppColors.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.rubik.copyWith(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: filled ? AppColors.white : AppColors.primary,
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AvatarFallback extends StatelessWidget {
-  const _AvatarFallback({required this.initials});
-
-  final String initials;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        initials,
-        style: AppTextStyles.rubik.copyWith(
-          fontSize: 20,
-          fontWeight: FontWeight.w800,
-          color: AppColors.primary,
-        ),
-      ),
-    );
-  }
-}
-
-class _InfoChip extends StatelessWidget {
-  const _InfoChip({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppColors.brandBackground,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        text,
-        style: AppTextStyles.rubik.copyWith(
-          fontSize: 11.5,
-          fontWeight: FontWeight.w700,
-          color: AppColors.primary,
+          ],
         ),
       ),
     );
@@ -610,7 +419,7 @@ class _DetailCard extends StatelessWidget {
               color: AppColors.softPrimary,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           child,
         ],
       ),
@@ -628,23 +437,29 @@ class _DetailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: AppTextStyles.rubik.copyWith(
-              fontSize: 12,
-              color: AppColors.softTextGrey,
+          SizedBox(
+            width: 96,
+            child: Text(
+              label,
+              style: AppTextStyles.rubik.copyWith(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: AppColors.softTextGrey,
+              ),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: AppTextStyles.rubik.copyWith(
-              fontSize: 13.5,
-              height: 1.45,
-              color: AppColors.softBlack,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              value,
+              style: AppTextStyles.rubik.copyWith(
+                fontSize: 13.5,
+                color: AppColors.softBlack,
+                height: 1.4,
+              ),
             ),
           ),
         ],
@@ -653,71 +468,29 @@ class _DetailRow extends StatelessWidget {
   }
 }
 
-class _ChatBubble extends StatelessWidget {
-  const _ChatBubble({
-    required this.alignEnd,
-    required this.text,
-    required this.timeLabel,
-  });
+class _InfoChip extends StatelessWidget {
+  const _InfoChip({required this.text});
 
-  final bool alignEnd;
   final String text;
-  final String timeLabel;
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: alignEnd ? Alignment.centerRight : Alignment.centerLeft,
-      child: Column(
-        crossAxisAlignment: alignEnd
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
-        children: [
-          Container(
-            constraints: const BoxConstraints(maxWidth: 280),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: alignEnd ? AppColors.primary : AppColors.brandBackground,
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(18),
-                topRight: const Radius.circular(18),
-                bottomLeft: Radius.circular(alignEnd ? 18 : 6),
-                bottomRight: Radius.circular(alignEnd ? 6 : 18),
-              ),
-            ),
-            child: Text(
-              text,
-              style: AppTextStyles.rubik.copyWith(
-                fontSize: 13.5,
-                height: 1.4,
-                color: alignEnd ? AppColors.white : AppColors.softBlack,
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            timeLabel,
-            style: AppTextStyles.rubik.copyWith(
-              fontSize: 10.5,
-              color: AppColors.softTextGrey,
-            ),
-          ),
-        ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        text,
+        style: AppTextStyles.rubik.copyWith(
+          fontSize: 11.5,
+          fontWeight: FontWeight.w700,
+          color: AppColors.primary,
+        ),
       ),
     );
   }
-}
-
-class _ChatMessage {
-  const _ChatMessage({
-    required this.text,
-    required this.isMe,
-    required this.timeLabel,
-  });
-
-  final String text;
-  final bool isMe;
-  final String timeLabel;
 }
 
 class _MissingUserState extends StatelessWidget {
@@ -730,49 +503,29 @@ class _MissingUserState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppColors.dividerColor),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.person_off_rounded,
-                color: AppColors.primary,
-                size: 42,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.person_off_rounded, size: 56),
+            const SizedBox(height: 12),
+            Text(
+              'User profile not available.',
+              style: AppTextStyles.rubik.copyWith(
+                fontSize: 14,
+                color: AppColors.softTextGrey,
               ),
-              const SizedBox(height: 12),
-              Text(
-                'No user details were passed from the network card.',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.rubik.copyWith(
-                  fontSize: 13.5,
-                  color: AppColors.softTextGrey,
-                ),
-              ),
-              const SizedBox(height: 16),
-              FilledButton(onPressed: onBack, child: const Text('Go Back')),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton(onPressed: onBack, child: const Text('Go back')),
+          ],
         ),
       ),
     );
   }
 }
 
-String _formatDate(DateTime value) {
-  final local = value.toLocal();
-  final month = local.month.toString().padLeft(2, '0');
-  final day = local.day.toString().padLeft(2, '0');
-  return '${local.year}-$month-$day';
-}
-
-String _firstName(String name) {
-  final parts = name.trim().split(RegExp(r'\s+'));
-  return parts.isNotEmpty && parts.first.isNotEmpty ? parts.first : name;
+String _formatDate(DateTime dateTime) {
+  final month = dateTime.month.toString().padLeft(2, '0');
+  final day = dateTime.day.toString().padLeft(2, '0');
+  return '${dateTime.year}-$month-$day';
 }

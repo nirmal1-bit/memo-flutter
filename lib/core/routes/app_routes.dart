@@ -12,4 +12,5 @@ class AppRoutes {
   static const String newPassword = '/new-password';
   static const String userProfile = '/user-profile';
   static const String otherUserProfile = '/other-user-profile';
+  static const String chat = '/chat';
 }

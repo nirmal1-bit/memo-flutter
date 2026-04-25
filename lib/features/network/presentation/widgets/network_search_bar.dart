@@ -9,33 +9,44 @@ class NetworkSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 46,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: TextField(
-        controller: controller,
-        style: AppTextStyles.rubik.copyWith(
-          fontSize: 13,
-          color: AppColors.textDark,
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        height: 52,
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: AppColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.softBlack.withValues(alpha: 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
-        decoration: InputDecoration(
-          hintText: 'Search people or content',
-          hintStyle: AppTextStyles.rubik.copyWith(
-            fontSize: 13,
-            color: AppColors.textLight,
+        child: TextField(
+          controller: controller,
+          style: AppTextStyles.rubik.copyWith(
+            fontSize: 13.5,
+            color: AppColors.textDark,
           ),
-          prefixIcon: const Icon(
-            Icons.search_rounded,
-            color: AppColors.textGrey,
-            size: 18,
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
+          decoration: InputDecoration(
+            hintText: 'Search',
+            hintStyle: AppTextStyles.rubik.copyWith(
+              fontSize: 13.5,
+              color: AppColors.textLight,
+            ),
+            prefixIcon: const Icon(
+              Icons.search_rounded,
+              color: AppColors.textGrey,
+              size: 20,
+            ),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 18,
+              vertical: 15,
+            ),
           ),
         ),
       ),

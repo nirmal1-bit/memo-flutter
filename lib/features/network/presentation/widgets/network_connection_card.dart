@@ -26,20 +26,23 @@ class NetworkConnectionCard extends StatelessWidget {
 
     return Material(
       color: AppColors.white,
-      borderRadius: BorderRadius.circular(24),
+      elevation: 6,
+      shadowColor: AppColors.softBlack.withValues(alpha: 0.18),
+      borderRadius: BorderRadius.circular(28),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(24),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -49,8 +52,8 @@ class NetworkConnectionCard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AvatarBadge(label: _initials(details.name), size: 50),
-                    const SizedBox(width: 12),
+                    AvatarBadge(label: _initials(details.name), size: 56),
+                    const SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +67,7 @@ class NetworkConnectionCard extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: AppTextStyles.rubik.copyWith(
-                                    fontSize: 15,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.softBlack,
                                   ),
@@ -85,7 +88,7 @@ class NetworkConnectionCard extends StatelessWidget {
                                 child: Text(
                                   isActive ? 'Active' : 'Pending',
                                   style: AppTextStyles.rubik.copyWith(
-                                    fontSize: 10,
+                                    fontSize: 10.5,
                                     fontWeight: FontWeight.w800,
                                     color: AppColors.primary,
                                     letterSpacing: 0.3,
@@ -98,7 +101,7 @@ class NetworkConnectionCard extends StatelessWidget {
                           Text(
                             details.role,
                             style: AppTextStyles.rubik.copyWith(
-                              fontSize: 12,
+                              fontSize: 12.5,
                               fontWeight: FontWeight.w500,
                               color: AppColors.ironGrey,
                             ),
@@ -110,7 +113,7 @@ class NetworkConnectionCard extends StatelessWidget {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.rubik.copyWith(
-                                fontSize: 12,
+                                fontSize: 12.5,
                                 color: AppColors.softTextGrey,
                                 height: 1.45,
                               ),
@@ -176,7 +179,7 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 42,
+      height: 46,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
@@ -199,7 +202,7 @@ class _ActionButton extends StatelessWidget {
                 label,
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.rubik.copyWith(
-                  fontSize: 13,
+                  fontSize: 13.5,
                   fontWeight: FontWeight.w700,
                   color: foregroundColor,
                 ),
