@@ -144,6 +144,11 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.scaffoldBackground,
+        elevation: 0,
+        toolbarHeight: 0,
+      ),
       body: AuthShell(
         title: 'Welcome back',
         subtitle:

@@ -33,6 +33,14 @@ import 'package:memo/features/auth/presentation/cubits/signup_cubit.dart'
     as _i495;
 import 'package:memo/features/auth/presentation/cubits/verify_token_cubit.dart'
     as _i783;
+import 'package:memo/features/network/domian/repository/network_respotory.dart'
+    as _i420;
+import 'package:memo/features/network/presentation/cubits/connections_cubit.dart'
+    as _i762;
+import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart'
+    as _i382;
+import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart'
+    as _i636;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -58,8 +66,21 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i361.Dio>(
       () => registerModules.dio(gh<_i174.AuthInterceptor>()),
     );
+    gh.lazySingleton<_i420.NetworkRepository>(
+      () =>
+          _i420.NetworkRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
+    );
     gh.lazySingleton<_i1052.AuthRepository>(
       () => _i1052.AuthRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
+    );
+    gh.factory<_i762.ConnectionsCubit>(
+      () => _i762.ConnectionsCubit(gh<_i420.NetworkRepository>()),
+    );
+    gh.factory<_i382.ReceivedConnectionsCubit>(
+      () => _i382.ReceivedConnectionsCubit(gh<_i420.NetworkRepository>()),
+    );
+    gh.factory<_i636.SentConnectionsCubit>(
+      () => _i636.SentConnectionsCubit(gh<_i420.NetworkRepository>()),
     );
     gh.factory<_i560.LoginCubit>(
       () => _i560.LoginCubit(gh<_i1052.AuthRepository>()),

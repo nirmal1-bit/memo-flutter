@@ -1,206 +1,135 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/core/di/injector.dart';
+import 'package:memo/core/state/base_api_state.dart';
+import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/network/presentation/cubits/connections_cubit.dart';
+import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart';
+import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart';
 import 'package:memo/features/network/presentation/widgets/add_button.dart';
-import 'package:memo/features/network/presentation/widgets/pending_request_card.dart';
+import 'package:memo/features/network/presentation/widgets/network_state_view.dart';
 import 'package:memo/features/network/presentation/widgets/search_field.dart';
 import 'package:memo/features/network/presentation/widgets/tab_strip.dart';
 import 'package:memo/features/network/presentation/widgets/top_header.dart';
-import 'package:memo/features/network/presentation/widgets/trusted_member_card.dart';
 
 class NetworkScreen extends StatefulWidget {
   const NetworkScreen({super.key, required this.controller});
 
   final ScrollController controller;
+
   @override
   State<NetworkScreen> createState() => _NetworkScreenState();
 }
 
 class _NetworkScreenState extends State<NetworkScreen> {
+  late final ConnectionsCubit _connectionsCubit;
+  late final SentConnectionsCubit _sentConnectionsCubit;
+  late final ReceivedConnectionsCubit _receivedConnectionsCubit;
+
   NetworkTab _selectedTab = NetworkTab.connections;
 
-  static const List<_PendingRequestData> _pendingRequests = [
-    _PendingRequestData(
-      name: 'Dr. Julian Vance',
-      role: 'Neuro-linguistics Expert',
-      avatarSeed: 'JV',
-    ),
-    _PendingRequestData(
-      name: 'Elena Rossi',
-      role: 'Product Strategy',
-      avatarSeed: 'ER',
-    ),
-    _PendingRequestData(
-      name: 'Noah Patel',
-      role: 'Design Systems Lead',
-      avatarSeed: 'NP',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _connectionsCubit = getIt<ConnectionsCubit>()..listConnections();
+    _sentConnectionsCubit = getIt<SentConnectionsCubit>()
+      ..listSentConnections();
+    _receivedConnectionsCubit = getIt<ReceivedConnectionsCubit>()
+      ..listReceivedConnections();
+  }
 
-  static const List<_NetworkMemberData> _trustedMembers = [
-    _NetworkMemberData(
-      name: 'Marcus Thorne',
-      role: 'Lead Systems Architect',
-      avatarSeed: 'MT',
-      metaLabel: 'Shared 12 memories',
-    ),
-    _NetworkMemberData(
-      name: 'Sarah Jenkins',
-      role: 'AI Research Lead',
-      avatarSeed: 'SJ',
-      metaLabel: 'Shared 4 projects',
-    ),
-    _NetworkMemberData(
-      name: 'Priya Desai',
-      role: 'Knowledge Curator',
-      avatarSeed: 'PD',
-      metaLabel: 'Shared 8 notes',
-    ),
-
-    _NetworkMemberData(
-      name: 'Marcus Thorne',
-      role: 'Lead Systems Architect',
-      avatarSeed: 'MT',
-      metaLabel: 'Shared 12 memories',
-    ),
-    _NetworkMemberData(
-      name: 'Sarah Jenkins',
-      role: 'AI Research Lead',
-      avatarSeed: 'SJ',
-      metaLabel: 'Shared 4 projects',
-    ),
-    _NetworkMemberData(
-      name: 'Priya Desai',
-      role: 'Knowledge Curator',
-      avatarSeed: 'PD',
-      metaLabel: 'Shared 8 notes',
-    ),
-  ];
+  @override
+  void dispose() {
+    _connectionsCubit.close();
+    _sentConnectionsCubit.close();
+    _receivedConnectionsCubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.scaffoldBackground,
-      child: SafeArea(
-        child: SingleChildScrollView(
-          controller: widget.controller,
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const TopHeader(
-                title: 'Network',
-                subtitle:
-                    'Manage your trusted circle and collaboration requests.',
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  const Expanded(
-                    child: SearchField(hintText: 'Search network or content'),
-                  ),
-                  const SizedBox(width: 12),
-                  AddButton(onPressed: () {}),
-                ],
-              ),
-              const SizedBox(height: 18),
-              TabStrip(
-                selectedTab: _selectedTab,
-                requestCount: _pendingRequests.length,
-                onChanged: (tab) {
-                  setState(() {
-                    _selectedTab = tab;
-                  });
-                },
-              ),
-              const SizedBox(height: 24),
-              if (_selectedTab == NetworkTab.requests) ...[
-                Text(
-                  'Pending Requests',
-                  style: AppTextStyles.libre.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.softPrimary,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ..._pendingRequests.map(
-                  (request) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: PendingRequestCard(
-                      name: request.name,
-                      role: request.role,
-                      avatarSeed: request.avatarSeed,
-                    ),
-                  ),
-                ),
-              ] else ...[
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _connectionsCubit),
+        BlocProvider.value(value: _sentConnectionsCubit),
+        BlocProvider.value(value: _receivedConnectionsCubit),
+      ],
+      child: Container(
+        color: AppColors.scaffoldBackground,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            controller: widget.controller,
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Trusted Network',
-                      style: AppTextStyles.libre.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.softPrimary,
-                        letterSpacing: 0.2,
-                      ),
+                    const Expanded(
+                      child: SearchField(hintText: 'Search network or content'),
                     ),
-                    Text(
-                      'View all',
-                      style: AppTextStyles.rubik.copyWith(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
-                    ),
+                    const SizedBox(width: 12),
+                    AddButton(onPressed: () {}),
                   ],
                 ),
-                const SizedBox(height: 12),
-                ..._trustedMembers.map(
-                  (member) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: TrustedMemberCard(
-                      name: member.name,
-                      role: member.role,
-                      avatarSeed: member.avatarSeed,
-                      metaLabel: member.metaLabel,
-                    ),
-                  ),
+                const SizedBox(height: 18),
+                TabStrip(
+                  selectedTab: _selectedTab,
+                  onChanged: (tab) {
+                    setState(() {
+                      _selectedTab = tab;
+                    });
+                  },
                 ),
+                const SizedBox(height: 24),
+                _buildTabContent(),
               ],
-            ],
+            ),
           ),
         ),
       ),
     );
   }
-}
 
-class _PendingRequestData {
-  const _PendingRequestData({
-    required this.name,
-    required this.role,
-    required this.avatarSeed,
-  });
-
-  final String name;
-  final String role;
-  final String avatarSeed;
-}
-
-class _NetworkMemberData {
-  const _NetworkMemberData({
-    required this.name,
-    required this.role,
-    required this.avatarSeed,
-    required this.metaLabel,
-  });
-
-  final String name;
-  final String role;
-  final String avatarSeed;
-  final String metaLabel;
+  Widget _buildTabContent() {
+    switch (_selectedTab) {
+      case NetworkTab.connections:
+        return BlocBuilder<
+          ConnectionsCubit,
+          BaseApiState<List<ConnectionResponse>>
+        >(
+          builder: (context, state) {
+            return NetworkStateView(
+              state: state,
+              emptyMessage: 'You do not have any connections yet.',
+            );
+          },
+        );
+      case NetworkTab.sent:
+        return BlocBuilder<
+          SentConnectionsCubit,
+          BaseApiState<List<ConnectionResponse>>
+        >(
+          builder: (context, state) {
+            return NetworkStateView(
+              state: state,
+              emptyMessage: 'No sent requests yet.',
+            );
+          },
+        );
+      case NetworkTab.received:
+        return BlocBuilder<
+          ReceivedConnectionsCubit,
+          BaseApiState<List<ConnectionResponse>>
+        >(
+          builder: (context, state) {
+            return NetworkStateView(
+              state: state,
+              emptyMessage: 'No received requests yet.',
+            );
+          },
+        );
+    }
+  }
 }

@@ -1,25 +1,83 @@
+import 'package:injectable/injectable.dart';
 import 'package:memo/core/api/base_api_response.dart';
+import 'package:memo/core/constants/api_endpoints.dart';
 import 'package:memo/core/response/base_api_response.dart';
 import 'package:memo/core/typedef/typedef.dart';
+import 'package:memo/features/network/data/models/response/connection_response.dart';
 
 abstract class NetworkRepository {
-  EitherResponse<ApiResponse<String>> listConnections();
+  EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
+  listConnections();
+
+  EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
+  listReceivedConnections();
+
+  EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
+  listSentConnections();
 }
 
+@LazySingleton(as: NetworkRepository)
 class NetworkRepositoryImpl extends BaseRemoteSource
     implements NetworkRepository {
   NetworkRepositoryImpl(super._dio, super._networkInfo);
 
   @override
-  Future<EitherResponse<ApiResponse<String>>> listConnections() async {
-    try {
-      // Simulate a network call with a delay
-      await Future.delayed(const Duration(seconds: 2));
-      // Return a successful response with dummy data
-      return Right(ApiResponse(data: "List of connections"));
-    } catch (e) {
-      // Return an error response in case of an exception
-      return Left(AppError(errorMessage: e.toString()));
-    }
+  EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
+  listConnections() async {
+    final response = await networkRequest(
+      request: (dio) async {
+        final response = await dio.get(ApiEndpoints.listConnections);
+
+        final list = response.data["connections"] as List<dynamic>;
+
+        return ApiResponseWithPagination(
+          success: response.data["status"] ?? true,
+          data: list.map((e) => ConnectionResponse.fromJson(e)).toList(),
+          message: (response.data["message"] ?? "success").toString(),
+        );
+      },
+    );
+
+    return response;
+  }
+
+  @override
+  EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
+  listReceivedConnections() async {
+    final response = await networkRequest(
+      request: (dio) async {
+        final response = await dio.get(ApiEndpoints.listReceivedConnections);
+
+        final list = response.data["connection_requests"] as List<dynamic>;
+
+        return ApiResponseWithPagination(
+          success: response.data["status"] ?? true,
+          data: list.map((e) => ConnectionResponse.fromJson(e)).toList(),
+          message: (response.data["message"] ?? "success").toString(),
+        );
+      },
+    );
+
+    return response;
+  }
+
+  @override
+  EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
+  listSentConnections() async {
+    final response = await networkRequest(
+      request: (dio) async {
+        final response = await dio.get(ApiEndpoints.listSentConnections);
+
+        final list = response.data["connection_requests"] as List<dynamic>;
+
+        return ApiResponseWithPagination(
+          success: response.data["status"] ?? true,
+          data: list.map((e) => ConnectionResponse.fromJson(e)).toList(),
+          message: (response.data["message"] ?? "success").toString(),
+        );
+      },
+    );
+
+    return response;
   }
 }

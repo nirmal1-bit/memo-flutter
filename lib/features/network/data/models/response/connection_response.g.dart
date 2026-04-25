@@ -9,8 +9,6 @@ part of 'connection_response.dart';
 _ConnectionResponse _$ConnectionResponseFromJson(Map<String, dynamic> json) =>
     _ConnectionResponse(
       id: (json['id'] as num).toInt(),
-      userOne: (json['user_one'] as num).toInt(),
-      userTwo: (json['user_two'] as num).toInt(),
       createdAt: DateTime.parse(json['created_at'] as String),
       otherUserDetails: OtherUserDetails.fromJson(
         json['other_user_details'] as Map<String, dynamic>,
@@ -20,8 +18,6 @@ _ConnectionResponse _$ConnectionResponseFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ConnectionResponseToJson(_ConnectionResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'user_one': instance.userOne,
-      'user_two': instance.userTwo,
       'created_at': instance.createdAt.toIso8601String(),
       'other_user_details': instance.otherUserDetails,
     };
@@ -37,7 +33,9 @@ _OtherUserDetails _$OtherUserDetailsFromJson(Map<String, dynamic> json) =>
       trialLeft: (json['trial_left'] as num).toInt(),
       isPremium: json['is_premium'] as bool,
       revenueId: json['revenue_id'] as String,
-      profile: Profile.fromJson(json['profile'] as Map<String, dynamic>),
+      profile: json['profile'] == null
+          ? null
+          : Profile.fromJson(json['profile'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$OtherUserDetailsToJson(_OtherUserDetails instance) =>

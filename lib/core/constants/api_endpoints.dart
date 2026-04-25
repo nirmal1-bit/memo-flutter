@@ -20,35 +20,10 @@ class ApiEndpoints {
   static const String verifyForgetToken = "/forget-password/verify";
   static const String resetPassword = "/forget-password/changePassword";
 
-  // task
-  static const String scanDocument = "/scanTask";
-  static const String addTask = "/createTask";
-  static const String listTasks = "/listTask";
-  static String updateTask(int id) => "/updateTask/$id";
-  static String deleteTask(int id) => "/deleteTask/$id";
-  static String toggleComplete(int id) => "/toogleComplete/$id";
-  static const String deleteCompleted = "/completed";
-  static const String listPendingTasks = "/listPendingTask";
+  // connections
 
-  // habits
-  static const String addHabit = "/createHabit";
-  static const String listHabits = "/listHabits";
-  static String editHabit(int id) => "/updateHabit/$id";
-  static String deleteHabit(int id) => "/deleteHabit/$id";
-
-  //habit logs
-  static String createHabitLogs = "/createHabitLog";
-  static String getHabitLogs = "/listHabitLogs";
-  static String deleteHabitLogs = "/deleteHabitLog";
-
-  // stats
-  static const String stats = "/stats";
-
-  // notes
-  static const String scanNote = "/scanNote";
-  static const String addNote = "/createNote";
-  static const String listNotes = "/listNotes";
-  static String editNote(int id) => "/updateNote/$id";
-  static String deleteNote(int id) => "/deleteNote/$id";
-  static const String listNotesTitle = "/sameTitle";
+  static const String listConnections = "/connections";
+  static const String sendRequest = "/connection-request";
+  static const String listReceivedConnections = "/connection-requests/received";
+  static const String listSentConnections = "/connection-requests/sent";
 }
