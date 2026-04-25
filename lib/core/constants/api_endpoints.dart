@@ -2,7 +2,6 @@ class ApiEndpoints {
   static const String healthCheck = "/healthcheck";
 
   // user
-
   static const String user = "/user";
 
   // auth
@@ -21,7 +20,6 @@ class ApiEndpoints {
   static const String resetPassword = "/forget-password/changePassword";
 
   // connections
-
   static const String listConnections = "/connections";
   static const String sendRequest = "/connection-request";
   static const String listReceivedConnections = "/connection-requests/received";

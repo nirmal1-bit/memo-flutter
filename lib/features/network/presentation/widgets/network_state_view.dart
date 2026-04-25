@@ -3,64 +3,409 @@ import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/network/presentation/widgets/avatar_badge.dart';
 import 'package:memo/features/network/presentation/widgets/network_connection_card.dart';
+import 'package:memo/features/network/presentation/widgets/network_widget_types.dart';
 
 class NetworkStateView extends StatelessWidget {
   const NetworkStateView({
     super.key,
     required this.state,
     required this.emptyMessage,
+    this.onConnectionTap,
+    this.onChatTap,
+    this.onCallTap,
+    this.cardStyle = NetworkCardStyle.connections,
   });
 
   final BaseApiState<List<ConnectionResponse>> state;
   final String emptyMessage;
+  final ValueChanged<ConnectionResponse>? onConnectionTap;
+  final ValueChanged<ConnectionResponse>? onChatTap;
+  final ValueChanged<ConnectionResponse>? onCallTap;
+  final NetworkCardStyle cardStyle;
 
   @override
   Widget build(BuildContext context) {
     return state.when(
-      initial: () => const _LoadingBox(),
-      loading: () => const _LoadingBox(),
+      initial: () => const _ListSkeleton(),
+      loading: () => const _ListSkeleton(),
       success: (data) => data.isEmpty
           ? _EmptyState(message: emptyMessage)
           : Column(
-              children: data
-                  .map(
-                    (connection) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: NetworkConnectionCard(connection: connection),
+              children: data.map((connection) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: switch (cardStyle) {
+                    NetworkCardStyle.connections => NetworkConnectionCard(
+                      connection: connection,
+                      onTap: onConnectionTap == null
+                          ? null
+                          : () => onConnectionTap!(connection),
+                      onChatTap: onChatTap == null
+                          ? null
+                          : () => onChatTap!(connection),
+                      onCallTap: onCallTap == null
+                          ? null
+                          : () => onCallTap!(connection),
                     ),
-                  )
-                  .toList(),
+                    NetworkCardStyle.sent => _SentCard(connection: connection),
+                    NetworkCardStyle.received => _ReceivedCard(
+                      connection: connection,
+                    ),
+                  },
+                );
+              }).toList(),
             ),
-      error: (message) => _MessageState(
+      error: (message) => _StatusState(
         icon: Icons.error_outline_rounded,
         title: 'Something went wrong',
-        message: message,
+        subtitle: message,
       ),
-      noInternet: () => const _MessageState(
+      noInternet: () => const _StatusState(
         icon: Icons.wifi_off_rounded,
-        title: 'No internet connection',
-        message: 'Check your connection and try again.',
+        title: 'No internet',
+        subtitle: 'Check your connection and try again.',
       ),
-      validationError: (validationError) => _MessageState(
+      validationError: (error) => _StatusState(
         icon: Icons.warning_amber_rounded,
-        title: validationError.message,
-        message: validationError.errors.isNotEmpty
-            ? validationError.errors.values.first.toString()
+        title: error.message,
+        subtitle: error.errors.isNotEmpty
+            ? error.errors.values.first.toString()
             : '',
       ),
     );
   }
 }
 
-class _LoadingBox extends StatelessWidget {
-  const _LoadingBox();
+class _SentCard extends StatelessWidget {
+  const _SentCard({required this.connection});
+
+  final ConnectionResponse connection;
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 36),
-      child: Center(child: CircularProgressIndicator()),
+    final details = connection.otherUserDetails;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        children: [
+          AvatarBadge(label: _initials(details.name), size: 44),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  details.name,
+                  style: AppTextStyles.rubik.copyWith(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.softBlack,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  details.role,
+                  style: AppTextStyles.rubik.copyWith(
+                    fontSize: 12,
+                    color: AppColors.ironGrey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Pending response',
+                  style: AppTextStyles.rubik.copyWith(
+                    fontSize: 11,
+                    color: AppColors.textLight,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 8,
+            height: 8,
+            decoration: const BoxDecoration(
+              color: Color(0xFFFF8C42),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReceivedCard extends StatelessWidget {
+  const _ReceivedCard({required this.connection});
+
+  final ConnectionResponse connection;
+
+  @override
+  Widget build(BuildContext context) {
+    final details = connection.otherUserDetails;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              AvatarBadge(label: _initials(details.name), size: 44),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      details.name,
+                      style: AppTextStyles.rubik.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.softBlack,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      details.role,
+                      style: AppTextStyles.rubik.copyWith(
+                        fontSize: 12,
+                        color: AppColors.ironGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _ActionButton(
+                  label: 'Accept',
+                  icon: Icons.check_rounded,
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.white,
+                  borderColor: AppColors.primary,
+                  onPressed: () {},
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _ActionButton(
+                  label: 'Decline',
+                  icon: Icons.close_rounded,
+                  backgroundColor: AppColors.white,
+                  foregroundColor: AppColors.primary,
+                  borderColor: AppColors.brandBackgroundLight,
+                  onPressed: () {},
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.label,
+    required this.icon,
+    required this.backgroundColor,
+    required this.foregroundColor,
+    required this.borderColor,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final Color borderColor;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 38,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: backgroundColor,
+          foregroundColor: foregroundColor,
+          side: BorderSide(color: borderColor),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.rubik.copyWith(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: foregroundColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ListSkeleton extends StatefulWidget {
+  const _ListSkeleton();
+
+  @override
+  State<_ListSkeleton> createState() => _ListSkeletonState();
+}
+
+class _ListSkeletonState extends State<_ListSkeleton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1100),
+    )..repeat(reverse: true);
+    _animation = Tween<double>(
+      begin: 0.3,
+      end: 0.8,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(
+        3,
+        (index) => _SkeletonCard(animation: _animation, index: index),
+      ),
+    );
+  }
+}
+
+class _SkeletonCard extends StatelessWidget {
+  const _SkeletonCard({required this.animation, required this.index});
+
+  final Animation<double> animation;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            AnimatedBuilder(
+              animation: animation,
+              builder: (_, __) => Opacity(
+                opacity: animation.value - (index * 0.05),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.border.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(13),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AnimatedBuilder(
+                    animation: animation,
+                    builder: (_, __) => Opacity(
+                      opacity: animation.value,
+                      child: Container(
+                        width: 130,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          color: AppColors.border.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  AnimatedBuilder(
+                    animation: animation,
+                    builder: (_, __) => Opacity(
+                      opacity: animation.value * 0.7,
+                      child: Container(
+                        width: 90,
+                        height: 11,
+                        decoration: BoxDecoration(
+                          color: AppColors.border.withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  AnimatedBuilder(
+                    animation: animation,
+                    builder: (_, __) => Opacity(
+                      opacity: animation.value * 0.5,
+                      child: Container(
+                        width: double.infinity,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: AppColors.border.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -74,26 +419,34 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.dividerColor),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.people_outline_rounded,
-            color: AppColors.primary,
-            size: 40,
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.brandBackground,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(
+              Icons.people_outline_rounded,
+              color: AppColors.primary,
+              size: 26,
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Text(
             message,
             textAlign: TextAlign.center,
             style: AppTextStyles.rubik.copyWith(
-              fontSize: 13.5,
-              color: AppColors.softTextGrey,
+              fontSize: 13,
+              color: AppColors.textGrey,
+              height: 1.5,
             ),
           ),
         ],
@@ -102,50 +455,68 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-class _MessageState extends StatelessWidget {
-  const _MessageState({
+class _StatusState extends StatelessWidget {
+  const _StatusState({
     required this.icon,
     required this.title,
-    required this.message,
+    required this.subtitle,
   });
 
   final IconData icon;
   final String title;
-  final String message;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.dividerColor),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         children: [
-          Icon(icon, color: AppColors.primary, size: 40),
-          const SizedBox(height: 12),
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.brandBackground,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 26),
+          ),
+          const SizedBox(height: 14),
           Text(
             title,
-            style: AppTextStyles.libre.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: AppColors.softPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            textAlign: TextAlign.center,
             style: AppTextStyles.rubik.copyWith(
-              fontSize: 13.5,
-              color: AppColors.softTextGrey,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.softBlack,
             ),
           ),
+          if (subtitle.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.rubik.copyWith(
+                fontSize: 12,
+                color: AppColors.textGrey,
+                height: 1.5,
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
+}
+
+String _initials(String name) {
+  final parts = name.trim().split(RegExp(r'\s+'));
+  if (parts.isEmpty) return 'N';
+  final first = parts.first.isNotEmpty ? parts.first[0] : 'N';
+  final second = parts.length > 1 && parts[1].isNotEmpty ? parts[1][0] : '';
+  return (first + second).toUpperCase();
 }

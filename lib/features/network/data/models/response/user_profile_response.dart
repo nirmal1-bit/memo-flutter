@@ -21,7 +21,7 @@ abstract class UserProfileResponse with _$UserProfileResponse {
 
     @JsonKey(name: 'revenue_id') required String revenueId,
 
-    Profile? profile, // ✅ nullable
+    Profile? profile,
   }) = _UserProfileResponse;
 
   factory UserProfileResponse.fromJson(Map<String, dynamic> json) =>

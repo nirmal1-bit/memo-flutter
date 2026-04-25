@@ -10,4 +10,6 @@ class AppRoutes {
   static const String verifyToken = '/verify-token';
   static const String forgetPassword = '/forget-password';
   static const String newPassword = '/new-password';
+  static const String userProfile = '/user-profile';
+  static const String otherUserProfile = '/other-user-profile';
 }

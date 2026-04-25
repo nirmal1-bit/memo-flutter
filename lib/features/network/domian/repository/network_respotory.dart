@@ -4,6 +4,7 @@ import 'package:memo/core/constants/api_endpoints.dart';
 import 'package:memo/core/response/base_api_response.dart';
 import 'package:memo/core/typedef/typedef.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 
 abstract class NetworkRepository {
   EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
@@ -14,6 +15,7 @@ abstract class NetworkRepository {
 
   EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
   listSentConnections();
+  EitherResponse<ApiResponse<UserProfileResponse>> getUserProfile();
 }
 
 @LazySingleton(as: NetworkRepository)
@@ -73,6 +75,23 @@ class NetworkRepositoryImpl extends BaseRemoteSource
         return ApiResponseWithPagination(
           success: response.data["status"] ?? true,
           data: list.map((e) => ConnectionResponse.fromJson(e)).toList(),
+          message: (response.data["message"] ?? "success").toString(),
+        );
+      },
+    );
+
+    return response;
+  }
+
+  @override
+  EitherResponse<ApiResponse<UserProfileResponse>> getUserProfile() async {
+    final response = await networkRequest(
+      request: (dio) async {
+        final response = await dio.get(ApiEndpoints.user);
+
+        return ApiResponse(
+          success: response.data["status"] ?? true,
+          data: UserProfileResponse.fromJson(response.data['user']),
           message: (response.data["message"] ?? "success").toString(),
         );
       },

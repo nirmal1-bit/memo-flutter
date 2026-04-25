@@ -9,6 +9,9 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:memo/features/main/auth_main_screen.dart';
 import 'package:memo/features/main/main_screen.dart';
+import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/network/presentation/screens/others_user_profile.dart';
+import 'package:memo/features/network/presentation/screens/user_profile_screen.dart';
 
 // extension cannot be defined inside a class it has to be outside the class must
 //be top level function
@@ -43,6 +46,16 @@ class AppRouter {
         (context, state) => NewPasswordScreen(
           arguments: state.extra is AuthFlowArgs
               ? state.extra as AuthFlowArgs
+              : null,
+        ),
+      ),
+      AppRoutes.userProfile.route(
+        (context, state) => const UserProfileScreen(),
+      ),
+      AppRoutes.otherUserProfile.route(
+        (context, state) => OthersUserProfileScreen(
+          details: state.extra is OtherUserDetails
+              ? state.extra as OtherUserDetails
               : null,
         ),
       ),

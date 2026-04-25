@@ -37,6 +37,8 @@ import 'package:memo/features/network/domian/repository/network_respotory.dart'
     as _i420;
 import 'package:memo/features/network/presentation/cubits/connections_cubit.dart'
     as _i762;
+import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart'
+    as _i680;
 import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart'
     as _i382;
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart'
@@ -75,6 +77,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i762.ConnectionsCubit>(
       () => _i762.ConnectionsCubit(gh<_i420.NetworkRepository>()),
+    );
+    gh.factory<_i680.GetUserProfileCubit>(
+      () => _i680.GetUserProfileCubit(gh<_i420.NetworkRepository>()),
     );
     gh.factory<_i382.ReceivedConnectionsCubit>(
       () => _i382.ReceivedConnectionsCubit(gh<_i420.NetworkRepository>()),

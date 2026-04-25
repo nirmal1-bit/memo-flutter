@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
+import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/presentation/cubits/connections_cubit.dart';
+import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart';
-import 'package:memo/features/network/presentation/widgets/add_button.dart';
-import 'package:memo/features/network/presentation/widgets/network_state_view.dart';
-import 'package:memo/features/network/presentation/widgets/search_field.dart';
-import 'package:memo/features/network/presentation/widgets/tab_strip.dart';
-import 'package:memo/features/network/presentation/widgets/top_header.dart';
+import 'package:memo/features/network/presentation/widgets/app_bar.dart';
+import 'package:memo/features/network/presentation/widgets/network_screen_widgets.dart';
+import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 
 class NetworkScreen extends StatefulWidget {
   const NetworkScreen({super.key, required this.controller});
@@ -26,8 +27,10 @@ class _NetworkScreenState extends State<NetworkScreen> {
   late final ConnectionsCubit _connectionsCubit;
   late final SentConnectionsCubit _sentConnectionsCubit;
   late final ReceivedConnectionsCubit _receivedConnectionsCubit;
+  late final GetUserProfileCubit _userProfileCubit;
 
   NetworkTab _selectedTab = NetworkTab.connections;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -37,6 +40,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
       ..listSentConnections();
     _receivedConnectionsCubit = getIt<ReceivedConnectionsCubit>()
       ..listReceivedConnections();
+    _userProfileCubit = getIt<GetUserProfileCubit>()..getUserProfile();
   }
 
   @override
@@ -44,6 +48,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
     _connectionsCubit.close();
     _sentConnectionsCubit.close();
     _receivedConnectionsCubit.close();
+    _userProfileCubit.close();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -54,35 +60,51 @@ class _NetworkScreenState extends State<NetworkScreen> {
         BlocProvider.value(value: _connectionsCubit),
         BlocProvider.value(value: _sentConnectionsCubit),
         BlocProvider.value(value: _receivedConnectionsCubit),
+        BlocProvider.value(value: _userProfileCubit),
       ],
       child: Container(
         color: AppColors.scaffoldBackground,
         child: SafeArea(
           child: SingleChildScrollView(
             controller: widget.controller,
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    const Expanded(
-                      child: SearchField(hintText: 'Search network or content'),
-                    ),
-                    const SizedBox(width: 12),
-                    AddButton(onPressed: () {}),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                TabStrip(
-                  selectedTab: _selectedTab,
-                  onChanged: (tab) {
-                    setState(() {
-                      _selectedTab = tab;
-                    });
+                BlocBuilder<
+                  GetUserProfileCubit,
+                  BaseApiState<UserProfileResponse>
+                >(
+                  builder: (context, state) {
+                    return state.when(
+                      initial: () => const SizedBox.shrink(),
+                      loading: () => const SizedBox.shrink(),
+                      success: (user) => NetworkAppBar(
+                        user: user,
+                        onTap: () => context.push(AppRoutes.userProfile),
+                      ),
+                      error: (_) => const SizedBox.shrink(),
+                      noInternet: () => const SizedBox.shrink(),
+                      validationError: (_) => const SizedBox.shrink(),
+                    );
                   },
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: NetworkSearchBar(controller: _searchController),
+                    ),
+                    const SizedBox(width: 10),
+                    NetworkAddButton(onPressed: () {}),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                NetworkTabStrip(
+                  selected: _selectedTab,
+                  onChanged: (tab) => setState(() => _selectedTab = tab),
+                ),
+                const SizedBox(height: 16),
                 _buildTabContent(),
               ],
             ),
@@ -99,36 +121,47 @@ class _NetworkScreenState extends State<NetworkScreen> {
           ConnectionsCubit,
           BaseApiState<List<ConnectionResponse>>
         >(
-          builder: (context, state) {
-            return NetworkStateView(
-              state: state,
-              emptyMessage: 'You do not have any connections yet.',
-            );
-          },
+          builder: (context, state) => NetworkStateView(
+            state: state,
+            emptyMessage: 'No connections yet.\nStart building your network.',
+            onConnectionTap: (connection) => context.push(
+              AppRoutes.otherUserProfile,
+              extra: connection.otherUserDetails,
+            ),
+            onChatTap: (connection) => context.push(
+              AppRoutes.otherUserProfile,
+              extra: connection.otherUserDetails,
+            ),
+            onCallTap: (connection) => ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Starting a video call with ${connection.otherUserDetails.name}...',
+                ),
+              ),
+            ),
+          ),
         );
       case NetworkTab.sent:
         return BlocBuilder<
           SentConnectionsCubit,
           BaseApiState<List<ConnectionResponse>>
         >(
-          builder: (context, state) {
-            return NetworkStateView(
-              state: state,
-              emptyMessage: 'No sent requests yet.',
-            );
-          },
+          builder: (context, state) => NetworkStateView(
+            state: state,
+            emptyMessage: 'No sent requests yet.',
+            cardStyle: NetworkCardStyle.sent,
+          ),
         );
       case NetworkTab.received:
         return BlocBuilder<
           ReceivedConnectionsCubit,
           BaseApiState<List<ConnectionResponse>>
         >(
-          builder: (context, state) {
-            return NetworkStateView(
-              state: state,
-              emptyMessage: 'No received requests yet.',
-            );
-          },
+          builder: (context, state) => NetworkStateView(
+            state: state,
+            emptyMessage: 'No received requests yet.',
+            cardStyle: NetworkCardStyle.received,
+          ),
         );
     }
   }
