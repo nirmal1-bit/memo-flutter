@@ -15,6 +15,7 @@ enum ChatConnectionStatus {
   error,
 }
 
+// this is the message class
 class ChatMessage {
   const ChatMessage({
     required this.name,
@@ -29,6 +30,7 @@ class ChatMessage {
   final String timeLabel;
 }
 
+// this is the state class
 class ChatState {
   const ChatState({
     this.messages = const [],
@@ -40,6 +42,8 @@ class ChatState {
   final ChatConnectionStatus status;
   final String? errorMessage;
 
+  // copy with to emmit new state with other value same and to give new instance of the object
+  // copy with and initiate new object refrence
   ChatState copyWith({
     List<ChatMessage>? messages,
     ChatConnectionStatus? status,
@@ -55,21 +59,27 @@ class ChatState {
 
 class ChatCubit extends Cubit<ChatState> {
   ChatCubit({required this.connection, required this.sessionService})
-    : super(const ChatState());
+    : super(
+        const ChatState(),
+      ); // initilizing the initial state of the chatstate
 
   final ConnectionResponse connection;
   final SessionService sessionService;
 
+  int? userId;
+
   IOWebSocketChannel? _channel;
   StreamSubscription? _subscription;
   bool _hasConnected = false;
-  final Queue<String> _pendingOutgoingMessages = Queue<String>();
 
   Future<void> connect() async {
     if (_hasConnected || state.status == ChatConnectionStatus.connecting) {
       return;
     }
+    // if already hass been connected is in connecting state do nothing
 
+    // state here is the ChatState and copywith is to
+    //create new instance of the state with new values and other values same
     emit(
       state.copyWith(
         status: ChatConnectionStatus.connecting,
@@ -78,9 +88,9 @@ class ChatCubit extends Cubit<ChatState> {
     );
 
     try {
+      userId = int.tryParse(await sessionService.userId);
       final token = await sessionService.token;
       final uri = Uri.parse('ws://192.168.1.94:4000/v1/chat/${connection.id}');
-
       _channel = IOWebSocketChannel.connect(
         uri,
         headers: {'Authorization': 'Bearer $token'},
@@ -94,6 +104,8 @@ class ChatCubit extends Cubit<ChatState> {
         ),
       );
 
+      // this is to listen to the incoming messages from the websocket and handle them with the
+      //_handleIncomingMessage function and also handle errors and done events
       _subscription = _channel!.stream.listen(
         _handleIncomingMessage,
         onError: _handleError,
@@ -134,7 +146,8 @@ class ChatCubit extends Cubit<ChatState> {
       timeLabel: _currentTimeLabel(),
     );
 
-    _pendingOutgoingMessages.addLast(message);
+    // i think this is the one which is causing error adding the message
+
     emit(state.copyWith(messages: [...state.messages, outgoingMessage]));
 
     try {
@@ -142,7 +155,6 @@ class ChatCubit extends Cubit<ChatState> {
         jsonEncode(<String, dynamic>{'message': message, 'name': 'You'}),
       );
     } catch (error) {
-      _pendingOutgoingMessages.remove(message);
       _removeLastOptimisticMessage(message);
       emit(
         state.copyWith(
@@ -161,18 +173,20 @@ class ChatCubit extends Cubit<ChatState> {
 
   void _handleIncomingMessage(dynamic rawMessage) {
     try {
-      final decoded = _decodeIncoming(rawMessage);
-
-      if (_shouldIgnoreEcho(decoded.message)) {
-        return;
-      }
+      final decodedMessage = jsonDecode(rawMessage) as Map<String, dynamic>;
 
       final incomingMessage = ChatMessage(
-        name: decoded.name,
-        message: decoded.message,
+        name: "",
+        message: decodedMessage['message'] ?? '',
         isMe: false,
         timeLabel: _currentTimeLabel(),
       );
+
+      if (int.tryParse(decodedMessage['sender_id']) == userId) {
+        // if the sender id is same as the user id then it is a message from me and
+        //we can ignore it because we already added it to the chat with optimistic update
+        return;
+      }
 
       emit(state.copyWith(messages: [...state.messages, incomingMessage]));
     } catch (error) {
@@ -208,7 +222,6 @@ class ChatCubit extends Cubit<ChatState> {
     _subscription = null;
     _channel?.sink.close();
     _channel = null;
-    _pendingOutgoingMessages.clear();
   }
 
   @override
@@ -217,38 +230,8 @@ class ChatCubit extends Cubit<ChatState> {
     return super.close();
   }
 
-  _DecodedMessage _decodeIncoming(dynamic rawMessage) {
-    if (rawMessage is Map<String, dynamic>) {
-      return _DecodedMessage.fromMap(rawMessage);
-    }
-
-    if (rawMessage is String) {
-      final decoded = jsonDecode(rawMessage);
-      if (decoded is Map<String, dynamic>) {
-        return _DecodedMessage.fromMap(decoded);
-      }
-
-      return _DecodedMessage(name: 'Unknown', message: decoded.toString());
-    }
-
-    return _DecodedMessage(name: 'Unknown', message: rawMessage.toString());
-  }
-
-  bool _shouldIgnoreEcho(String incomingMessage) {
-    final normalizedIncoming = incomingMessage.trim();
-    if (_pendingOutgoingMessages.isEmpty || normalizedIncoming.isEmpty) {
-      return false;
-    }
-
-    final pendingMessage = _pendingOutgoingMessages.first;
-    if (pendingMessage.trim() != normalizedIncoming) {
-      return false;
-    }
-
-    _pendingOutgoingMessages.removeFirst();
-    return true;
-  }
-
+  //. optimistic update is to add the message to the chat before it is actually sent to the server and
+  //if there is an error in sending the message we need to remove that message from the chat and show the error message
   void _removeLastOptimisticMessage(String text) {
     for (var index = state.messages.length - 1; index >= 0; index--) {
       final message = state.messages[index];
@@ -267,20 +250,4 @@ class ChatCubit extends Cubit<ChatState> {
     final suffix = now.hour >= 12 ? 'PM' : 'AM';
     return '$hourOfDay:$minute $suffix';
   }
-}
-
-class _DecodedMessage {
-  const _DecodedMessage({required this.name, required this.message});
-
-  factory _DecodedMessage.fromMap(Map<String, dynamic> json) {
-    return _DecodedMessage(
-      name: json['name']?.toString().trim().isNotEmpty == true
-          ? json['name'].toString()
-          : 'Unknown',
-      message: json['message']?.toString() ?? '',
-    );
-  }
-
-  final String name;
-  final String message;
 }

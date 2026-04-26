@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 import 'package:memo/features/network/presentation/widgets/network_search_bar.dart';
 
-class NetworkAppBar extends StatelessWidget {
+class NetworkAppBar extends StatefulWidget {
   const NetworkAppBar({
     super.key,
     required this.user,
@@ -19,8 +20,20 @@ class NetworkAppBar extends StatelessWidget {
   final VoidCallback? onActionTap;
 
   @override
+  State<NetworkAppBar> createState() => _NetworkAppBarState();
+}
+
+class _NetworkAppBarState extends State<NetworkAppBar> {
+  @override
+  void initState() {
+    super.initState();
+
+    SessionService().saveUserId(widget.user.id.toString());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final profile = user.profile;
+    final profile = widget.user.profile;
 
     return Container(
       width: double.infinity,
@@ -33,7 +46,7 @@ class NetworkAppBar extends StatelessWidget {
       child: Row(
         children: [
           InkWell(
-            onTap: onTap,
+            onTap: widget.onTap,
             borderRadius: BorderRadius.circular(999),
             child: Container(
               width: 54,
@@ -62,18 +75,19 @@ class NetworkAppBar extends StatelessWidget {
                     ? Image.network(
                         profile!.avatarUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
-                            _AvatarFallback(initials: _initials(user.name)),
+                        errorBuilder: (_, __, ___) => _AvatarFallback(
+                          initials: _initials(widget.user.name),
+                        ),
                       )
-                    : _AvatarFallback(initials: _initials(user.name)),
+                    : _AvatarFallback(initials: _initials(widget.user.name)),
               ),
             ),
           ),
           const SizedBox(width: 12),
-          Expanded(child: NetworkSearchBar(controller: controller)),
+          Expanded(child: NetworkSearchBar(controller: widget.controller)),
           const SizedBox(width: 10),
           InkWell(
-            onTap: onActionTap,
+            onTap: widget.onActionTap,
             borderRadius: BorderRadius.circular(18),
             child: Container(
               width: 52,

@@ -19,30 +19,6 @@ class SessionService {
     await prefs.setBool(StorageKeys.hasOnboarding, value);
   }
 
-  // ----------------- Vendor Status -----------------
-
-  Future<String> get hasVendorStatus async {
-    final prefs = await _prefs;
-    return prefs.getString(StorageKeys.vendorStatusKey) ?? 'pending';
-  }
-
-  Future<void> saveVendorStatus(String value) async {
-    final prefs = await _prefs;
-    await prefs.setString(StorageKeys.vendorStatusKey, value);
-  }
-
-  // ----------------- Premium -----------------
-
-  Future<bool> get hasPremium async {
-    final prefs = await _prefs;
-    return prefs.getBool(StorageKeys.premiumKey) ?? false;
-  }
-
-  Future<void> savePremium(bool value) async {
-    final prefs = await _prefs;
-    await prefs.setBool(StorageKeys.premiumKey, value);
-  }
-
   // ----------------- App Theme -----------------
 
   Future<String> get themeMode async {
@@ -55,26 +31,14 @@ class SessionService {
     await prefs.setString(StorageKeys.themeMode, value);
   }
 
-  // ----------------- Phone & Password -----------------
-
-  Future<String> get getPhoneNumber async {
+  Future<void> saveUserId(String value) async {
     final prefs = await _prefs;
-    return prefs.getString(StorageKeys.phoneNumber) ?? '';
+    await prefs.setString(StorageKeys.userId, value);
   }
 
-  Future<void> savePhoneNumber(String value) async {
+  Future<String> get userId async {
     final prefs = await _prefs;
-    await prefs.setString(StorageKeys.phoneNumber, value);
-  }
-
-  Future<String> get getPassword async {
-    final prefs = await _prefs;
-    return prefs.getString(StorageKeys.password) ?? '';
-  }
-
-  Future<void> savePassword(String value) async {
-    final prefs = await _prefs;
-    await prefs.setString(StorageKeys.password, value);
+    return prefs.getString(StorageKeys.userId) ?? '';
   }
 
   // ----------------- Token & Session -----------------
