@@ -35,6 +35,8 @@ import 'package:memo/features/auth/presentation/cubits/verify_token_cubit.dart'
     as _i783;
 import 'package:memo/features/network/domian/repository/network_respotory.dart'
     as _i420;
+import 'package:memo/features/network/presentation/cubits/chat_cubit.dart'
+    as _i228;
 import 'package:memo/features/network/presentation/cubits/connections_cubit.dart'
     as _i762;
 import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart'
@@ -64,6 +66,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i509.NetworkInfo>(
       () => _i509.NetworkInfoImpl(gh<_i973.InternetConnectionChecker>()),
+    );
+    gh.factory<_i228.ChatCubit>(
+      () => _i228.ChatCubit(sessionService: gh<_i73.SessionService>()),
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModules.dio(gh<_i174.AuthInterceptor>()),

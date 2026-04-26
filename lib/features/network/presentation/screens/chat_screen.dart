@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/presentation/cubits/chat_cubit.dart';
@@ -29,85 +30,97 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final user = widget.connection.otherUserDetails;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: AppColors.scaffoldBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.scaffoldBackground,
-        elevation: 0,
-        foregroundColor: AppColors.softPrimary,
-        titleSpacing: 0,
-        title: Text(
-          'Chat',
-          style: AppTextStyles.libre.copyWith(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
-            color: AppColors.softPrimary,
-          ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => getIt<ChatCubit>()..connect(widget.connection.id),
         ),
-        actions: [
-          IconButton(
-            tooltip: 'Start video call',
-            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Starting video call with ${user.name}...'),
+      ],
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            resizeToAvoidBottomInset: true,
+            backgroundColor: AppColors.scaffoldBackground,
+            appBar: AppBar(
+              backgroundColor: AppColors.scaffoldBackground,
+              elevation: 0,
+              foregroundColor: AppColors.softPrimary,
+              titleSpacing: 0,
+              title: Text(
+                'Chat',
+                style: AppTextStyles.libre.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.softPrimary,
+                ),
+              ),
+              actions: [
+                IconButton(
+                  tooltip: 'Start video call',
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Starting video call with ${user.name}...'),
+                    ),
+                  ),
+                  icon: const Icon(Icons.videocam_rounded),
+                ),
+              ],
+            ),
+            body: SafeArea(
+              child: BlocConsumer<ChatCubit, ChatState>(
+                listenWhen: (previous, current) =>
+                    previous.messages.length != current.messages.length ||
+                    previous.status != current.status,
+                listener: (context, state) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (_messagesController.hasClients) {
+                      _messagesController.animateTo(
+                        _messagesController.position.maxScrollExtent + 120,
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeOut,
+                      );
+                    }
+                  });
+
+                  if (state.status == ChatConnectionStatus.error &&
+                      state.errorMessage != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.errorMessage!)),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _ChatPanel(
+                            messagesController: _messagesController,
+                            messages: state.messages,
+                            status: state.status,
+                            errorMessage: state.errorMessage,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        SafeArea(
+                          top: false,
+                          child: _ChatComposer(
+                            controller: _messageController,
+                            onSend: () => _sendMessage(context),
+                            isBusy:
+                                state.status == ChatConnectionStatus.connecting,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
-            icon: const Icon(Icons.videocam_rounded),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: BlocConsumer<ChatCubit, ChatState>(
-          listenWhen: (previous, current) =>
-              previous.messages.length != current.messages.length ||
-              previous.status != current.status,
-          listener: (context, state) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (_messagesController.hasClients) {
-                _messagesController.animateTo(
-                  _messagesController.position.maxScrollExtent + 120,
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeOut,
-                );
-              }
-            });
-
-            if (state.status == ChatConnectionStatus.error &&
-                state.errorMessage != null) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-            }
-          },
-          builder: (context, state) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: _ChatPanel(
-                      messagesController: _messagesController,
-                      messages: state.messages,
-                      status: state.status,
-                      errorMessage: state.errorMessage,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SafeArea(
-                    top: false,
-                    child: _ChatComposer(
-                      controller: _messageController,
-                      onSend: () => _sendMessage(context),
-                      isBusy: state.status == ChatConnectionStatus.connecting,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
+          );
+        },
       ),
     );
   }

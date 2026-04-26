@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/features/auth/presentation/models/auth_flow_args.dart';
 import 'package:memo/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:memo/features/auth/presentation/screens/login_screen.dart';
@@ -8,15 +7,12 @@ import 'package:memo/features/auth/presentation/screens/signup_screen.dart';
 import 'package:memo/features/auth/presentation/screens/verify_token_screen.dart';
 import 'package:memo/core/routes/app_routes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:memo/core/di/injector.dart';
 import 'package:memo/features/main/auth_main_screen.dart';
 import 'package:memo/features/main/main_screen.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
-import 'package:memo/features/network/presentation/cubits/chat_cubit.dart';
 import 'package:memo/features/network/presentation/screens/chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/others_user_profile.dart';
 import 'package:memo/features/network/presentation/screens/user_profile_screen.dart';
-import 'package:memo/core/session/session_service.dart';
 
 // extension cannot be defined inside a class it has to be outside the class must
 //be top level function
@@ -76,16 +72,11 @@ class AppRouter {
         final connection = state.extra is ConnectionResponse
             ? state.extra as ConnectionResponse
             : throw ArgumentError('Chat screen requires connection details.');
-
-        return BlocProvider(
-          create: (_) => ChatCubit(
-            connection: connection,
-            sessionService: getIt<SessionService>(),
-          )..connect(),
-          child: ChatScreen(connection: connection),
-        );
+        return ChatScreen(connection: connection);
       }),
+
       AppRoutes.main.route((context, state) => const MainScreen(title: 'Main')),
+
       AppRoutes.onboarding.route(
         (context, state) =>
             const Scaffold(body: Center(child: Text('Onboarding screen'))),

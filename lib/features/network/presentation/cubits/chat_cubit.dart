@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:memo/core/session/session_service.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:web_socket_channel/io.dart';
@@ -57,13 +57,13 @@ class ChatState {
   }
 }
 
+@injectable
 class ChatCubit extends Cubit<ChatState> {
-  ChatCubit({required this.connection, required this.sessionService})
+  ChatCubit({required this.sessionService})
     : super(
         const ChatState(),
       ); // initilizing the initial state of the chatstate
 
-  final ConnectionResponse connection;
   final SessionService sessionService;
 
   int? userId;
@@ -72,7 +72,9 @@ class ChatCubit extends Cubit<ChatState> {
   StreamSubscription? _subscription;
   bool _hasConnected = false;
 
-  Future<void> connect() async {
+  // making this a future function cause problems i don't know why
+  //when doing form getIt it causes some problems
+  void connect(int id) async {
     if (_hasConnected || state.status == ChatConnectionStatus.connecting) {
       return;
     }
@@ -90,7 +92,7 @@ class ChatCubit extends Cubit<ChatState> {
     try {
       userId = int.tryParse(await sessionService.userId);
       final token = await sessionService.token;
-      final uri = Uri.parse('ws://192.168.1.94:4000/v1/chat/${connection.id}');
+      final uri = Uri.parse('ws://192.168.1.94:4000/v1/chat/$id');
       _channel = IOWebSocketChannel.connect(
         uri,
         headers: {'Authorization': 'Bearer $token'},
@@ -165,10 +167,10 @@ class ChatCubit extends Cubit<ChatState> {
     }
   }
 
-  void retry() {
+  void retry(int id) {
     closeConnection();
     _hasConnected = false;
-    connect();
+    connect(id);
   }
 
   void _handleIncomingMessage(dynamic rawMessage) {
