@@ -134,7 +134,9 @@ class _NetworkScreenState extends State<NetworkScreen> {
             emptyMessage: 'No connections yet.\nStart building your network.',
             onConnectionTap: (connection) => context.push(
               AppRoutes.otherUserProfile,
-              extra: connection.otherUserDetails,
+              extra: OtherUserProfileArguments(
+                details: connection.otherUserDetails,
+              ),
             ),
             onChatTap: (connection) =>
                 context.push(AppRoutes.chat, extra: connection),

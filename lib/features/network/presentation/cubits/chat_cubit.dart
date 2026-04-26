@@ -153,9 +153,7 @@ class ChatCubit extends Cubit<ChatState> {
     emit(state.copyWith(messages: [...state.messages, outgoingMessage]));
 
     try {
-      _channel!.sink.add(
-        jsonEncode(<String, dynamic>{'message': message, 'name': 'You'}),
-      );
+      _channel!.sink.add(message);
     } catch (error) {
       _removeLastOptimisticMessage(message);
       emit(

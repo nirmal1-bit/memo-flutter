@@ -6,20 +6,22 @@ import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/common/primary_button.dart';
 import 'package:memo/features/network/presentation/cubits/chat_cubit.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:memo/features/video_call/cubit/end_video_call.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../model/call_request_model.dart';
+
+class VideoCallPageParams {
+  VideoCallPageParams({required this.requestModel, required this.connectionId});
+
+  final CallRequestModel requestModel;
+  final int connectionId;
+}
 
 class VideoCallPage extends StatefulWidget {
   /// Construct the [VideoCallPage]
-  const VideoCallPage({
-    super.key,
-    required this.callRequestModel,
-    required this.bookingId,
-  });
+  const VideoCallPage({super.key, required this.params});
 
-  final CallRequestModel callRequestModel;
-  final int bookingId;
+  final VideoCallPageParams params;
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -27,7 +29,6 @@ class VideoCallPage extends StatefulWidget {
 
 class _State extends State<VideoCallPage> {
   RtcEngine? _engine;
-  bool _localUserJoined = false;
   int? _remoteUid;
   bool _localVideoEnabled = true;
   bool _localAudioEnabled = true;
@@ -55,7 +56,7 @@ class _State extends State<VideoCallPage> {
 
       await _engine?.initialize(
         RtcEngineContext(
-          appId: widget.callRequestModel.appId,
+          appId: widget.params.requestModel.appId,
           channelProfile: ChannelProfileType.channelProfileCommunication,
         ),
       );
@@ -64,9 +65,6 @@ class _State extends State<VideoCallPage> {
         RtcEngineEventHandler(
           onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
             debugPrint("Local user ${connection.localUid} joined");
-            setState(() {
-              _localUserJoined = true;
-            });
             AppUtils.showSuccessSnackbar(message: "Connected to call!");
           },
           onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
@@ -109,14 +107,14 @@ class _State extends State<VideoCallPage> {
         scenario: AudioScenarioType.audioScenarioChatroom,
       );
 
-      debugPrint("The token is ${widget.callRequestModel.token}");
-      debugPrint("The channel is ${widget.callRequestModel.channel}");
+      debugPrint("The token is ${widget.params.requestModel.token}");
+      debugPrint("The channel is ${widget.params.requestModel.channel}");
       debugPrint("The uid is $validUid");
 
       await _engine?.joinChannel(
-        channelId: widget.callRequestModel.channel,
+        channelId: widget.params.requestModel.channel,
         options: const ChannelMediaOptions(),
-        token: widget.callRequestModel.token,
+        token: widget.params.requestModel.token,
         uid: validUid,
       );
 
@@ -234,10 +232,10 @@ class _State extends State<VideoCallPage> {
   void dispose() {
     if (!_callEnded) {
       try {
-        // getIt<EndVideoCall>().endCall(
-        //   widget.bookingId,
-        //   widget.callRequestModel.videoCallSessionId,
-        // );
+        getIt<EndVideoCall>().endCall(
+          widget.params.connectionId,
+          widget.params.requestModel.videoCallSessionId,
+        );
       } catch (_) {}
       _callEnded = true;
     }
@@ -269,7 +267,9 @@ class _State extends State<VideoCallPage> {
         controller: VideoViewController.remote(
           rtcEngine: _engine!,
           canvas: VideoCanvas(uid: _remoteUid),
-          connection: RtcConnection(channelId: widget.callRequestModel.channel),
+          connection: RtcConnection(
+            channelId: widget.params.requestModel.channel,
+          ),
         ),
       );
     } else {
@@ -344,6 +344,10 @@ class _State extends State<VideoCallPage> {
                       ),
                       TextButton(
                         onPressed: () {
+                          getIt<EndVideoCall>().endCall(
+                            widget.params.connectionId,
+                            widget.params.requestModel.videoCallSessionId,
+                          );
                           Navigator.of(dialogContext).pop(true);
                         },
                         child: const Text("Yes"),
@@ -356,10 +360,10 @@ class _State extends State<VideoCallPage> {
               if (shouldEnd == true) {
                 if (!_callEnded && mounted) {
                   try {
-                    // context.read<EndVideoCall>().endCall(
-                    //   widget.bookingId,
-                    //   widget.callRequestModel.videoCallSessionId,
-                    // );
+                    context.read<EndVideoCall>().endCall(
+                      widget.params.connectionId,
+                      widget.params.requestModel.videoCallSessionId,
+                    );
                   } catch (_) {}
                   _callEnded = true;
                 }
@@ -402,10 +406,10 @@ class _State extends State<VideoCallPage> {
                           if (!context.mounted) return;
                           // ✅ FIX: guard _callEnded before calling endCall
                           if (!_callEnded) {
-                            // context.read<EndVideoCall>().endCall(
-                            //   widget.bookingId,
-                            //   widget.callRequestModel.videoCallSessionId,
-                            // );
+                            context.read<EndVideoCall>().endCall(
+                              widget.params.connectionId,
+                              widget.params.requestModel.videoCallSessionId,
+                            );
                             _callEnded = true;
                           }
                           await _leaveChannel();

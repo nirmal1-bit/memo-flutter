@@ -18,18 +18,14 @@ class OtherUserProfileArguments {
 class OthersUserProfileScreen extends StatelessWidget {
   const OthersUserProfileScreen({
     super.key,
-    required this.details,
-    this.isFromReceived = false,
-    this.isFromSent = false,
+    required this.otherUserProfileArgs,
   });
 
-  final OtherUserDetails? details;
-  final bool isFromReceived;
-  final bool isFromSent;
+  final OtherUserProfileArguments otherUserProfileArgs;
 
   @override
   Widget build(BuildContext context) {
-    final user = details;
+    final user = otherUserProfileArgs.details;
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -47,113 +43,108 @@ class OthersUserProfileScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: user == null
-            ? _MissingUserState(onBack: () => Navigator.of(context).pop())
-            : SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _HeaderCard(
+                user: user,
+                isFromReceived: otherUserProfileArgs.isFromReceived,
+                isFromSent: otherUserProfileArgs.isFromSent,
+              ),
+              const SizedBox(height: 16),
+              if (otherUserProfileArgs.isFromReceived) ...[
+                _RequestActionRow(
+                  primaryLabel: 'Accept',
+                  primaryIcon: Icons.check_rounded,
+                  primaryFilled: true,
+                  onPrimaryPressed: () => _showFeedback(
+                    context,
+                    'Accepted request from ${user.name}',
+                  ),
+                  secondaryLabel: 'Decline',
+                  secondaryIcon: Icons.close_rounded,
+                  secondaryFilled: false,
+                  onSecondaryPressed: () => _showFeedback(
+                    context,
+                    'Declined request from ${user.name}',
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ] else if (otherUserProfileArgs.isFromSent) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: _ActionButton(
+                    label: 'Cancel',
+                    icon: Icons.cancel_outlined,
+                    filled: false,
+                    onPressed: () => _showFeedback(
+                      context,
+                      'Cancelled request to ${user.name}',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+              _DetailCard(
+                title: 'About',
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _HeaderCard(
-                      user: user,
-                      isFromReceived: isFromReceived,
-                      isFromSent: isFromSent,
+                    _DetailRow(label: 'Email', value: user.email),
+                    _DetailRow(
+                      label: 'Activated',
+                      value: user.activated ? 'Yes' : 'No',
                     ),
-                    const SizedBox(height: 16),
-                    if (isFromReceived) ...[
-                      _RequestActionRow(
-                        primaryLabel: 'Accept',
-                        primaryIcon: Icons.check_rounded,
-                        primaryFilled: true,
-                        onPrimaryPressed: () => _showFeedback(
-                          context,
-                          'Accepted request from ${user.name}',
-                        ),
-                        secondaryLabel: 'Decline',
-                        secondaryIcon: Icons.close_rounded,
-                        secondaryFilled: false,
-                        onSecondaryPressed: () => _showFeedback(
-                          context,
-                          'Declined request from ${user.name}',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ] else if (isFromSent) ...[
-                      SizedBox(
-                        width: double.infinity,
-                        child: _ActionButton(
-                          label: 'Cancel',
-                          icon: Icons.cancel_outlined,
-                          filled: false,
-                          onPressed: () => _showFeedback(
-                            context,
-                            'Cancelled request to ${user.name}',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                    _DetailCard(
-                      title: 'About',
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _DetailRow(label: 'Email', value: user.email),
-                          _DetailRow(
-                            label: 'Activated',
-                            value: user.activated ? 'Yes' : 'No',
-                          ),
-                          _DetailRow(
-                            label: 'Joined',
-                            value: _formatDate(user.createdAt),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _DetailCard(
-                      title: 'Profile',
-                      child: user.profile == null
-                          ? Text(
-                              'No profile details available yet.',
-                              style: AppTextStyles.rubik.copyWith(
-                                fontSize: 13.5,
-                                color: AppColors.softTextGrey,
-                              ),
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _DetailRow(
-                                  label: 'Headline',
-                                  value: user.profile!.headline,
-                                ),
-                                _DetailRow(
-                                  label: 'Bio',
-                                  value: user.profile!.bio,
-                                ),
-                                _DetailRow(
-                                  label: 'Company',
-                                  value: user.profile!.companyName,
-                                ),
-                                _DetailRow(
-                                  label: 'Location',
-                                  value: user.profile!.location,
-                                ),
-                                _DetailRow(
-                                  label: 'Website',
-                                  value: user.profile!.website,
-                                ),
-                                _DetailRow(
-                                  label: 'Profile Link',
-                                  value: user.profile!.profileUrl,
-                                ),
-                              ],
-                            ),
+                    _DetailRow(
+                      label: 'Joined',
+                      value: _formatDate(user.createdAt),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
+              _DetailCard(
+                title: 'Profile',
+                child: user.profile == null
+                    ? Text(
+                        'No profile details available yet.',
+                        style: AppTextStyles.rubik.copyWith(
+                          fontSize: 13.5,
+                          color: AppColors.softTextGrey,
+                        ),
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _DetailRow(
+                            label: 'Headline',
+                            value: user.profile!.headline,
+                          ),
+                          _DetailRow(label: 'Bio', value: user.profile!.bio),
+                          _DetailRow(
+                            label: 'Company',
+                            value: user.profile!.companyName,
+                          ),
+                          _DetailRow(
+                            label: 'Location',
+                            value: user.profile!.location,
+                          ),
+                          _DetailRow(
+                            label: 'Website',
+                            value: user.profile!.website,
+                          ),
+                          _DetailRow(
+                            label: 'Profile Link',
+                            value: user.profile!.profileUrl,
+                          ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
