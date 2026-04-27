@@ -4,9 +4,12 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/core/services/call_keep_service.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+
+late CallKeepService _callKeepService;
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'channel_id',
@@ -43,6 +46,8 @@ class FirebaseNotificationService {
         );
 
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
+    _callKeepService = CallKeepService();
+    CallKeepService().init();
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
@@ -92,7 +97,10 @@ class FirebaseNotificationService {
 
     final data = message.data;
     final notification = message.notification;
-    if (notification != null) {
+    if (data['type'] == 'call') {
+      _callKeepService.showCallKit(data);
+    }
+    if (notification != null && data['type'] == 'chat') {
       flutterLocalNotificationsPlugin
           .show(
             id: notification.hashCode,
@@ -123,12 +131,13 @@ class FirebaseNotificationService {
 
   void _onMessageOpenedApp(RemoteMessage message) async {}
 
-  // void _handleDataMessage(
-  //   Map<String, dynamic> data, {
-  //   bool foreground = false,
-  //   bool openedApp = false,
-  // }) {
-  // }
+  void _handleDataMessage(
+    Map<String, dynamic> data, {
+    bool foreground = false,
+    bool openedApp = false,
+  }) {
+    _callKeepService.showCallKit(data);
+  }
 
   void _handleCallDecline(Map<String, dynamic>? body) {
     print("Call declined");
