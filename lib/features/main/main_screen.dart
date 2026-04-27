@@ -4,8 +4,7 @@ import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/features/network/presentation/screens/network_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.title});
-  final String title;
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();

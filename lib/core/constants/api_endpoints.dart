@@ -24,4 +24,12 @@ class ApiEndpoints {
   static const String sendRequest = "/connection-request";
   static const String listReceivedConnections = "/connection-requests/received";
   static const String listSentConnections = "/connection-requests/sent";
+
+  // video call
+  static String agora(int id) => "connections/$id/agora-token";
+  static String startCall(int id) => "connections/$id/video-call/start";
+  static String endCall(int id) => "connections/$id/video-call/end";
+
+  // tokens
+  static const String fcmToken = "/user/device";
 }

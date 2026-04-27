@@ -13,6 +13,7 @@ import 'package:memo/features/network/data/models/response/connection_response.d
 import 'package:memo/features/network/presentation/screens/chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/others_user_profile.dart';
 import 'package:memo/features/network/presentation/screens/user_profile_screen.dart';
+import 'package:memo/features/video_call/pages/video_call_screen.dart';
 
 // extension cannot be defined inside a class it has to be outside the class must
 //be top level function
@@ -55,19 +56,15 @@ class AppRouter {
       ),
       AppRoutes.otherUserProfile.route(
         (context, state) => OthersUserProfileScreen(
-          details: state.extra is OtherUserProfileArguments
-              ? (state.extra as OtherUserProfileArguments).details
-              : state.extra is OtherUserDetails
-              ? state.extra as OtherUserDetails
-              : null,
-          isFromReceived: state.extra is OtherUserProfileArguments
-              ? (state.extra as OtherUserProfileArguments).isFromReceived
-              : false,
-          isFromSent: state.extra is OtherUserProfileArguments
-              ? (state.extra as OtherUserProfileArguments).isFromSent
-              : false,
+          otherUserProfileArgs: state.extra as OtherUserProfileArguments,
         ),
       ),
+
+      AppRoutes.videoScreen.route(
+        (context, state) =>
+            VideoCallPage(params: state.extra as VideoCallPageParams),
+      ),
+
       AppRoutes.chat.route((context, state) {
         final connection = state.extra is ConnectionResponse
             ? state.extra as ConnectionResponse
@@ -75,8 +72,7 @@ class AppRouter {
         return ChatScreen(connection: connection);
       }),
 
-      AppRoutes.main.route((context, state) => const MainScreen(title: 'Main')),
-
+      AppRoutes.main.route((context, state) => const MainScreen()),
       AppRoutes.onboarding.route(
         (context, state) =>
             const Scaffold(body: Center(child: Text('Onboarding screen'))),

@@ -13,4 +13,6 @@ class AppRoutes {
   static const String userProfile = '/user-profile';
   static const String otherUserProfile = '/other-user-profile';
   static const String chat = '/chat';
+
+  static const String videoScreen = '/video-screen';
 }

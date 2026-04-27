@@ -17,6 +17,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
 import 'package:memo/core/di/register_modules.dart' as _i850;
 import 'package:memo/core/network/auth_interceptor.dart' as _i174;
 import 'package:memo/core/network/network_info.dart' as _i509;
+import 'package:memo/core/services/fcm_service.dart' as _i714;
 import 'package:memo/core/session/session_service.dart' as _i73;
 import 'package:memo/core/session/shared_prefrences_init.dart' as _i876;
 import 'package:memo/features/auth/domain/repository/auth_repository.dart'
@@ -45,6 +46,13 @@ import 'package:memo/features/network/presentation/cubits/received_connections_c
     as _i382;
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart'
     as _i636;
+import 'package:memo/features/video_call/cubit/end_video_call.dart' as _i1019;
+import 'package:memo/features/video_call/cubit/join_video_call_cubit.dart'
+    as _i246;
+import 'package:memo/features/video_call/cubit/start_video_call_cubit.dart'
+    as _i256;
+import 'package:memo/features/video_call/repository/video_call_repository.dart'
+    as _i818;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -54,6 +62,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModules = _$RegisterModules();
+    gh.factory<_i714.FCMService>(() => _i714.FCMService());
     gh.singleton<_i876.SharedPreferencesInit>(
       () => registerModules.sharedPreferences,
     );
@@ -79,6 +88,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i1052.AuthRepository>(
       () => _i1052.AuthRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
+    );
+    gh.lazySingleton<_i818.VideoCallRepository>(
+      () => _i818.VideoCallRepositoryImpl(
+        gh<_i361.Dio>(),
+        gh<_i509.NetworkInfo>(),
+      ),
     );
     gh.factory<_i762.ConnectionsCubit>(
       () => _i762.ConnectionsCubit(gh<_i420.NetworkRepository>()),
@@ -109,6 +124,21 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i783.VerifyTokenCubit>(
       () => _i783.VerifyTokenCubit(gh<_i1052.AuthRepository>()),
+    );
+    gh.factory<_i1019.EndVideoCall>(
+      () => _i1019.EndVideoCall(
+        videoCallRemoteSource: gh<_i818.VideoCallRepository>(),
+      ),
+    );
+    gh.factory<_i246.JoinVideoCallCubit>(
+      () => _i246.JoinVideoCallCubit(
+        videoCallRemoteSource: gh<_i818.VideoCallRepository>(),
+      ),
+    );
+    gh.factory<_i256.StartVideoCallCubit>(
+      () => _i256.StartVideoCallCubit(
+        videoCallRemoteSource: gh<_i818.VideoCallRepository>(),
+      ),
     );
     return this;
   }

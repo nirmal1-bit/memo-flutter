@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/routes/app_routes.dart';
+import 'package:memo/core/services/fcm_service.dart';
 import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
@@ -49,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     context: context,
                     message: 'Signed in successfully',
                   );
+                  getIt<FCMService>().init();
                   await SessionService().saveToken(data.token);
                   if (!context.mounted) {
                     return;
