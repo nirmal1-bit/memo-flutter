@@ -7,6 +7,27 @@ abstract class AppColors {
   static const Color secondary = Color(0xFF7B4B94); // Teal
   static const Color secondary2 = Color(0xFF020887); // Teal
 
+  // more added colors
+  // NEW — add these to AppColors
+  static const memoryAmber = Color(0xFFFFF3E0);
+  static const memoryAmberBorder = Color(0xFFFFCC80);
+  static const memoryAmberText = Color(0xFF8D4E00);
+  static const timelineCall = Color(0xFF2FBF71);
+  static const timelineMsg = Color(0xFF087E8B);
+  static const timelineMeet = Color(0xFFC1839F);
+  static const timelineVid = Color(0xFF7B4B94);
+  static const timelineMem = Color(0xFFFF8C42);
+  static const aiSurfaceBg = Color(0xFFFFF8F0);
+  static const aiSurfaceBorder = Color(0xFFFFCC80);
+  static const aiSurfaceText = Color(0xFF7A3E00);
+  static const chipGreenBg = Color(0xFFE8F8F0);
+  static const chipGreenText = Color(0xFF1A7A4A);
+  static const chipPurpleBg = Color(0xFFF0EAF8);
+  static const chipPurpleText = Color(0xFF5A2D82);
+  static const chipOrangeBg = Color(0xFFFFF0E5);
+  static const chipOrangeText = Color(0xFFB85C00);
+  static const highlightYellow = Color(0xFFFFF9C4);
+
   // TEXT COLORS
   static const Color textDark = Color(0xFF3C3C3C); // Gunmetal
   static const Color textLightDark = Color(0xFF6E6E6E);

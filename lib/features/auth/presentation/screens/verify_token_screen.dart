@@ -65,7 +65,6 @@ class _VerifyTokenScreenState extends State<VerifyTokenScreen> {
                     );
                     return;
                   }
-
                   context.go(AppRoutes.login);
                 },
                 error: (message) {

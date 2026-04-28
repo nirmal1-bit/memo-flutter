@@ -11,8 +11,12 @@ import 'package:memo/features/main/auth_main_screen.dart';
 import 'package:memo/features/main/main_screen.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/presentation/screens/chat_screen.dart';
-import 'package:memo/features/network/presentation/screens/others_user_profile.dart';
+import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
+import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 import 'package:memo/features/network/presentation/screens/user_profile_screen.dart';
+import 'package:memo/features/profile/data/request/profile_request_model.dart';
+import 'package:memo/features/profile/presentation/set_profile_screen.dart';
+import 'package:memo/features/splash/splash_screen.dart';
 import 'package:memo/features/video_call/pages/video_call_screen.dart';
 
 // extension cannot be defined inside a class it has to be outside the class must
@@ -29,11 +33,22 @@ extension GoRoutes on String {
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.main,
+    initialLocation: AppRoutes.splash,
     routes: [
+      AppRoutes.splash.route((context, state) => const SplashScreen()),
       AppRoutes.authMain.route((context, state) => const AuthMainScreen()),
       AppRoutes.login.route((context, state) => const LoginScreen()),
       AppRoutes.signUp.route((context, state) => const SignupScreen()),
+      AppRoutes.setProfile.route(
+        (context, state) => SetProfileScreen(
+          initialProfile: state.extra is ProfileRequestModel
+              ? state.extra as ProfileRequestModel
+              : null,
+        ),
+      ),
+      AppRoutes.addConnection.route(
+        (context, state) => const AddConnectionScreen(),
+      ),
       AppRoutes.verifyToken.route(
         (context, state) => VerifyTokenScreen(
           arguments: state.extra is AuthFlowArgs

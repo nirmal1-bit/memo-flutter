@@ -3,9 +3,14 @@ import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 
 class NetworkSearchBar extends StatelessWidget {
-  const NetworkSearchBar({super.key, required this.controller});
+  const NetworkSearchBar({
+    super.key,
+    required this.controller,
+    this.onSubmitted,
+  });
 
   final TextEditingController controller;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +32,8 @@ class NetworkSearchBar extends StatelessWidget {
         ),
         child: TextField(
           controller: controller,
+          textInputAction: TextInputAction.search,
+          onSubmitted: onSubmitted,
           style: AppTextStyles.rubik.copyWith(
             fontSize: 13.5,
             color: AppColors.textDark,

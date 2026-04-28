@@ -17,6 +17,9 @@ class NetworkStateView extends StatelessWidget {
     this.onCallTap,
     this.onSentTap,
     this.onReceivedTap,
+    this.onAcceptTap,
+    this.onRejectTap,
+    this.onCancelTap,
     this.cardStyle = NetworkCardStyle.connections,
   });
 
@@ -27,6 +30,9 @@ class NetworkStateView extends StatelessWidget {
   final ValueChanged<ConnectionResponse>? onCallTap;
   final ValueChanged<ConnectionResponse>? onSentTap;
   final ValueChanged<ConnectionResponse>? onReceivedTap;
+  final ValueChanged<ConnectionResponse>? onAcceptTap;
+  final ValueChanged<ConnectionResponse>? onRejectTap;
+  final ValueChanged<ConnectionResponse>? onCancelTap;
   final NetworkCardStyle cardStyle;
 
   @override
@@ -58,12 +64,21 @@ class NetworkStateView extends StatelessWidget {
                       onTap: onSentTap == null
                           ? null
                           : () => onSentTap!(connection),
+                      onCancelTap: onCancelTap == null
+                          ? null
+                          : () => onCancelTap!(connection),
                     ),
                     NetworkCardStyle.received => _ReceivedCard(
                       connection: connection,
                       onTap: onReceivedTap == null
                           ? null
                           : () => onReceivedTap!(connection),
+                      onAcceptTap: onAcceptTap == null
+                          ? null
+                          : () => onAcceptTap!(connection),
+                      onRejectTap: onRejectTap == null
+                          ? null
+                          : () => onRejectTap!(connection),
                     ),
                   },
                 );
@@ -91,10 +106,11 @@ class NetworkStateView extends StatelessWidget {
 }
 
 class _SentCard extends StatelessWidget {
-  const _SentCard({required this.connection, this.onTap});
+  const _SentCard({required this.connection, this.onTap, this.onCancelTap});
 
   final ConnectionResponse connection;
   final VoidCallback? onTap;
+  final VoidCallback? onCancelTap;
 
   @override
   Widget build(BuildContext context) {
@@ -111,48 +127,68 @@ class _SentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         child: Padding(
           padding: const EdgeInsets.all(18),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AvatarBadge(label: _initials(details.name), size: 52),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      details.name,
-                      style: AppTextStyles.rubik.copyWith(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.softBlack,
-                      ),
+              Row(
+                children: [
+                  AvatarBadge(label: _initials(details.name), size: 52),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          details.name,
+                          style: AppTextStyles.rubik.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.softBlack,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          details.role,
+                          style: AppTextStyles.rubik.copyWith(
+                            fontSize: 12.5,
+                            color: AppColors.ironGrey,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Pending response',
+                          style: AppTextStyles.rubik.copyWith(
+                            fontSize: 11.5,
+                            color: AppColors.textLight,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      details.role,
-                      style: AppTextStyles.rubik.copyWith(
-                        fontSize: 12.5,
-                        color: AppColors.ironGrey,
-                      ),
+                  ),
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFF8C42),
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Pending response',
-                      style: AppTextStyles.rubik.copyWith(
-                        fontSize: 11.5,
-                        color: AppColors.textLight,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Container(
-                width: 10,
-                height: 10,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFF8C42),
-                  shape: BoxShape.circle,
-                ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: _ActionButton(
+                      label: 'Cancel',
+                      icon: Icons.cancel_outlined,
+                      backgroundColor: AppColors.white,
+                      foregroundColor: AppColors.primary,
+                      borderColor: AppColors.brandBackgroundLight,
+                      onPressed: onCancelTap ?? () {},
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -163,10 +199,17 @@ class _SentCard extends StatelessWidget {
 }
 
 class _ReceivedCard extends StatelessWidget {
-  const _ReceivedCard({required this.connection, this.onTap});
+  const _ReceivedCard({
+    required this.connection,
+    this.onTap,
+    this.onAcceptTap,
+    this.onRejectTap,
+  });
 
   final ConnectionResponse connection;
   final VoidCallback? onTap;
+  final VoidCallback? onAcceptTap;
+  final VoidCallback? onRejectTap;
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +268,7 @@ class _ReceivedCard extends StatelessWidget {
                       backgroundColor: AppColors.primary,
                       foregroundColor: AppColors.white,
                       borderColor: AppColors.primary,
-                      onPressed: () {},
+                      onPressed: onAcceptTap ?? () {},
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -236,7 +279,7 @@ class _ReceivedCard extends StatelessWidget {
                       backgroundColor: AppColors.white,
                       foregroundColor: AppColors.primary,
                       borderColor: AppColors.brandBackgroundLight,
-                      onPressed: () {},
+                      onPressed: onRejectTap ?? () {},
                     ),
                   ),
                 ],

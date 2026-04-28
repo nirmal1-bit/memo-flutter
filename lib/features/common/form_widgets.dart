@@ -11,6 +11,7 @@ class InputField extends StatelessWidget {
     required this.icon,
     this.obscureText = false,
     this.keyboardType,
+    this.maxLines = 1,
     this.validator,
     this.suffix,
   });
@@ -21,6 +22,7 @@ class InputField extends StatelessWidget {
   final IconData icon;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final int maxLines;
   final String? Function(String?)? validator;
   final Widget? suffix;
 
@@ -43,6 +45,7 @@ class InputField extends StatelessWidget {
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
+          maxLines: maxLines,
           validator: validator,
           style: AppTextStyles.rubik.copyWith(
             fontSize: 15,

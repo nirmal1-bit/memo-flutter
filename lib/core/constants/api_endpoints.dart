@@ -3,6 +3,10 @@ class ApiEndpoints {
 
   // user
   static const String user = "/user";
+  static const String searchUser = "/users/search";
+
+  //setprofile
+  static const String setupProfile = "/user/profile";
 
   // auth
   static const String register = "/register";
@@ -21,7 +25,8 @@ class ApiEndpoints {
 
   // connections
   static const String listConnections = "/connections";
-  static const String sendRequest = "/connection-request";
+  static const String sendRequest = "/connection-requests";
+  static String connectionRequest(int id) => "/connection-requests/$id";
   static const String listReceivedConnections = "/connection-requests/received";
   static const String listSentConnections = "/connection-requests/sent";
 

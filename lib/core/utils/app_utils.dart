@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/core/services/cloudinary_service.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
 class AppUtils {
+  static final ImagePicker _imagePicker = ImagePicker();
+
   static void unfocusKeyboard(BuildContext context) {
     final currentFocus = FocusScope.of(context);
     if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
@@ -76,6 +81,34 @@ class AppUtils {
         ),
       );
       return;
+    }
+  }
+
+  static Future<XFile?> pickImage({ImageSource source = ImageSource.gallery}) {
+    return _imagePicker.pickImage(source: source, imageQuality: 90);
+  }
+
+  static Future<String?> uploadImage({required XFile file, String? folder}) {
+    return getIt<CloudinaryService>().uploadImage(file, folder: folder);
+  }
+
+  static Future<String?> pickAndUploadImage({
+    BuildContext? context,
+    ImageSource source = ImageSource.gallery,
+    String? folder,
+  }) async {
+    final pickedFile = await pickImage(source: source);
+    if (pickedFile == null) {
+      return null;
+    }
+
+    try {
+      return await uploadImage(file: pickedFile, folder: folder);
+    } catch (error) {
+      if (context != null) {
+        showErrorSnackbar(context: context, message: error.toString());
+      }
+      return null;
     }
   }
 
