@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
 import 'package:memo/features/auth/presentation/models/auth_flow_args.dart';
 import 'package:memo/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:memo/features/auth/presentation/screens/login_screen.dart';
@@ -17,6 +18,7 @@ import 'package:memo/features/network/presentation/screens/user_profile_screen.d
 import 'package:memo/features/profile/data/request/profile_request_model.dart';
 import 'package:memo/features/profile/presentation/set_profile_screen.dart';
 import 'package:memo/features/splash/splash_screen.dart';
+import 'package:memo/features/timeline/presentation/time_line_screen.dart';
 import 'package:memo/features/video_call/pages/video_call_screen.dart';
 
 // extension cannot be defined inside a class it has to be outside the class must
@@ -75,6 +77,12 @@ class AppRouter {
         ),
       ),
 
+      AppRoutes.timeLine.route(
+        (context, state) => TimeLineScreen(
+          otherUserProfileArgs: state.extra as OtherUserProfileArguments,
+        ),
+      ),
+
       AppRoutes.videoScreen.route(
         (context, state) =>
             VideoCallPage(params: state.extra as VideoCallPageParams),
@@ -92,6 +100,7 @@ class AppRouter {
         (context, state) =>
             const Scaffold(body: Center(child: Text('Onboarding screen'))),
       ),
+      AppRoutes.aiChat.route((context, state) => const AiChatScreen()),
     ],
   );
 }

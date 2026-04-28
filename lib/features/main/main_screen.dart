@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
+import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
 import 'package:memo/features/network/presentation/screens/network_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -87,10 +89,13 @@ class _MainScreenState extends State<MainScreen>
         body: (context, controller) => TabBarView(
           controller: tabController,
 
-          children: List.generate(
-            5,
-            (index) => NetworkScreen(controller: controller),
-          ),
+          children: [
+            NetworkScreen(controller: controller),
+            AddConnectionScreen(),
+            AiChatScreen(),
+            Placeholder(),
+            Placeholder(),
+          ],
         ),
         child: Stack(
           alignment: Alignment.center,
@@ -122,7 +127,7 @@ class _MainScreenState extends State<MainScreen>
                   inactiveColor: AppColors.white,
                 ),
                 _BottomTabIcon(
-                  icon: Icons.add_circle,
+                  icon: Icons.chat_sharp,
                   active: currentPage == 2,
                   activeColor: colors[0],
                   inactiveColor: AppColors.white,

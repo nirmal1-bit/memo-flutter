@@ -1,19 +1,3 @@
-import 'package:memo/features/network/data/models/response/connection_response.dart';
-
-class OtherUserProfileArguments {
-  const OtherUserProfileArguments({
-    required this.details,
-    this.connectionId,
-    this.isFromReceived = false,
-    this.isFromSent = false,
-  });
-
-  final OtherUserDetails details;
-  final int? connectionId;
-  final bool isFromReceived;
-  final bool isFromSent;
-}
-
 enum MemoryType { personal, work, event, behaviour }
 
 class MemoryEntry {

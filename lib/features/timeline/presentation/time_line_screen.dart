@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memo/features/timeline/presentation/time_line_data.dart';
+import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 import 'package:memo/features/timeline/presentation/widgets/timeline_ai_assistant_tab.dart';
 import 'package:memo/features/timeline/presentation/widgets/timeline_activity_tab.dart';
 import 'package:memo/features/timeline/presentation/widgets/timeline_face_data_tab.dart';

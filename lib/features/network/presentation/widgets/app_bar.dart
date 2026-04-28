@@ -86,30 +86,6 @@ class _NetworkAppBarState extends State<NetworkAppBar> {
           const SizedBox(width: 12),
           Expanded(child: NetworkSearchBar(controller: widget.controller)),
           const SizedBox(width: 10),
-          InkWell(
-            onTap: widget.onActionTap,
-            borderRadius: BorderRadius.circular(18),
-            child: Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: AppColors.textDark,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.softBlack.withValues(alpha: 0.12),
-                    blurRadius: 14,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.more_horiz_rounded,
-                color: AppColors.white,
-                size: 26,
-              ),
-            ),
-          ),
         ],
       ),
     );

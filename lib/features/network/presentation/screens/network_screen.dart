@@ -212,7 +212,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
             state: state,
             emptyMessage: 'No connections yet.\nStart building your network.',
             onConnectionTap: (connection) => context.push(
-              AppRoutes.otherUserProfile,
+              AppRoutes.timeLine,
               extra: OtherUserProfileArguments(
                 details: connection.otherUserDetails,
               ),
