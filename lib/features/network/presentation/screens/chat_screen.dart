@@ -7,7 +7,6 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/core/utils/app_utils.dart';
-import 'package:memo/features/auth/data/models/response/authentication_token.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/presentation/cubits/chat_cubit.dart';
 import 'package:memo/features/video_call/cubit/join_video_call_cubit.dart';
@@ -163,7 +162,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: () {
                       context.read<JoinVideoCallCubit>().joinCall(
                         widget.connection.id,
-                        14,
+                        5,
                       );
                     },
                     icon: const Icon(Icons.join_full),

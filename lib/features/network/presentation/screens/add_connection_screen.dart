@@ -69,6 +69,7 @@ class _AddConnectionScreenState extends State<AddConnectionScreen> {
             child: Scaffold(
               backgroundColor: AppColors.scaffoldBackground,
               appBar: AppBar(
+                automaticallyImplyLeading: false,
                 backgroundColor: AppColors.scaffoldBackground,
                 elevation: 0,
                 foregroundColor: AppColors.softPrimary,

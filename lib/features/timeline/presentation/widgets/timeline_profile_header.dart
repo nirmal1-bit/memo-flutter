@@ -16,6 +16,7 @@ class TimelineProfileSliverHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 280,
+      automaticallyImplyLeading: false,
       pinned: true,
       backgroundColor: AppColors.white,
       foregroundColor: AppColors.softPrimary,

@@ -91,8 +91,9 @@ class _MainScreenState extends State<MainScreen>
 
           children: [
             NetworkScreen(controller: controller),
+
             AddConnectionScreen(),
-            AiChatScreen(),
+            AiChatScreen(scrollController: controller),
             Placeholder(),
             Placeholder(),
           ],
