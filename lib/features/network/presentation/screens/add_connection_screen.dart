@@ -309,7 +309,11 @@ class _SearchResultCard extends StatelessWidget {
         padding: const EdgeInsets.all(18),
         child: Row(
           children: [
-            AvatarBadge(label: _initials(user.name), size: 54),
+            AvatarBadge(
+              profileLink: profile?.avatarUrl ?? '',
+              label: _initials(user.name),
+              size: 54,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(

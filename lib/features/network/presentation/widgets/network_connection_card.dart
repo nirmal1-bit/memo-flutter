@@ -52,7 +52,11 @@ class NetworkConnectionCard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AvatarBadge(label: _initials(details.name), size: 56),
+                    AvatarBadge(
+                      profileLink: profile?.avatarUrl ?? '',
+                      label: _initials(details.name),
+                      size: 56,
+                    ),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(

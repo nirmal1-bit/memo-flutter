@@ -132,7 +132,11 @@ class _SentCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  AvatarBadge(label: _initials(details.name), size: 52),
+                  AvatarBadge(
+                    profileLink: details.profile?.avatarUrl ?? '',
+                    label: _initials(details.name),
+                    size: 52,
+                  ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
@@ -231,7 +235,11 @@ class _ReceivedCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  AvatarBadge(label: _initials(details.name), size: 52),
+                  AvatarBadge(
+                    profileLink: details.profile?.avatarUrl ?? '',
+                    label: _initials(details.name),
+                    size: 52,
+                  ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
