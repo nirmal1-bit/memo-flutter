@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
 import 'package:memo/features/auth/presentation/models/auth_flow_args.dart';
 import 'package:memo/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:memo/features/auth/presentation/screens/login_screen.dart';
@@ -14,6 +13,7 @@ import 'package:memo/features/network/data/models/response/connection_response.d
 import 'package:memo/features/network/presentation/screens/chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
+import 'package:memo/features/network/presentation/screens/qr_scanner.dart';
 import 'package:memo/features/network/presentation/screens/user_profile_screen.dart';
 import 'package:memo/features/profile/data/request/profile_request_model.dart';
 import 'package:memo/features/profile/presentation/set_profile_screen.dart';
@@ -35,7 +35,7 @@ extension GoRoutes on String {
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.splash,
+    initialLocation: AppRoutes.login,
     routes: [
       AppRoutes.splash.route((context, state) => const SplashScreen()),
       AppRoutes.authMain.route((context, state) => const AuthMainScreen()),
@@ -96,6 +96,8 @@ class AppRouter {
       }),
 
       AppRoutes.main.route((context, state) => const MainScreen()),
+
+      AppRoutes.qrScanner.route((context, state) => const QrScannerPage()),
       AppRoutes.onboarding.route(
         (context, state) =>
             const Scaffold(body: Center(child: Text('Onboarding screen'))),

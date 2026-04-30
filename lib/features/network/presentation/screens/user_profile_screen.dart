@@ -9,6 +9,7 @@ import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
@@ -223,6 +224,7 @@ class _ProfileBody extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
+          const SizedBox(height: 20),
           _DetailCard(
             title: 'About',
             child: Column(
@@ -259,6 +261,8 @@ class _ProfileBody extends StatelessWidget {
                     ],
                   ),
           ),
+          SizedBox(height: 20),
+          _QrCard(userId: user.id),
         ],
       ),
     );
@@ -383,6 +387,48 @@ class _StatCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _QrCard extends StatelessWidget {
+  const _QrCard({required this.userId});
+
+  final int userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 200,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.dividerColor),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.softBlack.withOpacity(0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.brandBackground,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: QrImageView(
+            data: userId.toString(),
+            version: QrVersions.auto,
+            backgroundColor: AppColors.white,
+            padding: EdgeInsets.zero,
+          ),
+        ),
       ),
     );
   }
