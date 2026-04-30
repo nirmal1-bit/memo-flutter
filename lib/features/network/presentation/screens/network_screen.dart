@@ -18,9 +18,7 @@ import 'package:memo/features/network/presentation/widgets/app_bar.dart';
 import 'package:memo/features/network/presentation/widgets/network_screen_widgets.dart';
 
 class NetworkScreen extends StatefulWidget {
-  const NetworkScreen({super.key, required this.controller});
-
-  final ScrollController controller;
+  const NetworkScreen({super.key});
 
   @override
   State<NetworkScreen> createState() => _NetworkScreenState();
@@ -153,8 +151,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
                     context.read<GetUserProfileCubit>().getUserProfile();
                   },
                   child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: widget.controller,
                     padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

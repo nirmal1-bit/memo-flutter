@@ -4,6 +4,7 @@ import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
 import 'package:memo/features/network/presentation/screens/network_screen.dart';
+import 'package:memo/features/profile/presentation/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -28,7 +29,7 @@ class _MainScreenState extends State<MainScreen>
   @override
   void initState() {
     currentPage = 0;
-    tabController = TabController(length: 5, vsync: this);
+    tabController = TabController(length: 4, vsync: this);
     tabController.animation?.addListener(() {
       final value = tabController.animation!.value.round();
       if (value != currentPage && mounted) {
@@ -74,27 +75,23 @@ class _MainScreenState extends State<MainScreen>
         borderRadius: BorderRadius.circular(500),
         duration: Duration(milliseconds: 500),
         curve: Curves.easeInOut,
-        showIcon: true,
+        barColor: AppColors.textBlue,
         width: 360,
-        barColor: AppColors.softPrimary.withAlpha(200),
         start: 2,
         end: 0,
-        scrollDeltaThreshold: 8,
-
+        scrollDeltaThreshold: 2,
         offset: 2,
         hideOnScroll: true,
         barAlignment: Alignment.bottomCenter,
         iconHeight: 30,
         iconWidth: 30,
-        body: (context, controller) => TabBarView(
-          controller: tabController,
-
+        body: (context, controller) => IndexedStack(
+          index: currentPage,
           children: [
-            NetworkScreen(controller: controller),
+            NetworkScreen(),
+            AiChatScreen(controller: controller),
             AddConnectionScreen(),
-            AiChatScreen(),
-            Placeholder(),
-            Placeholder(),
+            SettingsScreen(),
           ],
         ),
         child: Stack(
@@ -120,27 +117,24 @@ class _MainScreenState extends State<MainScreen>
                   activeColor: colors[0],
                   inactiveColor: AppColors.white,
                 ),
+
                 _BottomTabIcon(
-                  icon: Icons.search_rounded,
+                  icon: Icons.chat_sharp,
                   active: currentPage == 1,
                   activeColor: colors[0],
                   inactiveColor: AppColors.white,
                 ),
+
                 _BottomTabIcon(
-                  icon: Icons.chat_sharp,
+                  icon: Icons.search_rounded,
                   active: currentPage == 2,
                   activeColor: colors[0],
                   inactiveColor: AppColors.white,
                 ),
-                _BottomTabIcon(
-                  icon: Icons.favorite_rounded,
-                  active: currentPage == 3,
-                  activeColor: colors[0],
-                  inactiveColor: AppColors.white,
-                ),
+
                 _BottomTabIcon(
                   icon: Icons.settings_rounded,
-                  active: currentPage == 4,
+                  active: currentPage == 3,
                   activeColor: colors[0],
                   inactiveColor: AppColors.white,
                 ),

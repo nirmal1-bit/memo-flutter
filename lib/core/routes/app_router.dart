@@ -100,7 +100,6 @@ class AppRouter {
         (context, state) =>
             const Scaffold(body: Center(child: Text('Onboarding screen'))),
       ),
-      AppRoutes.aiChat.route((context, state) => const AiChatScreen()),
     ],
   );
 }

@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:memo/core/session/session_service.dart';
-import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:web_socket_channel/io.dart';
 
 enum ChatConnectionStatus {
@@ -92,7 +91,7 @@ class ChatCubit extends Cubit<ChatState> {
     try {
       userId = int.tryParse(await sessionService.userId);
       final token = await sessionService.token;
-      final uri = Uri.parse('ws://192.168.1.94:4000/v1/chat/$id');
+      final uri = Uri.parse('ws://192.168.1.87:4000/v1/chat/$id');
       _channel = IOWebSocketChannel.connect(
         uri,
         headers: {'Authorization': 'Bearer $token'},

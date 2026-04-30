@@ -20,7 +20,7 @@ abstract class RegisterModules {
   Dio dio(AuthInterceptor authInterceptor) =>
       Dio(
           BaseOptions(
-            baseUrl: "http://192.168.1.94:4000/v1/",
+            baseUrl: "http://192.168.1.87:4000/v1/",
             receiveTimeout: const Duration(minutes: 2),
             connectTimeout: const Duration(milliseconds: 60000),
             responseType: ResponseType.json,

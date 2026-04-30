@@ -6,6 +6,7 @@ import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
 
@@ -36,7 +37,7 @@ class UserProfileScreen extends StatelessWidget {
               builder: (context, state) {
                 return state.when(
                   initial: () => const _LoadingState(),
-                  loading: () => const _LoadingState(),
+                  loading: () => const ProductDetailShimmer(),
                   success: (user) => _ProfileBody(user: user),
                   error: (message) => _StateMessage(
                     icon: Icons.error_outline_rounded,
