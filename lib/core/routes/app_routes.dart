@@ -16,8 +16,8 @@ class AppRoutes {
   static const String chat = '/chat';
 
   static const String videoScreen = '/video-screen';
-
   static const String timeLine = '/time-line';
-
   static const String aiChat = '/aiChat';
+
+  static const String qrScanner = '/qr-scanner';
 }

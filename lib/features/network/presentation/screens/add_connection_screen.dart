@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
+import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/core/utils/app_utils.dart';
@@ -239,50 +241,55 @@ class _QrActionCard extends StatelessWidget {
               colors: [AppColors.brandBackground, AppColors.white],
             ),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(18),
+          child: GestureDetector(
+            onTap: () {
+              context.push(AppRoutes.qrScanner);
+            },
+            child: Row(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: const Icon(
+                    Icons.qr_code_2_rounded,
+                    color: AppColors.primary,
+                    size: 28,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.qr_code_2_rounded,
-                  color: AppColors.primary,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Scan QR code',
-                      style: AppTextStyles.libre.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.softPrimary,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Scan QR code',
+                        style: AppTextStyles.libre.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.softPrimary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'QR scanning UI only for now.',
-                      style: AppTextStyles.rubik.copyWith(
-                        fontSize: 12.5,
-                        color: AppColors.softTextGrey,
+                      const SizedBox(height: 4),
+                      Text(
+                        'Scan QR and send instant connection requests.',
+                        style: AppTextStyles.rubik.copyWith(
+                          fontSize: 12.5,
+                          color: AppColors.softTextGrey,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.ironGrey,
-              ),
-            ],
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.ironGrey,
+                ),
+              ],
+            ),
           ),
         ),
       ),
