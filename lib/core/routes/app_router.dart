@@ -35,7 +35,7 @@ extension GoRoutes on String {
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.login,
+    initialLocation: AppRoutes.splash,
     routes: [
       AppRoutes.splash.route((context, state) => const SplashScreen()),
       AppRoutes.authMain.route((context, state) => const AuthMainScreen()),

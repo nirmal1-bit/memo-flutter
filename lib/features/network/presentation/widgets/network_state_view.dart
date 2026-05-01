@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/network/presentation/cubits/connections_cubit.dart';
+import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
+import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart';
+import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart';
 import 'package:memo/features/network/presentation/widgets/avatar_badge.dart';
 import 'package:memo/features/network/presentation/widgets/network_connection_card.dart';
 import 'package:memo/features/network/presentation/widgets/network_widget_types.dart';
@@ -38,51 +44,64 @@ class NetworkStateView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return state.when(
-      initial: () => const _ListSkeleton(),
-      loading: () => const _ListSkeleton(),
+      initial: () => const ListShimmer(),
+      loading: () => const ListShimmer(),
       success: (data) => data.isEmpty
           ? _EmptyState(message: emptyMessage)
-          : Column(
-              children: data.map((connection) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: switch (cardStyle) {
-                    NetworkCardStyle.connections => NetworkConnectionCard(
-                      connection: connection,
-                      onTap: onConnectionTap == null
-                          ? null
-                          : () => onConnectionTap!(connection),
-                      onChatTap: onChatTap == null
-                          ? null
-                          : () => onChatTap!(connection),
-                      onCallTap: onCallTap == null
-                          ? null
-                          : () => onCallTap!(connection),
-                    ),
-                    NetworkCardStyle.sent => _SentCard(
-                      connection: connection,
-                      onTap: onSentTap == null
-                          ? null
-                          : () => onSentTap!(connection),
-                      onCancelTap: onCancelTap == null
-                          ? null
-                          : () => onCancelTap!(connection),
-                    ),
-                    NetworkCardStyle.received => _ReceivedCard(
-                      connection: connection,
-                      onTap: onReceivedTap == null
-                          ? null
-                          : () => onReceivedTap!(connection),
-                      onAcceptTap: onAcceptTap == null
-                          ? null
-                          : () => onAcceptTap!(connection),
-                      onRejectTap: onRejectTap == null
-                          ? null
-                          : () => onRejectTap!(connection),
-                    ),
-                  },
-                );
-              }).toList(),
+          : RefreshIndicator(
+              onRefresh: () async {
+                context.read<ConnectionsCubit>().listConnections();
+                context.read<SentConnectionsCubit>().listSentConnections();
+                context
+                    .read<ReceivedConnectionsCubit>()
+                    .listReceivedConnections();
+                context.read<GetUserProfileCubit>().getUserProfile();
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: data.map((connection) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 25),
+                      child: switch (cardStyle) {
+                        NetworkCardStyle.connections => NetworkConnectionCard(
+                          connection: connection,
+                          onTap: onConnectionTap == null
+                              ? null
+                              : () => onConnectionTap!(connection),
+                          onChatTap: onChatTap == null
+                              ? null
+                              : () => onChatTap!(connection),
+                          onCallTap: onCallTap == null
+                              ? null
+                              : () => onCallTap!(connection),
+                        ),
+                        NetworkCardStyle.sent => _SentCard(
+                          connection: connection,
+                          onTap: onSentTap == null
+                              ? null
+                              : () => onSentTap!(connection),
+                          onCancelTap: onCancelTap == null
+                              ? null
+                              : () => onCancelTap!(connection),
+                        ),
+                        NetworkCardStyle.received => _ReceivedCard(
+                          connection: connection,
+                          onTap: onReceivedTap == null
+                              ? null
+                              : () => onReceivedTap!(connection),
+                          onAcceptTap: onAcceptTap == null
+                              ? null
+                              : () => onAcceptTap!(connection),
+                          onRejectTap: onRejectTap == null
+                              ? null
+                              : () => onRejectTap!(connection),
+                        ),
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
       error: (message) => _StatusState(
         icon: Icons.error_outline_rounded,

@@ -6,6 +6,7 @@ import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/utils/app_utils.dart';
+import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 import 'package:memo/features/network/presentation/cubits/connections_cubit.dart';
@@ -69,125 +70,110 @@ class _NetworkScreenState extends State<NetworkScreen> {
       ],
       child: Builder(
         builder: (context) {
-          return Container(
-            color: AppColors.scaffoldBackground,
-            child: MultiBlocListener(
-              listeners: [
-                BlocListener<
-                  GetUserProfileCubit,
-                  BaseApiState<UserProfileResponse>
-                >(
-                  listener: (context, state) {
-                    state.maybeWhen(
-                      success: (data) {
-                        if (data.profile == null) {
-                          context.push(AppRoutes.setProfile);
-                        }
-                      },
-                      error: (message) {},
-                      validationError: (validationError) {
-                        AppUtils.showErrorSnackbar(
-                          context: context,
-                          message: validationError.message,
+          return MultiBlocListener(
+            listeners: [
+              BlocListener<
+                GetUserProfileCubit,
+                BaseApiState<UserProfileResponse>
+              >(
+                listener: (context, state) {
+                  state.maybeWhen(
+                    success: (data) {
+                      if (data.profile == null) {
+                        context.push(AppRoutes.setProfile);
+                      }
+                    },
+                    error: (message) {},
+                    validationError: (validationError) {
+                      AppUtils.showErrorSnackbar(
+                        context: context,
+                        message: validationError.message,
+                      );
+                    },
+                    noInternet: () {
+                      AppUtils.showErrorSnackbar(
+                        context: context,
+                        message: 'No internet connection',
+                      );
+                    },
+                    orElse: () {},
+                  );
+                },
+              ),
+              BlocListener<ConnectionActionCubit, BaseApiState<String>>(
+                listener: (context, state) {
+                  state.maybeWhen(
+                    success: (message) {
+                      AppUtils.showSuccessSnackbar(
+                        context: context,
+                        message: message,
+                      );
+                      context.read<ConnectionsCubit>().listConnections();
+                      context
+                          .read<SentConnectionsCubit>()
+                          .listSentConnections();
+                      context
+                          .read<ReceivedConnectionsCubit>()
+                          .listReceivedConnections();
+                    },
+                    error: (message) {
+                      AppUtils.showErrorSnackbar(
+                        context: context,
+                        message: message,
+                      );
+                    },
+                    validationError: (validationError) {
+                      AppUtils.showErrorSnackbar(
+                        context: context,
+                        message: validationError.message,
+                      );
+                    },
+                    noInternet: () {
+                      AppUtils.showErrorSnackbar(
+                        context: context,
+                        message: 'No internet connection',
+                      );
+                    },
+                    orElse: () {},
+                  );
+                },
+              ),
+            ],
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    BlocBuilder<
+                      GetUserProfileCubit,
+                      BaseApiState<UserProfileResponse>
+                    >(
+                      builder: (context, state) {
+                        return state.when(
+                          initial: () => const SizedBox.shrink(),
+                          loading: () => ProductBannerShimmer(),
+                          success: (user) => NetworkAppBar(
+                            user: user,
+                            controller: _searchController,
+                            onTap: () => context.push(AppRoutes.userProfile),
+                            onActionTap: () =>
+                                context.push(AppRoutes.addConnection),
+                          ),
+                          error: (_) => const SizedBox.shrink(),
+                          noInternet: () => const SizedBox.shrink(),
+                          validationError: (_) => const SizedBox.shrink(),
                         );
                       },
-                      noInternet: () {
-                        AppUtils.showErrorSnackbar(
-                          context: context,
-                          message: 'No internet connection',
-                        );
-                      },
-                      orElse: () {},
-                    );
-                  },
-                ),
-                BlocListener<ConnectionActionCubit, BaseApiState<String>>(
-                  listener: (context, state) {
-                    state.maybeWhen(
-                      success: (message) {
-                        AppUtils.showSuccessSnackbar(
-                          context: context,
-                          message: message,
-                        );
-                        context.read<ConnectionsCubit>().listConnections();
-                        context
-                            .read<SentConnectionsCubit>()
-                            .listSentConnections();
-                        context
-                            .read<ReceivedConnectionsCubit>()
-                            .listReceivedConnections();
-                      },
-                      error: (message) {
-                        AppUtils.showErrorSnackbar(
-                          context: context,
-                          message: message,
-                        );
-                      },
-                      validationError: (validationError) {
-                        AppUtils.showErrorSnackbar(
-                          context: context,
-                          message: validationError.message,
-                        );
-                      },
-                      noInternet: () {
-                        AppUtils.showErrorSnackbar(
-                          context: context,
-                          message: 'No internet connection',
-                        );
-                      },
-                      orElse: () {},
-                    );
-                  },
-                ),
-              ],
-              child: SafeArea(
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    context.read<ConnectionsCubit>().listConnections();
-                    context.read<SentConnectionsCubit>().listSentConnections();
-                    context
-                        .read<ReceivedConnectionsCubit>()
-                        .listReceivedConnections();
-                    context.read<GetUserProfileCubit>().getUserProfile();
-                  },
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        BlocBuilder<
-                          GetUserProfileCubit,
-                          BaseApiState<UserProfileResponse>
-                        >(
-                          builder: (context, state) {
-                            return state.when(
-                              initial: () => const SizedBox.shrink(),
-                              loading: () => const SizedBox.shrink(),
-                              success: (user) => NetworkAppBar(
-                                user: user,
-                                controller: _searchController,
-                                onTap: () =>
-                                    context.push(AppRoutes.userProfile),
-                                onActionTap: () =>
-                                    context.push(AppRoutes.addConnection),
-                              ),
-                              error: (_) => const SizedBox.shrink(),
-                              noInternet: () => const SizedBox.shrink(),
-                              validationError: (_) => const SizedBox.shrink(),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        NetworkTabStrip(
-                          selected: _selectedTab,
-                          onChanged: (tab) =>
-                              setState(() => _selectedTab = tab),
-                        ),
-                        const SizedBox(height: 16),
-                        _buildTabContent(),
-                      ],
                     ),
-                  ),
+                    const SizedBox(height: 16),
+                    NetworkTabStrip(
+                      selected: _selectedTab,
+                      onChanged: (tab) => setState(() => _selectedTab = tab),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTabContent(),
+                  ],
                 ),
               ),
             ),
