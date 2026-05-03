@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 
@@ -18,8 +19,6 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bubbleMaxWidth = MediaQuery.sizeOf(context).width * 0.72;
-
     return Align(
       alignment: alignEnd ? Alignment.centerRight : Alignment.centerLeft,
       child: Column(
@@ -41,7 +40,6 @@ class ChatBubble extends StatelessWidget {
             ),
           ],
           Container(
-            constraints: BoxConstraints(maxWidth: bubbleMaxWidth),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color: alignEnd ? AppColors.primary : AppColors.brandBackground,
@@ -52,14 +50,58 @@ class ChatBubble extends StatelessWidget {
                 bottomRight: Radius.circular(alignEnd ? 6 : 18),
               ),
             ),
-            child: Text(
-              text,
-              style: AppTextStyles.rubik.copyWith(
-                fontSize: 13.5,
-                height: 1.35,
-                color: alignEnd ? AppColors.white : AppColors.softBlack,
-              ),
-            ),
+            child: alignEnd
+                ? Text(
+                    text,
+                    style: AppTextStyles.rubik.copyWith(
+                      fontSize: 13.5,
+                      height: 1.35,
+                      color: AppColors.white,
+                    ),
+                  )
+                : MarkdownBody(
+                    data: text,
+                    selectable: true,
+                    styleSheet: MarkdownStyleSheet(
+                      p: AppTextStyles.rubik.copyWith(
+                        fontSize: 13.5,
+                        height: 1.35,
+                        color: AppColors.softBlack,
+                      ),
+                      strong: AppTextStyles.rubik.copyWith(
+                        fontSize: 13.5,
+                        height: 1.35,
+                        color: AppColors.softBlack,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      em: AppTextStyles.rubik.copyWith(
+                        fontSize: 13.5,
+                        height: 1.35,
+                        color: AppColors.softBlack,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      a: AppTextStyles.rubik.copyWith(
+                        fontSize: 13.5,
+                        height: 1.35,
+                        color: AppColors.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                      code: AppTextStyles.rubik.copyWith(
+                        fontSize: 13,
+                        height: 1.35,
+                        color: AppColors.softBlack,
+                        backgroundColor: AppColors.white,
+                      ),
+                      codeblockPadding: EdgeInsets.zero,
+                      blockSpacing: 8,
+                      pPadding: EdgeInsets.zero,
+                      listBullet: AppTextStyles.rubik.copyWith(
+                        fontSize: 13.5,
+                        height: 1.35,
+                        color: AppColors.softBlack,
+                      ),
+                    ),
+                  ),
           ),
           const SizedBox(height: 3),
           Text(

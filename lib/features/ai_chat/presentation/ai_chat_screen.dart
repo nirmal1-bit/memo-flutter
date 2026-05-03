@@ -4,6 +4,7 @@ import 'package:memo/core/chat/chat_state.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/features/ai_chat/cubits/ai_chat_cubit.dart';
+import 'package:memo/features/ai_chat/presentation/widgets/ai_chat_app_bar.dart';
 import 'package:memo/features/ai_chat/presentation/widgets/ai_chat_panel.dart';
 import 'package:memo/features/network/presentation/widgets/chat/chat_composer.dart';
 
@@ -27,58 +28,53 @@ class _AiChatScreenState extends State<AiChatScreen> {
           return Scaffold(
             resizeToAvoidBottomInset: true,
             backgroundColor: AppColors.scaffoldBackground,
-            body: SafeArea(
-              child: BlocConsumer<AiChatCubit, ChatState>(
-                listenWhen: (previous, current) =>
-                    previous.messages.length != current.messages.length ||
-                    _lastMessageChanged(previous, current) ||
-                    previous.status != current.status,
-                listener: (context, state) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (_messagesController.hasClients) {
-                      _messagesController.animateTo(
-                        _messagesController.position.maxScrollExtent + 120,
-                        duration: const Duration(milliseconds: 250),
-                        curve: Curves.easeOut,
-                      );
-                    }
-                  });
-
-                  if (state.status == ChatConnectionStatus.error &&
-                      state.errorMessage != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.errorMessage!)),
+            body: BlocConsumer<AiChatCubit, ChatState>(
+              listenWhen: (previous, current) =>
+                  previous.messages.length != current.messages.length ||
+                  _lastMessageChanged(previous, current) ||
+                  previous.status != current.status,
+              listener: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (_messagesController.hasClients) {
+                    _messagesController.animateTo(
+                      _messagesController.position.maxScrollExtent + 120,
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut,
                     );
                   }
-                },
-                builder: (context, state) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: AiChatPanel(
-                            messagesController: _messagesController,
-                            messages: state.messages,
-                            status: state.status,
-                            errorMessage: state.errorMessage,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ChatComposer(
-                          controller: _messageController,
-                          onSend: () => _sendMessage(context),
-                          isBusy:
-                              state.status == ChatConnectionStatus.connecting,
-                        ),
+                });
 
-                        SizedBox(height: 60),
-                      ],
+                if (state.status == ChatConnectionStatus.error &&
+                    state.errorMessage != null) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+                }
+              },
+              builder: (context, state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AiChatAppBar(),
+                    Expanded(
+                      child: AiChatPanel(
+                        messagesController: _messagesController,
+                        messages: state.messages,
+                        status: state.status,
+                        errorMessage: state.errorMessage,
+                      ),
                     ),
-                  );
-                },
-              ),
+                    const SizedBox(height: 12),
+                    ChatComposer(
+                      controller: _messageController,
+                      onSend: () => _sendMessage(context),
+                      isBusy: state.status == ChatConnectionStatus.connecting,
+                    ),
+
+                    SizedBox(height: 60),
+                  ],
+                );
+              },
             ),
           );
         },
