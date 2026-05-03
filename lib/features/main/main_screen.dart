@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
+import 'package:memo/features/ai_chat/presentation/widgets/ai_chat_app_bar.dart';
 import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
 import 'package:memo/features/network/presentation/screens/network_screen.dart';
 import 'package:memo/features/profile/presentation/settings_screen.dart';
@@ -89,7 +90,7 @@ class _MainScreenState extends State<MainScreen>
           index: currentPage,
           children: [
             NetworkScreen(),
-            AiChatScreen(controller: controller),
+            AiChatScreen(),
             AddConnectionScreen(),
             SettingsScreen(),
           ],

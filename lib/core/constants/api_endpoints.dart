@@ -35,6 +35,6 @@ class ApiEndpoints {
   static String startCall(int id) => "connections/$id/video-call/start";
   static String endCall(int id) => "connections/$id/video-call/end";
 
-  // tokens
+  // fcm tokens
   static const String fcmToken = "/user/device";
 }

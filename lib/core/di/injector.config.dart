@@ -17,10 +17,11 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
 import 'package:memo/core/di/register_modules.dart' as _i850;
 import 'package:memo/core/network/auth_interceptor.dart' as _i174;
 import 'package:memo/core/network/network_info.dart' as _i509;
-import 'package:memo/core/services/cloudinary_service.dart' as _i95;
+import 'package:memo/core/services/cloudinary_service.dart' as _i1009;
 import 'package:memo/core/services/fcm_service.dart' as _i714;
 import 'package:memo/core/session/session_service.dart' as _i73;
 import 'package:memo/core/session/shared_prefrences_init.dart' as _i876;
+import 'package:memo/features/ai_chat/cubits/ai_chat_cubit.dart' as _i20;
 import 'package:memo/features/auth/domain/repository/auth_repository.dart'
     as _i1052;
 import 'package:memo/features/auth/presentation/cubits/login_cubit.dart'
@@ -40,7 +41,7 @@ import 'package:memo/features/network/domian/repository/network_respotory.dart'
 import 'package:memo/features/network/presentation/cubits/chat_cubit.dart'
     as _i228;
 import 'package:memo/features/network/presentation/cubits/connection_action_cubit.dart'
-    as _i901;
+    as _i575;
 import 'package:memo/features/network/presentation/cubits/connections_cubit.dart'
     as _i762;
 import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart'
@@ -48,13 +49,13 @@ import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit
 import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart'
     as _i382;
 import 'package:memo/features/network/presentation/cubits/search_users_cubit.dart'
-    as _i610;
+    as _i294;
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart'
     as _i636;
+import 'package:memo/features/profile/presentation/cubits/set_profile_cubit.dart'
+    as _i1051;
 import 'package:memo/features/profile/repository/profile_repository.dart'
     as _i533;
-import 'package:memo/features/profile/presentation/cubits/set_profile_cubit.dart'
-    as _i1022;
 import 'package:memo/features/video_call/cubit/end_video_call.dart' as _i1019;
 import 'package:memo/features/video_call/cubit/join_video_call_cubit.dart'
     as _i246;
@@ -79,11 +80,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i973.InternetConnectionChecker>(
       () => registerModules.connectionChecker,
     );
+    gh.lazySingleton<_i1009.CloudinaryService>(
+      () => _i1009.CloudinaryService(),
+    );
     gh.lazySingleton<_i174.AuthInterceptor>(
       () => _i174.AuthInterceptor(gh<_i73.SessionService>()),
     );
     gh.lazySingleton<_i509.NetworkInfo>(
       () => _i509.NetworkInfoImpl(gh<_i973.InternetConnectionChecker>()),
+    );
+    gh.factory<_i20.AiChatCubit>(
+      () => _i20.AiChatCubit(sessionService: gh<_i73.SessionService>()),
     );
     gh.factory<_i228.ChatCubit>(
       () => _i228.ChatCubit(sessionService: gh<_i73.SessionService>()),
@@ -108,12 +115,14 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i533.ProfileRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
     );
-    gh.lazySingleton<_i95.CloudinaryService>(() => _i95.CloudinaryService());
+    gh.factory<_i1051.SetProfileCubit>(
+      () => _i1051.SetProfileCubit(gh<_i533.ProfileRepository>()),
+    );
+    gh.factory<_i575.ConnectionActionCubit>(
+      () => _i575.ConnectionActionCubit(gh<_i420.NetworkRepository>()),
+    );
     gh.factory<_i762.ConnectionsCubit>(
       () => _i762.ConnectionsCubit(gh<_i420.NetworkRepository>()),
-    );
-    gh.factory<_i901.ConnectionActionCubit>(
-      () => _i901.ConnectionActionCubit(gh<_i420.NetworkRepository>()),
     );
     gh.factory<_i680.GetUserProfileCubit>(
       () => _i680.GetUserProfileCubit(gh<_i420.NetworkRepository>()),
@@ -121,8 +130,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i382.ReceivedConnectionsCubit>(
       () => _i382.ReceivedConnectionsCubit(gh<_i420.NetworkRepository>()),
     );
-    gh.factory<_i610.SearchUsersCubit>(
-      () => _i610.SearchUsersCubit(gh<_i420.NetworkRepository>()),
+    gh.factory<_i294.SearchUsersCubit>(
+      () => _i294.SearchUsersCubit(gh<_i420.NetworkRepository>()),
     );
     gh.factory<_i636.SentConnectionsCubit>(
       () => _i636.SentConnectionsCubit(gh<_i420.NetworkRepository>()),
@@ -141,9 +150,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i495.SignupCubit>(
       () => _i495.SignupCubit(gh<_i1052.AuthRepository>()),
-    );
-    gh.factory<_i1022.SetProfileCubit>(
-      () => _i1022.SetProfileCubit(gh<_i533.ProfileRepository>()),
     );
     gh.factory<_i783.VerifyTokenCubit>(
       () => _i783.VerifyTokenCubit(gh<_i1052.AuthRepository>()),

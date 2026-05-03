@@ -2,6 +2,10 @@
 
 part of 'user_search_response.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 _UserSearchResponse _$UserSearchResponseFromJson(Map<String, dynamic> json) =>
     _UserSearchResponse(
       user: SearchUser.fromJson(json['user'] as Map<String, dynamic>),
@@ -11,10 +15,7 @@ _UserSearchResponse _$UserSearchResponseFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$UserSearchResponseToJson(_UserSearchResponse instance) =>
-    <String, dynamic>{
-      'user': instance.user.toJson(),
-      'profile': instance.profile?.toJson(),
-    };
+    <String, dynamic>{'user': instance.user, 'profile': instance.profile};
 
 _SearchUser _$SearchUserFromJson(Map<String, dynamic> json) => _SearchUser(
   id: (json['id'] as num).toInt(),

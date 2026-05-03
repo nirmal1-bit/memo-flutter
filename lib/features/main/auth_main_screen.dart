@@ -12,6 +12,7 @@ class AuthMainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: AppColors.scaffoldBackground,
         elevation: 0,
       ),

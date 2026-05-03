@@ -139,41 +139,44 @@ class _NetworkScreenState extends State<NetworkScreen> {
                 },
               ),
             ],
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BlocBuilder<
-                      GetUserProfileCubit,
-                      BaseApiState<UserProfileResponse>
-                    >(
-                      builder: (context, state) {
-                        return state.when(
-                          initial: () => const SizedBox.shrink(),
-                          loading: () => ProductBannerShimmer(),
-                          success: (user) => NetworkAppBar(
-                            user: user,
-                            controller: _searchController,
-                            onTap: () => context.push(AppRoutes.userProfile),
-                            onActionTap: () =>
-                                context.push(AppRoutes.addConnection),
-                          ),
-                          error: (_) => const SizedBox.shrink(),
-                          noInternet: () => const SizedBox.shrink(),
-                          validationError: (_) => const SizedBox.shrink(),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    NetworkTabStrip(
-                      selected: _selectedTab,
-                      onChanged: (tab) => setState(() => _selectedTab = tab),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTabContent(),
-                  ],
+            child: Scaffold(
+              resizeToAvoidBottomInset: true,
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BlocBuilder<
+                        GetUserProfileCubit,
+                        BaseApiState<UserProfileResponse>
+                      >(
+                        builder: (context, state) {
+                          return state.when(
+                            initial: () => const SizedBox.shrink(),
+                            loading: () => ProductBannerShimmer(),
+                            success: (user) => NetworkAppBar(
+                              user: user,
+                              controller: _searchController,
+                              onTap: () => context.push(AppRoutes.userProfile),
+                              onActionTap: () =>
+                                  context.push(AppRoutes.addConnection),
+                            ),
+                            error: (_) => const SizedBox.shrink(),
+                            noInternet: () => const SizedBox.shrink(),
+                            validationError: (_) => const SizedBox.shrink(),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      NetworkTabStrip(
+                        selected: _selectedTab,
+                        onChanged: (tab) => setState(() => _selectedTab = tab),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTabContent(),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:memo/core/chat/chat_state.dart';
@@ -8,8 +6,8 @@ import 'package:memo/core/session/session_service.dart';
 import 'package:web_socket_channel/io.dart';
 
 @injectable
-class ChatCubit extends Cubit<ChatState> {
-  ChatCubit({required this.sessionService})
+class AiChatCubit extends Cubit<ChatState> {
+  AiChatCubit({required this.sessionService})
     : super(
         const ChatState(),
       ); // initilizing the initial state of the chatstate
@@ -18,13 +16,14 @@ class ChatCubit extends Cubit<ChatState> {
 
   int? userId;
 
-  IOWebSocketChannel? _channel;
+  IOWebSocketChannel? channel;
   StreamSubscription? _subscription;
   bool _hasConnected = false;
+  String incomingMessage = "";
 
   // making this a future function cause problems i don't know why
   //when doing form getIt it causes some problems
-  void connect(int id) async {
+  void connect() async {
     if (_hasConnected || state.status == ChatConnectionStatus.connecting) {
       return;
     }
@@ -42,8 +41,8 @@ class ChatCubit extends Cubit<ChatState> {
     try {
       userId = int.tryParse(await sessionService.userId);
       final token = await sessionService.token;
-      final uri = Uri.parse('ws://192.168.1.76:4000/v1/chat/$id');
-      _channel = IOWebSocketChannel.connect(
+      final uri = Uri.parse('ws://192.168.1.76:4000/v1/aiChat');
+      channel = IOWebSocketChannel.connect(
         uri,
         headers: {'Authorization': 'Bearer $token'},
       );
@@ -58,7 +57,7 @@ class ChatCubit extends Cubit<ChatState> {
 
       // this is to listen to the incoming messages from the websocket and handle them with the
       //_handleIncomingMessage function and also handle errors and done events
-      _subscription = _channel!.stream.listen(
+      _subscription = channel!.stream.listen(
         _handleIncomingMessage,
         onError: _handleError,
         onDone: _handleDone,
@@ -81,7 +80,7 @@ class ChatCubit extends Cubit<ChatState> {
       return;
     }
 
-    if (state.status != ChatConnectionStatus.connected || _channel == null) {
+    if (state.status != ChatConnectionStatus.connected || channel == null) {
       emit(
         state.copyWith(
           status: ChatConnectionStatus.error,
@@ -100,10 +99,17 @@ class ChatCubit extends Cubit<ChatState> {
 
     // i think this is the one which is causing error adding the message
 
-    emit(state.copyWith(messages: [...state.messages, outgoingMessage]));
+    emit(
+      state.copyWith(
+        messages: [...state.messages, outgoingMessage],
+        status: ChatConnectionStatus.answering,
+      ),
+    );
 
     try {
-      _channel!.sink.add(message);
+      // this is to send the message to the websocket server and if
+      //there is an error in sending the message we need to remove that message from the chat and show the error message
+      channel!.sink.add(message);
     } catch (error) {
       _removeLastOptimisticMessage(message);
       emit(
@@ -118,32 +124,32 @@ class ChatCubit extends Cubit<ChatState> {
   void retry(int id) {
     closeConnection();
     _hasConnected = false;
-    connect(id);
+    connect();
   }
 
   void _handleIncomingMessage(dynamic rawMessage) {
-    try {
-      final decodedMessage = jsonDecode(rawMessage) as Map<String, dynamic>;
+    final chunk = rawMessage as String;
+    if (!state.messages.last.isMe) {
+      // update last message
+      final last = state.messages.last;
+      final updated = last.copyWith(message: last.message + chunk);
+      final updatedList = [...state.messages];
+      updatedList[updatedList.length - 1] = updated;
 
-      final incomingMessage = ChatMessage(
-        name: "",
-        message: decodedMessage['message'] ?? '',
+      emit(state.copyWith(messages: updatedList));
+    } else {
+      // first chunk → create message
+      final newMsg = ChatMessage(
+        name: "Menmo AI",
+        message: chunk,
         isMe: false,
         timeLabel: _currentTimeLabel(),
       );
 
-      if (int.tryParse(decodedMessage['sender_id']) == userId) {
-        // if the sender id is same as the user id then it is a message from me and
-        //we can ignore it because we already added it to the chat with optimistic update
-        return;
-      }
-
-      emit(state.copyWith(messages: [...state.messages, incomingMessage]));
-    } catch (error) {
       emit(
         state.copyWith(
-          status: ChatConnectionStatus.error,
-          errorMessage: 'Received an invalid chat message: $error',
+          messages: [...state.messages, newMsg],
+          status: ChatConnectionStatus.connected,
         ),
       );
     }
@@ -165,13 +171,14 @@ class ChatCubit extends Cubit<ChatState> {
         errorMessage: 'Chat connection closed.',
       ),
     );
+    print("This ran");
   }
 
   void closeConnection() {
     _subscription?.cancel();
     _subscription = null;
-    _channel?.sink.close();
-    _channel = null;
+    channel?.sink.close();
+    channel = null;
   }
 
   @override
