@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:memo/core/chat/chat_state.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 
@@ -10,19 +11,22 @@ class ChatBubble extends StatelessWidget {
     required this.senderName,
     required this.text,
     required this.timeLabel,
+    this.status = ChatConnectionStatus.connected,
   });
 
   final bool alignEnd;
   final String senderName;
   final String text;
   final String timeLabel;
+  final ChatConnectionStatus status;
 
   @override
   Widget build(BuildContext context) {
+    final isAnswering = status == ChatConnectionStatus.answering;
     return Align(
-      alignment: alignEnd ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: (alignEnd) ? Alignment.centerRight : Alignment.centerLeft,
       child: Column(
-        crossAxisAlignment: alignEnd
+        crossAxisAlignment: (alignEnd)
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [

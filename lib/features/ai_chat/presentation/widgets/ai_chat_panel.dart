@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/chat/chat_state.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/features/ai_chat/cubits/ai_chat_cubit.dart';
 import 'package:memo/features/network/presentation/widgets/chat/chat_bubble.dart';
 
 class AiChatPanel extends StatelessWidget {
@@ -11,10 +13,8 @@ class AiChatPanel extends StatelessWidget {
     required this.messages,
     required this.status,
     required this.errorMessage,
-    this.isFromAi = false,
   });
 
-  final bool isFromAi;
   final ScrollController messagesController;
   final List<ChatMessage> messages;
   final ChatConnectionStatus status;
@@ -24,6 +24,7 @@ class AiChatPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final isConnecting = status == ChatConnectionStatus.connecting;
     final isConnected = status == ChatConnectionStatus.connected;
+    final isAnswering = status == ChatConnectionStatus.answering;
 
     return Container(
       width: double.infinity,
@@ -48,18 +49,20 @@ class AiChatPanel extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  isConnected
-                      ? 'Connected'
-                      : isConnecting
-                      ? 'Connecting...'
-                      : '',
-                  style: AppTextStyles.libre.copyWith(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.softPrimary,
+                if (isAnswering) ...[
+                  Text(
+                    isConnected
+                        ? 'Connected'
+                        : isConnecting
+                        ? 'Connecting...'
+                        : '',
+                    style: AppTextStyles.libre.copyWith(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.softPrimary,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
             if (errorMessage != null) ...[
@@ -111,6 +114,7 @@ class AiChatPanel extends StatelessWidget {
                           senderName: message.name,
                           text: message.message,
                           timeLabel: message.timeLabel,
+                          status: context.read<AiChatCubit>().state.status,
                         );
                       },
                     ),
