@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/> 
- 
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <application
         android:label="memo"
         android:name="${applicationName}"
@@ -9,8 +9,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

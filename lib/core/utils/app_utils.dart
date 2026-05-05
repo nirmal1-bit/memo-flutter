@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:downloadsfolder/downloadsfolder.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memo/core/di/injector.dart';
@@ -110,6 +113,23 @@ class AppUtils {
       }
       return null;
     }
+  }
+
+  static Future<void> downloadPdf(String tempFile) async {
+    try {
+      Directory downloadDirectory = await getDownloadDirectory();
+      print('Downloads folder path: ${downloadDirectory.path}');
+    } catch (e) {
+      print('Failed to retrieve downloads folder path $e');
+    }
+
+    bool? success = await copyFileIntoDownloadFolder(tempFile, "Notes");
+    if (success == true) {
+      print('File copied successfully.');
+    } else {
+      print('Failed to copy file.');
+    }
+    AppUtils.showSuccessSnackbar(message: 'PDF downloaded to download folder');
   }
 
   // static Future<File?> compressImage(String path) async {

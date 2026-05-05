@@ -59,6 +59,8 @@ import 'package:memo/features/profile/repository/profile_repository.dart'
 import 'package:memo/features/video_call/cubit/end_video_call.dart' as _i1019;
 import 'package:memo/features/video_call/cubit/join_video_call_cubit.dart'
     as _i246;
+import 'package:memo/features/video_call/cubit/make_transcript_cubit.dart'
+    as _i937;
 import 'package:memo/features/video_call/cubit/start_video_call_cubit.dart'
     as _i256;
 import 'package:memo/features/video_call/repository/video_call_repository.dart'
@@ -161,6 +163,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i246.JoinVideoCallCubit>(
       () => _i246.JoinVideoCallCubit(
+        videoCallRemoteSource: gh<_i818.VideoCallRepository>(),
+      ),
+    );
+    gh.factory<_i937.MakeTranscriptCubit>(
+      () => _i937.MakeTranscriptCubit(
         videoCallRemoteSource: gh<_i818.VideoCallRepository>(),
       ),
     );

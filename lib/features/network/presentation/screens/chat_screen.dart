@@ -163,7 +163,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: () {
                       context.read<JoinVideoCallCubit>().joinCall(
                         widget.connection.id,
-                        14,
+                        25,
                       );
                     },
                     icon: const Icon(Icons.join_full),

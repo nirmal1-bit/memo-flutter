@@ -8,161 +8,87 @@ import 'package:memo/features/video_call/pages/video_call_screen.dart';
 import 'package:memo/features/video_call/repository/video_call_repository.dart';
 import 'package:uuid/uuid.dart';
 
-Future<void> checkActiveCalls() async {
-  print("Checking active calls on app start...");
+Map<String, int> _extractIds(Map<Object?, Object?> source) {
+  final connectionId =
+      int.tryParse(
+        (source['connectionId'] ?? source['connection_id'] ?? '').toString(),
+      ) ??
+      0;
 
+  final sessionId =
+      int.tryParse(
+        (source['sessionId'] ?? source['session_id'] ?? '').toString(),
+      ) ??
+      0;
+
+  return {"connectionId": connectionId, "sessionId": sessionId};
+}
+
+Future<void> _joinAndNavigate(int connectionId, int sessionId) async {
+  if (connectionId <= 0 || sessionId <= 0) return;
+
+  final repo = getIt<VideoCallRepository>();
+  final response = await repo.joinCall(connectionId, sessionId);
+
+  response.fold((l) => print('Join call failed: $l'), (r) async {
+    await AppRouter.router.push(
+      AppRoutes.videoScreen,
+      extra: VideoCallPageParams(
+        requestModel: r.data,
+        connectionId: connectionId,
+      ),
+    );
+  });
+}
+
+Future<void> checkActiveCalls() async {
   final calls = await FlutterCallkitIncoming.activeCalls();
   if (calls == null || calls.isEmpty) return;
-  print("The active call data is ${calls[0]}]");
-  print("The accepted status is ${calls[0]['accepted']}");
-  try {
-    final call = calls[0];
-    final extra = call['extra'] ?? {};
 
-    final bookingId =
-        int.tryParse(
-          (extra['bookingId'] ?? extra['booking_id'] ?? '').toString(),
-        ) ??
-        0;
-    final videoId =
-        int.tryParse(
-          (extra['videoId'] ?? extra['video_call_session_id'] ?? '').toString(),
-        ) ??
-        0;
+  final call = calls.first;
 
-    if (calls[0]['accepted']) {
-      if (bookingId > 0 && videoId > 0) {
-        final repo = getIt<VideoCallRepository>();
-        final response = await repo.joinCall(bookingId, videoId);
-        response.fold((l) => print('Join call failed from activeCalls: $l'), (
-          r,
-        ) async {
-          final callModel = r.data;
-          await AppRouter.router.push(
-            AppRoutes.videoScreen,
-            extra: VideoCallPageParams(
-              requestModel: callModel,
-              connectionId: bookingId,
-            ),
-          );
-        });
-      }
-    }
-  } catch (e) {
-    print("activeCalls recovery failed: $e");
-  }
+  if (call['accepted'] != true) return;
+
+  final ids = _extractIds(call['extra'] ?? {});
+  await _joinAndNavigate(ids['connectionId']!, ids['sessionId']!);
 }
 
 class CallKeepService {
+  void init() => _registerListener();
+
   void _registerListener() async {
-    await FlutterCallkitIncoming.canUseFullScreenIntent();
     await FlutterCallkitIncoming.requestFullIntentPermission();
 
     FlutterCallkitIncoming.onEvent.listen((event) async {
       if (event == null) return;
-      try {
-        switch (event.event) {
-          case Event.actionCallAccept:
-            final extra =
-                event.body['extra'] ?? event.body['payload'] ?? event.body;
 
-            final bookingId =
-                int.tryParse(
-                  (extra['bookingId'] ?? extra['booking_id'] ?? '').toString(),
-                ) ??
-                0;
-            final videoId =
-                int.tryParse(
-                  (extra['videoId'] ?? extra['video_call_session_id'] ?? '')
-                      .toString(),
-                ) ??
-                0;
+      final data = event.body['extra'] ?? event.body['payload'] ?? event.body;
 
-            if (bookingId > 0 && videoId > 0) {
-              try {
-                final repo = getIt<VideoCallRepository>();
-                final response = await repo.joinCall(bookingId, videoId);
+      final ids = _extractIds(data);
 
-                response.fold((l) => print('Join call failed: $l'), (r) async {
-                  final callModel = r.data;
-                  try {
-                    await AppRouter.router.push(
-                      AppRoutes.videoScreen,
-                      extra: VideoCallPageParams(
-                        requestModel: callModel,
-                        connectionId: bookingId,
-                      ),
-                    );
-                  } catch (navErr) {
-                    print(
-                      'Navigation not ready, saved pending accept: $navErr',
-                    );
-                  }
-                });
-              } catch (e) {
-                print('Error joining call from CallKit, saved pending: $e');
-              }
-            }
-            break;
+      switch (event.event) {
+        case Event.actionCallAccept:
+          await _joinAndNavigate(ids['connectionId']!, ids['sessionId']!);
+          break;
 
-          case Event.actionCallDecline:
-            await FlutterCallkitIncoming.endAllCalls();
-          // final extra =
-          //     event.body['extra'] ?? event.body['payload'] ?? event.body;
+        case Event.actionCallDecline:
+        case Event.actionCallEnded:
+          await FlutterCallkitIncoming.endAllCalls();
+          break;
 
-          // final bookingId =
-          //     int.tryParse(
-          //       (extra['bookingId'] ?? extra['booking_id'] ?? '').toString(),
-          //     ) ??
-          //     0;
-          // final videoId =
-          //     int.tryParse(
-          //       (extra['videoId'] ?? extra['video_call_session_id'] ?? '')
-          //           .toString(),
-          //     ) ??
-          //     0;
-
-          // if (bookingId > 0 && videoId > 0) {
-          //   try {
-          //     final repo = getIt<VideoCallRepository>();
-          //     final response = await repo.endCall(bookingId, videoId);
-
-          //     response.fold(
-          //       (l) => print('Join call failed: $l'),
-          //       (r) async {},
-          //     );
-          //   } catch (e) {
-          //     print('Error joining call from CallKit, saved pending: $e');
-          //   }
-          // }
-
-          case Event.actionCallEnded:
-            await FlutterCallkitIncoming.endAllCalls();
-            break;
-
-          default:
-            print('Unhandled CallKit event: ${event.event}');
-        }
-      } catch (e) {
-        print('CallKit event handling error: $e');
+        default:
+          print('Unhandled CallKit event: ${event.event}');
       }
     });
   }
 
-  void init() => _registerListener();
-
   Future<void> showCallKit(Map<String, dynamic> data) async {
-    // final mapData = data['initiator'] is String
-    //     ? jsonDecode(data['initiator']) as Map<String, dynamic>
-    //     : data['initiator'] as Map<String, dynamic>;
-
     const uuid = Uuid();
+    final callId = uuid.v4();
 
     final params = CallKitParams(
-      // id: data["booking_id"].toString(),
-      id: uuid.v4(),
-
-      nameCaller: 'someone',
+      id: callId,
+      nameCaller: data['username'] ?? 'Menmo Call',
       handle: "",
       type: 0,
       duration: 30000,
@@ -189,12 +115,11 @@ class CallKeepService {
         supportsHolding: true,
         supportsGrouping: false,
         supportsUngrouping: false,
-        ringtonePath: 'system_ringtone_default', // ✅ Add this
+        ringtonePath: 'system_ringtone_default',
       ),
       extra: {
-        "bookingId": data["booking_id"],
-        "videoId": data["video_call_session_id"],
-        "uuid": uuid.v4(),
+        "sessionId": data["session_id"],
+        "connectionId": data["connection_id"],
       },
     );
 

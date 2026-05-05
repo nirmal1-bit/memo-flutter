@@ -34,7 +34,10 @@ class ApiEndpoints {
   static String agora(int id) => "connections/$id/agora-token";
   static String startCall(int id) => "connections/$id/video-call/start";
   static String endCall(int id) => "connections/$id/video-call/end";
+  static String makeTranscript(int id) => "connections/$id/transcript";
 
   // fcm tokens
   static const String fcmToken = "/user/device";
+
+  // video call transcript
 }
