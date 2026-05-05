@@ -39,5 +39,9 @@ class ApiEndpoints {
   // fcm tokens
   static const String fcmToken = "/user/device";
 
+  // connections
+  static String memories(int id) => "/memories/$id";
+  static String createMemory = "/memories";
+
   // video call transcript
 }

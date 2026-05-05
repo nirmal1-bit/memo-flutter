@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
@@ -200,6 +199,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
               AppRoutes.timeLine,
               extra: OtherUserProfileArguments(
                 details: connection.otherUserDetails,
+                connectionId: connection.id,
               ),
             ),
             onChatTap: (connection) =>

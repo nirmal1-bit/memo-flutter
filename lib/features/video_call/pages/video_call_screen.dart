@@ -369,6 +369,7 @@ class _State extends State<VideoCallPage> {
                               path,
                             );
                           }
+
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },

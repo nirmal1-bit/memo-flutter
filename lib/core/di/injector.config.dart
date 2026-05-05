@@ -56,6 +56,11 @@ import 'package:memo/features/profile/presentation/cubits/set_profile_cubit.dart
     as _i1051;
 import 'package:memo/features/profile/repository/profile_repository.dart'
     as _i533;
+import 'package:memo/features/timeline/cubits/create_memories_cubit.dart'
+    as _i910;
+import 'package:memo/features/timeline/cubits/get_memories_cubit.dart' as _i426;
+import 'package:memo/features/timeline/repository/timeline_repository.dart'
+    as _i1029;
 import 'package:memo/features/video_call/cubit/end_video_call.dart' as _i1019;
 import 'package:memo/features/video_call/cubit/join_video_call_cubit.dart'
     as _i246;
@@ -107,6 +112,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1052.AuthRepository>(
       () => _i1052.AuthRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
     );
+    gh.lazySingleton<_i1029.TimelineRepository>(
+      () => _i1029.TimelineRepositoryImpl(
+        gh<_i361.Dio>(),
+        gh<_i509.NetworkInfo>(),
+      ),
+    );
     gh.lazySingleton<_i818.VideoCallRepository>(
       () => _i818.VideoCallRepositoryImpl(
         gh<_i361.Dio>(),
@@ -116,6 +127,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i533.ProfileRepository>(
       () =>
           _i533.ProfileRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
+    );
+    gh.factory<_i910.CreateMemoriesCubit>(
+      () => _i910.CreateMemoriesCubit(gh<_i1029.TimelineRepository>()),
+    );
+    gh.factory<_i426.GetMemoriesCubit>(
+      () => _i426.GetMemoriesCubit(gh<_i1029.TimelineRepository>()),
     );
     gh.factory<_i1051.SetProfileCubit>(
       () => _i1051.SetProfileCubit(gh<_i533.ProfileRepository>()),

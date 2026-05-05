@@ -9,8 +9,8 @@ import 'package:memo/features/ai_chat/presentation/widgets/ai_chat_panel.dart';
 import 'package:memo/features/network/presentation/widgets/chat/chat_composer.dart';
 
 class AiChatScreen extends StatefulWidget {
-  const AiChatScreen({super.key});
-
+  const AiChatScreen({super.key, required this.connectionId});
+  final int connectionId;
   @override
   State<AiChatScreen> createState() => _AiChatScreenState();
 }
@@ -22,7 +22,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => getIt<AiChatCubit>()..connect())],
+      providers: [
+        BlocProvider(
+          create: (_) => getIt<AiChatCubit>()..connect(widget.connectionId),
+        ),
+      ],
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -55,7 +59,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AiChatAppBar(),
                     Expanded(
                       child: AiChatPanel(
                         messagesController: _messagesController,
@@ -70,8 +73,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
                       onSend: () => _sendMessage(context),
                       isBusy: state.status == ChatConnectionStatus.connecting,
                     ),
-
-                    SizedBox(height: 60),
                   ],
                 );
               },

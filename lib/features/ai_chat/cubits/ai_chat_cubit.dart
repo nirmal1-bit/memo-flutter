@@ -11,11 +11,8 @@ class AiChatCubit extends Cubit<ChatState> {
     : super(
         const ChatState(),
       ); // initilizing the initial state of the chatstate
-
   final SessionService sessionService;
-
   int? userId;
-
   IOWebSocketChannel? channel;
   StreamSubscription? _subscription;
   bool _hasConnected = false;
@@ -23,14 +20,15 @@ class AiChatCubit extends Cubit<ChatState> {
 
   // making this a future function cause problems i don't know why
   //when doing form getIt it causes some problems
-  void connect() async {
+
+  void connect(int connectionId) async {
     if (_hasConnected || state.status == ChatConnectionStatus.connecting) {
       return;
     }
     // if already hass been connected is in connecting state do nothing
-
     // state here is the ChatState and copywith is to
     //create new instance of the state with new values and other values same
+
     emit(
       state.copyWith(
         status: ChatConnectionStatus.connecting,
@@ -41,7 +39,7 @@ class AiChatCubit extends Cubit<ChatState> {
     try {
       userId = int.tryParse(await sessionService.userId);
       final token = await sessionService.token;
-      final uri = Uri.parse('ws://192.168.1.76:4000/v1/aiChat');
+      final uri = Uri.parse('ws://192.168.1.76:4000/v1/aiChat/$connectionId');
       channel = IOWebSocketChannel.connect(
         uri,
         headers: {'Authorization': 'Bearer $token'},
@@ -124,7 +122,7 @@ class AiChatCubit extends Cubit<ChatState> {
   void retry(int id) {
     closeConnection();
     _hasConnected = false;
-    connect();
+    connect(id);
   }
 
   void _handleIncomingMessage(dynamic rawMessage) {

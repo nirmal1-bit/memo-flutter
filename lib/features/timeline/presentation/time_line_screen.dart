@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memo/core/di/injector.dart';
+import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
-import 'package:memo/features/timeline/presentation/widgets/timeline_ai_assistant_tab.dart';
+import 'package:memo/features/timeline/cubits/get_memories_cubit.dart';
 import 'package:memo/features/timeline/presentation/widgets/timeline_activity_tab.dart';
 import 'package:memo/features/timeline/presentation/widgets/timeline_face_data_tab.dart';
 import 'package:memo/features/timeline/presentation/widgets/timeline_memories_tab.dart';
@@ -33,22 +36,32 @@ class _TimeLineScreenState extends State<TimeLineScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          TimelineProfileSliverHeader(
-            tabController: _tabController,
-            innerBoxIsScrolled: innerBoxIsScrolled,
-          ),
-        ],
-        body: TabBarView(
-          controller: _tabController,
-          children: const [
-            TimelineMemoriesTab(),
-            TimelineActivityTab(),
-            TimelineAiAssistantTab(),
-            TimelineFaceDataTab(),
+    return BlocProvider(
+      create: (_) =>
+          getIt<GetMemoriesCubit>()
+            ..getMemories(widget.otherUserProfileArgs.connectionId),
+      child: Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            TimelineProfileSliverHeader(
+              otherUserProfileArgs: widget.otherUserProfileArgs,
+              tabController: _tabController,
+              innerBoxIsScrolled: innerBoxIsScrolled,
+            ),
           ],
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              TimelineMemoriesTab(
+                connectionId: widget.otherUserProfileArgs.connectionId,
+              ),
+              TimelineActivityTab(),
+              AiChatScreen(
+                connectionId: widget.otherUserProfileArgs.connectionId,
+              ),
+              TimelineFaceDataTab(),
+            ],
+          ),
         ),
       ),
     );

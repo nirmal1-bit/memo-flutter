@@ -8,11 +8,13 @@ class OtherUserProfileArguments {
     required this.details,
     this.isFromReceived = false,
     this.isFromSent = false,
+    this.connectionId = -1,
   });
 
   final OtherUserDetails details;
   final bool isFromReceived;
   final bool isFromSent;
+  final int connectionId;
 }
 
 class OthersUserProfileScreen extends StatelessWidget {

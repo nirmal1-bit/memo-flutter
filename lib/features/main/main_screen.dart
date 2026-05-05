@@ -90,7 +90,7 @@ class _MainScreenState extends State<MainScreen>
           index: currentPage,
           children: [
             NetworkScreen(),
-            AiChatScreen(),
+            AiChatScreen(connectionId: 1),
             AddConnectionScreen(),
             SettingsScreen(),
           ],
