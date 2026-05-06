@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:memo/core/api/base_api_response.dart';
 import 'package:memo/core/constants/api_endpoints.dart';
@@ -11,6 +12,10 @@ abstract final class VideoCallRepository {
   EitherResponse<ApiResponse<CallRequestModel>> joinCall(
     int connectionId,
     int sessionId,
+  );
+  EitherResponse<ApiResponse<String>> makeTranscript(
+    int connectionId,
+    String filepath,
   );
 }
 
@@ -72,6 +77,30 @@ final class VideoCallRepositoryImpl extends BaseRemoteSource
         return ApiResponse(
           success: response.data['success'] as bool,
           data: CallRequestModel.fromJson(response.data['data']),
+          message: response.data['message'] as String? ?? 'Success',
+        );
+      },
+    );
+    return response;
+  }
+
+  @override
+  EitherResponse<ApiResponse<String>> makeTranscript(
+    int connectionId,
+    String filepath,
+  ) async {
+    final formData = FormData.fromMap({
+      "audio": await MultipartFile.fromFile(filepath),
+    });
+    final response = await networkRequest(
+      request: (dio) async {
+        final response = await dio.post(
+          ApiEndpoints.makeTranscript(connectionId),
+          data: formData,
+        );
+        return ApiResponse(
+          success: true,
+          data: "Success",
           message: response.data['message'] as String? ?? 'Success',
         );
       },

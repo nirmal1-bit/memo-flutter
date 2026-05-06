@@ -99,6 +99,7 @@ class FirebaseNotificationService {
     final notification = message.notification;
     if (data['type'] == 'call') {
       _callKeepService.showCallKit(data);
+      print("The data is $data");
     }
     if (notification != null && data['type'] == 'chat') {
       flutterLocalNotificationsPlugin
@@ -131,15 +132,15 @@ class FirebaseNotificationService {
 
   void _onMessageOpenedApp(RemoteMessage message) async {}
 
-  void _handleDataMessage(
-    Map<String, dynamic> data, {
-    bool foreground = false,
-    bool openedApp = false,
-  }) {
-    _callKeepService.showCallKit(data);
-  }
+  // void _handleDataMessage(
+  //   Map<String, dynamic> data, {
+  //   bool foreground = false,
+  //   bool openedApp = false,
+  // }) {
+  //   _callKeepService.showCallKit(data);
+  // }
 
-  void _handleCallDecline(Map<String, dynamic>? body) {
-    print("Call declined");
-  }
+  // void _handleCallDecline(Map<String, dynamic>? body) {
+  //   print("Call declined");
+  // }
 }

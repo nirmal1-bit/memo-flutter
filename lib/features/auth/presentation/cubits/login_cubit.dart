@@ -18,9 +18,12 @@ class LoginCubit extends Cubit<BaseApiState<AuthenticationToken>> {
 
     emit(
       response.fold(
-        (l) => l.validationErrorOrNull != null
-            ? BaseApiState.validationError(l.validationErrorOrNull!)
-            : BaseApiState.error(l.errorMessage),
+        (l) => l.when(
+          serverError: (error) => BaseApiState.error(error),
+          validationError: (validationError) =>
+              BaseApiState.validationError(validationError),
+          noInternet: (error) => BaseApiState.noInternet(),
+        ),
         (r) {
           return BaseApiState.success(r.data);
         },

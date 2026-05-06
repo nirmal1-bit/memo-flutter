@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/features/timeline/presentation/widgets/timeline_shared_widgets.dart';
+import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 
 class TimelineProfileSliverHeader extends StatelessWidget {
   const TimelineProfileSliverHeader({
     super.key,
     required this.tabController,
     required this.innerBoxIsScrolled,
+    required this.otherUserProfileArgs,
   });
 
   final TabController tabController;
   final bool innerBoxIsScrolled;
+  final OtherUserProfileArguments otherUserProfileArgs;
 
   @override
   Widget build(BuildContext context) {
+    final user = otherUserProfileArgs.details;
+
     return SliverAppBar(
-      expandedHeight: 280,
       automaticallyImplyLeading: false,
+      expandedHeight: 210,
       pinned: true,
       backgroundColor: AppColors.white,
       foregroundColor: AppColors.softPrimary,
       elevation: innerBoxIsScrolled ? 1 : 0,
-      flexibleSpace: const FlexibleSpaceBar(
+      flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.pin,
-        background: _TimelineProfileHeroCard(),
+        background: _TimelineProfileHeroCard(user: user),
       ),
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(48),
+        preferredSize: const Size.fromHeight(0),
         child: Container(
           color: AppColors.white,
           child: TabBar(
@@ -58,21 +63,20 @@ class TimelineProfileSliverHeader extends StatelessWidget {
 }
 
 class _TimelineProfileHeroCard extends StatelessWidget {
-  const _TimelineProfileHeroCard();
+  const _TimelineProfileHeroCard({required this.user});
+
+  final OtherUserDetails user;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.white,
-      padding: const EdgeInsets.fromLTRB(20, 56, 20, 0),
-      child: const Column(
+      padding: const EdgeInsets.fromLTRB(20, 26, 20, 0),
+      child: Column(
         children: [
-          _TimelineProfileIdentityRow(),
-          SizedBox(height: 16),
-          _TimelineProfileInsightStrip(),
-          SizedBox(height: 14),
-          _TimelineProfileActionRow(),
-          SizedBox(height: 8),
+          _TimelineProfileIdentityRow(user: user),
+          const SizedBox(height: 16),
+          _TimelineProfileInsightStrip(user: user),
         ],
       ),
     );
@@ -80,26 +84,33 @@ class _TimelineProfileHeroCard extends StatelessWidget {
 }
 
 class _TimelineProfileIdentityRow extends StatelessWidget {
-  const _TimelineProfileIdentityRow();
+  const _TimelineProfileIdentityRow({required this.user});
+
+  final OtherUserDetails user;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        _TimelineProfileAvatar(),
-        SizedBox(width: 16),
-        Expanded(child: _TimelineProfileNameBlock()),
+      children: [
+        _TimelineProfileAvatar(user: user),
+        const SizedBox(width: 16),
+        Expanded(child: _TimelineProfileNameBlock(user: user)),
       ],
     );
   }
 }
 
 class _TimelineProfileAvatar extends StatelessWidget {
-  const _TimelineProfileAvatar();
+  const _TimelineProfileAvatar({required this.user});
+
+  final OtherUserDetails user;
 
   @override
   Widget build(BuildContext context) {
+    final profile = user.profile;
+    final initials = _buildInitials(user.name);
+
     return Container(
       width: 72,
       height: 72,
@@ -108,33 +119,45 @@ class _TimelineProfileAvatar extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 2),
       ),
-      child: const Center(
-        child: Text(
-          'PM',
-          style: TextStyle(
-            fontFamily: 'Rubik',
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: AppColors.primary,
-          ),
-        ),
-      ),
+      child: profile?.avatarUrl.isNotEmpty ?? false
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: Image.network(
+                profile!.avatarUrl,
+                width: 72,
+                height: 72,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    _InitialsAvatar(initials: initials),
+              ),
+            )
+          : _InitialsAvatar(initials: initials),
     );
   }
 }
 
 class _TimelineProfileNameBlock extends StatelessWidget {
-  const _TimelineProfileNameBlock();
+  const _TimelineProfileNameBlock({required this.user});
+
+  final OtherUserDetails user;
 
   @override
   Widget build(BuildContext context) {
+    final profile = user.profile;
+    final headline = profile?.headline.isNotEmpty ?? false
+        ? profile!.headline
+        : user.role;
+    final location = profile?.location.isNotEmpty ?? false
+        ? profile!.location
+        : user.email;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 4),
-        const Text(
-          'Priya Menon',
-          style: TextStyle(
+        Text(
+          user.name,
+          style: const TextStyle(
             fontFamily: 'Libre',
             fontSize: 22,
             fontWeight: FontWeight.w800,
@@ -142,18 +165,18 @@ class _TimelineProfileNameBlock extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 3),
-        const Text(
-          'Product Lead · Series B startup',
-          style: TextStyle(
+        Text(
+          headline,
+          style: const TextStyle(
             fontFamily: 'Rubik',
             fontSize: 13,
             color: AppColors.softTextGrey,
           ),
         ),
         const SizedBox(height: 3),
-        const Text(
-          'Mumbai, India',
-          style: TextStyle(
+        Text(
+          location,
+          style: const TextStyle(
             fontFamily: 'Rubik',
             fontSize: 12,
             color: AppColors.textGrey,
@@ -163,25 +186,48 @@ class _TimelineProfileNameBlock extends StatelessWidget {
         Wrap(
           spacing: 6,
           runSpacing: 6,
-          children: const [
+          children: [
             _InfoChip(
-              label: 'Connected',
-              bg: Color(0xFFE8F8F0),
-              fg: Color(0xFF1A7A4A),
+              label: user.activated ? 'Active' : 'Pending',
+              bg: const Color(0xFFE8F8F0),
+              fg: const Color(0xFF1A7A4A),
             ),
             _InfoChip(
-              label: '2 yrs known',
-              bg: Color(0xFFEFF7F8),
-              fg: Color(0xFF055F6B),
+              label: user.isPremium ? 'Premium' : 'Standard',
+              bg: const Color(0xFFEFF7F8),
+              fg: const Color(0xFF055F6B),
             ),
             _InfoChip(
-              label: '18 memories',
-              bg: Color(0xFFFFF0E5),
-              fg: Color(0xFFB85C00),
+              label: profile?.companyName.isNotEmpty ?? false
+                  ? profile!.companyName
+                  : '${user.trialLeft} days left',
+              bg: const Color(0xFFFFF0E5),
+              fg: const Color(0xFFB85C00),
             ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class _InitialsAvatar extends StatelessWidget {
+  const _InitialsAvatar({required this.initials});
+
+  final String initials;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        initials,
+        style: const TextStyle(
+          fontFamily: 'Rubik',
+          fontSize: 22,
+          fontWeight: FontWeight.w800,
+          color: AppColors.primary,
+        ),
+      ),
     );
   }
 }
@@ -215,10 +261,17 @@ class _InfoChip extends StatelessWidget {
 }
 
 class _TimelineProfileInsightStrip extends StatelessWidget {
-  const _TimelineProfileInsightStrip();
+  const _TimelineProfileInsightStrip({required this.user});
+
+  final OtherUserDetails user;
 
   @override
   Widget build(BuildContext context) {
+    final profile = user.profile;
+    final note = profile?.headline.isNotEmpty ?? false
+        ? '${user.name} highlighted ${profile!.headline.toLowerCase()}.'
+        : '${user.name} is active on the timeline and can be reached through this profile.';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -227,15 +280,19 @@ class _TimelineProfileInsightStrip extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.aiSurfaceBorder),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.auto_awesome_rounded, size: 14, color: Color(0xFFFF8C42)),
-          SizedBox(width: 8),
+          const Icon(
+            Icons.auto_awesome_rounded,
+            size: 14,
+            color: Color(0xFFFF8C42),
+          ),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Priya is more responsive on Thursdays. She mentioned hiring pressure — asking about the team\'s morale could be a good icebreaker.',
-              style: TextStyle(
+              note,
+              style: const TextStyle(
                 fontFamily: 'Rubik',
                 fontSize: 12,
                 height: 1.5,
@@ -249,42 +306,13 @@ class _TimelineProfileInsightStrip extends StatelessWidget {
   }
 }
 
-class _TimelineProfileActionRow extends StatelessWidget {
-  const _TimelineProfileActionRow();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: const [
-        Expanded(
-          child: TimelineActionButton(
-            label: 'Message',
-            icon: Icons.chat_bubble_outline_rounded,
-            filled: false,
-            onTap: _noop,
-          ),
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: TimelineActionButton(
-            label: 'Video',
-            icon: Icons.videocam_outlined,
-            filled: false,
-            onTap: _noop,
-          ),
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: TimelineActionButton(
-            label: 'Brief me',
-            icon: Icons.flash_on_rounded,
-            filled: true,
-            onTap: _noop,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 void _noop() {}
+
+String _buildInitials(String name) {
+  final parts = name
+      .trim()
+      .split(RegExp(r'\s+'))
+      .where((part) => part.isNotEmpty);
+  final initials = parts.take(2).map((part) => part[0]).join();
+  return initials.isEmpty ? '?' : initials.toUpperCase();
+}

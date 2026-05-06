@@ -2,11 +2,13 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/di/injector.dart';
+import 'package:memo/core/services/call_recording_service.dart';
 import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/common/primary_button.dart';
 import 'package:memo/features/network/presentation/cubits/chat_cubit.dart';
 import 'package:memo/features/video_call/cubit/end_video_call.dart';
+import 'package:memo/features/video_call/cubit/make_transcript_cubit.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../model/call_request_model.dart';
 
@@ -35,15 +37,24 @@ class _State extends State<VideoCallPage> {
   bool _speakerEnabled = true;
   bool _permissionsGranted = false;
   bool _callEnded = false;
+  late CallRecordingService recordingService;
 
   @override
   void initState() {
     super.initState();
     // CheckCallKit.isInCall = true;
+    recordingService = CallRecordingService();
     _initAgora();
   }
 
   Future<void> _initAgora() async {
+    try {
+      await recordingService.startRecording("1");
+      print("Call recording started");
+    } catch (e) {
+      debugPrint("Call recording error: $e");
+      AppUtils.showErrorSnackbar(message: "Failed to start call recording");
+    }
     final int validUid = int.tryParse(await SessionService().userId) ?? 0;
     await _checkPermissions();
 
@@ -236,6 +247,7 @@ class _State extends State<VideoCallPage> {
           widget.params.connectionId,
           widget.params.requestModel.videoCallSessionId,
         );
+        recordingService.stopRecording();
       } catch (_) {}
       _callEnded = true;
     }
@@ -343,12 +355,23 @@ class _State extends State<VideoCallPage> {
                         child: const Text("No"),
                       ),
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          print("This is getting called");
                           getIt<EndVideoCall>().endCall(
                             widget.params.connectionId,
                             widget.params.requestModel.videoCallSessionId,
                           );
-                          Navigator.of(dialogContext).pop(true);
+                          final path = await recordingService.stopRecording();
+                          print("The path path to be send to backend is $path");
+                          if (path != null) {
+                            getIt<MakeTranscriptCubit>().makeTranscript(
+                              widget.params.connectionId,
+                              path,
+                            );
+                          }
+
+                          Navigator.pop(context);
+                          Navigator.pop(context);
                         },
                         child: const Text("Yes"),
                       ),
@@ -364,6 +387,8 @@ class _State extends State<VideoCallPage> {
                       widget.params.connectionId,
                       widget.params.requestModel.videoCallSessionId,
                     );
+                    final path = await recordingService.stopRecording();
+                    print("The path is $path");
                   } catch (_) {}
                   _callEnded = true;
                 }
@@ -384,8 +409,13 @@ class _State extends State<VideoCallPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<ChatCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ChatCubit>(create: (context) => getIt<ChatCubit>()),
+        BlocProvider<MakeTranscriptCubit>(
+          create: (context) => getIt<MakeTranscriptCubit>(),
+        ),
+      ],
       child: Builder(
         builder: (context) {
           return WillPopScope(
@@ -412,6 +442,9 @@ class _State extends State<VideoCallPage> {
                             );
                             _callEnded = true;
                           }
+                          final path = await CallRecordingService()
+                              .stopRecording();
+                          print("The path is $path");
                           await _leaveChannel();
                           Navigator.of(dialogContext).pop(true);
                         },

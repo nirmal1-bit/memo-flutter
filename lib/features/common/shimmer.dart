@@ -157,7 +157,7 @@ class ProductBannerShimmer extends StatelessWidget {
       enabled: true,
       child: Container(
         width: double.infinity,
-        height: 180,
+        height: 100,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),

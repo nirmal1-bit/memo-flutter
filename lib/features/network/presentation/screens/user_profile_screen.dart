@@ -107,7 +107,7 @@ class _ProfileBody extends StatelessWidget {
                         ? Image.network(
                             profile!.avatarUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => CircleAvatar(
+                            errorBuilder: (_, _, _) => CircleAvatar(
                               radius: 34,
                               backgroundColor: AppColors.primary,
                               child: Text(

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:downloadsfolder/downloadsfolder.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memo/core/di/injector.dart';
@@ -112,49 +115,20 @@ class AppUtils {
     }
   }
 
-  // static Future<File?> compressImage(String path) async {
-  //   final tempDir = await getTemporaryDirectory();
-  //   final targetPath = p.join(
-  //     tempDir.path,
-  //     '${DateTime.now().microsecondsSinceEpoch}_temp_image.jpg',
-  //   );
+  static Future<void> downloadPdf(String tempFile) async {
+    try {
+      Directory downloadDirectory = await getDownloadDirectory();
+      print('Downloads folder path: ${downloadDirectory.path}');
+    } catch (e) {
+      print('Failed to retrieve downloads folder path $e');
+    }
 
-  //   final originalSize = File(path).lengthSync();
-  //   print('Original size: ${originalSize / 1024} KB');
-
-  //   final compressedImage = await FlutterImageCompress.compressAndGetFile(
-  //     path,
-  //     targetPath,
-  //     quality: 20, // good balance for OCR
-  //     minWidth: 924, // resizing is key
-  //     minHeight: 924,
-  //     format: CompressFormat.jpeg,
-  //   );
-  //   print(" the image is $compressedImage");
-
-  //   if (compressedImage == null) {
-  //     AppUtils.showErrorSnackbar(
-  //       message: "Some error occurred in image compression",
-  //     );
-  //     return null;
-  //   }
-  //   print("The image path is ${compressedImage.path}");
-
-  //   final compressedSize = File(compressedImage.path).lengthSync();
-  //   print('Compressed size: ${compressedSize / 1024} KB');
-
-  //   return File(compressedImage.path);
-  // }
-
-  // static Future<File> ensureJpgFile(String path) async {
-  //   final file = File(path);
-  //   final ext = p.extension(path).toLowerCase();
-
-  //   if (ext == '.jpg' || ext == '.jpeg') {
-  //     return file;
-  //   }
-
-  //   final newPath = p.setExtension(path, '.jpg');
-  //   return file.copy(newPath);
-  // }
+    bool? success = await copyFileIntoDownloadFolder(tempFile, "Notes");
+    if (success == true) {
+      print('File copied successfully.');
+    } else {
+      print('Failed to copy file.');
+    }
+    AppUtils.showSuccessSnackbar(message: 'PDF downloaded to download folder');
+  }
 }
