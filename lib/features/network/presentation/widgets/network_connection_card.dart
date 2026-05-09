@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
-import 'package:memo/features/network/presentation/widgets/avatar_badge.dart';
 
 class NetworkConnectionCard extends StatelessWidget {
   const NetworkConnectionCard({
@@ -25,131 +24,100 @@ class NetworkConnectionCard extends StatelessWidget {
     final isActive = details.activated;
 
     return Material(
-      color: AppColors.white,
-      elevation: 6,
-      shadowColor: AppColors.softBlack.withValues(alpha: 0.18),
-      borderRadius: BorderRadius.circular(28),
+      color: AppColors.primary.withAlpha(40),
+      borderRadius: BorderRadius.circular(14),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(28),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xFFDDE3ED), width: 0.5),
+            borderRadius: BorderRadius.circular(14),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppColors.brandBackground, AppColors.white],
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _Avatar(
+                    avatarUrl: profile?.avatarUrl ?? '',
+                    initials: _initials(details.name),
                   ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AvatarBadge(
-                      profileLink: profile?.avatarUrl ?? '',
-                      label: _initials(details.name),
-                      size: 56,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  details.name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppTextStyles.rubik.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.softBlack,
-                                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                details.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.rubik.copyWith(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF1A2233),
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 3,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isActive
-                                      ? AppColors.primary.withOpacity(0.12)
-                                      : AppColors.brandBackground,
-                                  borderRadius: BorderRadius.circular(999),
-                                ),
-                                child: Text(
-                                  isActive ? 'Active' : 'Pending',
-                                  style: AppTextStyles.rubik.copyWith(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w800,
-                                    color: AppColors.primary,
-                                    letterSpacing: 0.3,
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
+                            const SizedBox(width: 8),
+                            _StatusBadge(isActive: isActive),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          details.role,
+                          style: AppTextStyles.rubik.copyWith(
+                            fontSize: 12,
+                            color: const Color(0xFF6B7A99),
                           ),
+                        ),
+                        if ((profile?.headline ?? '').isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
-                            details.role,
+                            profile!.headline,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: AppTextStyles.rubik.copyWith(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.ironGrey,
+                              fontSize: 12,
+                              color: const Color(0xFF8A98B8),
+                              height: 1.5,
                             ),
                           ),
-                          if ((profile?.headline ?? '').isNotEmpty) ...[
-                            const SizedBox(height: 6),
-                            Text(
-                              profile!.headline,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.rubik.copyWith(
-                                fontSize: 12.5,
-                                color: AppColors.softTextGrey,
-                                height: 1.45,
-                              ),
-                            ),
-                          ],
                         ],
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 13),
+              const Divider(
+                height: 1,
+                thickness: 0.5,
+                color: Color(0xFFDDE3ED),
+              ),
+              const SizedBox(height: 13),
               Row(
                 children: [
                   Expanded(
                     child: _ActionButton(
                       label: 'Chat',
                       icon: Icons.chat_bubble_outline_rounded,
-                      backgroundColor: AppColors.brandBackground,
-                      foregroundColor: AppColors.primary,
-                      borderColor: AppColors.brandBackground,
+                      filled: false,
                       onPressed: onChatTap ?? onTap ?? () {},
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: _ActionButton(
                       label: 'Call',
-                      icon: Icons.videocam_rounded,
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
-                      borderColor: AppColors.primary,
+                      icon: Icons.videocam_outlined,
+                      filled: true,
                       onPressed: onCallTap ?? onTap ?? () {},
                     ),
                   ),
@@ -163,53 +131,107 @@ class NetworkConnectionCard extends StatelessWidget {
   }
 }
 
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.avatarUrl, required this.initials});
+
+  final String avatarUrl;
+  final String initials;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Color(0xFFE2E8F4),
+      ),
+      alignment: Alignment.center,
+      child: avatarUrl.isNotEmpty
+          ? ClipOval(
+              child: Image.network(
+                avatarUrl,
+                width: 44,
+                height: 44,
+                fit: BoxFit.cover,
+              ),
+            )
+          : Text(
+              initials,
+              style: AppTextStyles.rubik.copyWith(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF3A517A),
+              ),
+            ),
+    );
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.isActive});
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFFE2E8F4) : const Color(0xFFF0F2F7),
+        borderRadius: BorderRadius.circular(99),
+      ),
+      child: Text(
+        isActive ? 'Active' : 'Pending',
+        style: AppTextStyles.rubik.copyWith(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: isActive ? const Color(0xFF3A517A) : const Color(0xFF8A98B8),
+        ),
+      ),
+    );
+  }
+}
+
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
     required this.label,
     required this.icon,
-    required this.backgroundColor,
-    required this.foregroundColor,
-    required this.borderColor,
+    required this.filled,
     required this.onPressed,
   });
 
   final String label;
   final IconData icon;
-  final Color backgroundColor;
-  final Color foregroundColor;
-  final Color borderColor;
+  final bool filled;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 46,
+      height: 36,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
-          side: BorderSide(color: borderColor),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+          backgroundColor: filled
+              ? const Color(0xFF1A2233)
+              : const Color(0xFFE2E8F4),
+          foregroundColor: filled
+              ? const Color(0xFFF5F7FA)
+              : const Color(0xFF3A517A),
+          side: BorderSide.none,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(horizontal: 12),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 16),
+            Icon(icon, size: 14),
             const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                label,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.rubik.copyWith(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w700,
-                  color: foregroundColor,
-                ),
+            Text(
+              label,
+              style: AppTextStyles.rubik.copyWith(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],

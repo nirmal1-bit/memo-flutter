@@ -10,12 +10,14 @@ class NetworkAppBar extends StatefulWidget {
     super.key,
     required this.user,
     required this.controller,
+    this.onSearchPressed,
     this.onTap,
     this.onActionTap,
   });
 
   final UserProfileResponse user;
   final TextEditingController controller;
+  final VoidCallback? onSearchPressed;
   final VoidCallback? onTap;
   final VoidCallback? onActionTap;
 
@@ -75,7 +77,7 @@ class _NetworkAppBarState extends State<NetworkAppBar> {
                     ? Image.network(
                         profile!.avatarUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _AvatarFallback(
+                        errorBuilder: (_, _, _) => _AvatarFallback(
                           initials: _initials(widget.user.name),
                         ),
                       )
@@ -84,8 +86,34 @@ class _NetworkAppBarState extends State<NetworkAppBar> {
             ),
           ),
           const SizedBox(width: 12),
-          Expanded(child: NetworkSearchBar(controller: widget.controller)),
-          const SizedBox(width: 10),
+          Expanded(
+            child: NetworkSearchBar(
+              controller: widget.controller,
+              onSubmitted: (_) => widget.onSearchPressed?.call(),
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            height: 52,
+            child: ElevatedButton.icon(
+              onPressed: widget.onSearchPressed,
+              icon: const Icon(Icons.search_rounded, size: 18),
+              label: const Text('Search'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                textStyle: AppTextStyles.rubik.copyWith(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -157,6 +157,10 @@ class _NetworkScreenState extends State<NetworkScreen> {
                             success: (user) => NetworkAppBar(
                               user: user,
                               controller: _searchController,
+                              onSearchPressed: () => _receivedConnectionsCubit
+                                  .filterReceivedConnectionsByName(
+                                    _searchController.text,
+                                  ),
                               onTap: () => context.push(AppRoutes.userProfile),
                               onActionTap: () =>
                                   context.push(AppRoutes.addConnection),

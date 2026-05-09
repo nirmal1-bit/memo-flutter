@@ -1,32 +1,114 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/features/timeline/presentation/time_line_data.dart';
-import 'package:memo/features/timeline/presentation/widgets/timeline_shared_widgets.dart';
+import 'package:memo/core/state/base_api_state.dart';
+import 'package:memo/features/timeline/cubits/get_timeline_cubit.dart';
+import 'package:memo/features/timeline/data/response/time_line_response.dart';
+import 'package:memo/features/timeline/presentation/widgets/common/timeline_shared_widgets.dart';
 
-class TimelineActivityTab extends StatelessWidget {
-  const TimelineActivityTab({super.key});
+class TimelineActivityTab extends StatefulWidget {
+  const TimelineActivityTab({super.key, required this.connectionId});
+
+  final int connectionId;
+
+  @override
+  State<TimelineActivityTab> createState() => _TimelineActivityTabState();
+}
+
+class _TimelineActivityTabState extends State<TimelineActivityTab> {
+  String? _filter;
+
+  static const _availableTypes = <String>[
+    'call',
+    'message',
+    'meeting',
+    'video',
+    'memory',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, List<TimelineEntry>> grouped = {};
-    for (final entry in dummyTimeline) {
-      final key = '${_mon(entry.date.month)} ${entry.date.year}';
-      grouped.putIfAbsent(key, () => []).add(entry);
-    }
+    return BlocBuilder<GetTimelineCubit, BaseApiState<List<TimeLineResponse>>>(
+      builder: (context, state) {
+        return CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: _TimelineFilterRow(
+                  availableTypes: _availableTypes,
+                  selectedType: _filter,
+                  onSelected: (type) =>
+                      setState(() => _filter = type.isEmpty ? null : type),
+                ),
+              ),
+            ),
+            _buildStateSliver(state),
+          ],
+        );
+      },
+    );
+  }
 
-    return CustomScrollView(
-      slivers: [
-        const SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: _TimelineFilterRow(),
-          ),
-        ),
-        SliverPadding(
+  Widget _buildStateSliver(BaseApiState<List<TimeLineResponse>> state) {
+    return state.when(
+      initial: () => const TimelineActivityLoadingSliver(),
+      loading: () => const TimelineActivityLoadingSliver(),
+      error: (message) => TimelineActivityStatusSliver(
+        icon: Icons.error_outline_rounded,
+        title: 'Unable to load activity',
+        message: message,
+      ),
+      noInternet: () => const TimelineActivityStatusSliver(
+        icon: Icons.wifi_off_rounded,
+        title: 'No internet connection',
+        message: 'Check your connection and try again.',
+      ),
+      validationError: (validationError) => TimelineActivityStatusSliver(
+        icon: Icons.warning_amber_rounded,
+        title: validationError.message,
+        message: validationError.errors.isNotEmpty
+            ? validationError.errors.values.first.toString()
+            : 'Please review the request and try again.',
+      ),
+      success: (timeline) {
+        final items = timeline.toList()
+          ..sort((left, right) => right.createdAt.compareTo(left.createdAt));
+
+        final filtered = _filter == null
+            ? items
+            : items
+                  .where((entry) => _activityType(entry.status) == _filter)
+                  .toList();
+
+        if (items.isEmpty) {
+          return const TimelineActivityStatusSliver(
+            icon: Icons.timeline_rounded,
+            title: 'No activity yet',
+            message: 'Timeline events for this connection will appear here.',
+          );
+        }
+
+        if (filtered.isEmpty) {
+          return const TimelineActivityStatusSliver(
+            icon: Icons.filter_alt_off_rounded,
+            title: 'No activity in this category',
+            message: 'Try a different filter to view more entries.',
+          );
+        }
+
+        final Map<String, List<TimeLineResponse>> grouped = {};
+        for (final entry in filtered) {
+          final key = '${_mon(entry.createdAt.month)} ${entry.createdAt.year}';
+          grouped.putIfAbsent(key, () => []).add(entry);
+        }
+
+        final groupedEntries = grouped.entries.toList();
+        return SliverPadding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate((context, sectionIndex) {
-              final entry = grouped.entries.toList()[sectionIndex];
+              final entry = groupedEntries[sectionIndex];
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -45,10 +127,10 @@ class TimelineActivityTab extends StatelessWidget {
                   ...entry.value.map((event) => _TimelineItem(event: event)),
                 ],
               );
-            }, childCount: grouped.length),
+            }, childCount: groupedEntries.length),
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -67,59 +149,104 @@ class TimelineActivityTab extends StatelessWidget {
     'Nov',
     'Dec',
   ][month];
+
+  String? _activityType(String status) {
+    final normalized = status.trim().toLowerCase();
+    if (normalized.contains('video')) {
+      return 'video';
+    }
+    if (normalized.contains('meet')) {
+      return 'meeting';
+    }
+    if (normalized.contains('message') || normalized.contains('chat')) {
+      return 'message';
+    }
+    if (normalized.contains('memory')) {
+      return 'memory';
+    }
+    if (normalized.contains('call')) {
+      return 'call';
+    }
+    return 'call';
+  }
 }
 
 class _TimelineFilterRow extends StatelessWidget {
-  const _TimelineFilterRow();
+  const _TimelineFilterRow({
+    required this.availableTypes,
+    required this.selectedType,
+    required this.onSelected,
+  });
+
+  final List<String> availableTypes;
+  final String? selectedType;
+  final ValueChanged<String> onSelected;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: const [
-          TimelineFilterChip(label: 'All', selected: true, onTap: _noop),
-          SizedBox(width: 8),
-          TimelineFilterChip(label: 'Calls', selected: false, onTap: _noop),
-          SizedBox(width: 8),
-          TimelineFilterChip(label: 'Messages', selected: false, onTap: _noop),
-          SizedBox(width: 8),
-          TimelineFilterChip(label: 'Meetings', selected: false, onTap: _noop),
-          SizedBox(width: 8),
-          TimelineFilterChip(label: 'Memories', selected: false, onTap: _noop),
+        children: [
+          TimelineFilterChip(
+            label: 'All',
+            selected: selectedType == null,
+            onTap: () => onSelected(''),
+          ),
+          ...availableTypes.map(
+            (type) => Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: TimelineFilterChip(
+                label: _labelForType(type),
+                selected: selectedType == type,
+                onTap: () => onSelected(type),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
+
+  String _labelForType(String type) => switch (type) {
+    'call' => 'Calls',
+    'message' => 'Messages',
+    'meeting' => 'Meetings',
+    'video' => 'Video',
+    'memory' => 'Memories',
+    _ => type,
+  };
 }
 
 class _TimelineItem extends StatelessWidget {
   const _TimelineItem({required this.event});
 
-  final TimelineEntry event;
+  final TimeLineResponse event;
 
-  Color get _dotColor => switch (event.type) {
-    TimelineEventType.call => AppColors.timelineCall,
-    TimelineEventType.message => AppColors.timelineMsg,
-    TimelineEventType.meeting => AppColors.timelineMeet,
-    TimelineEventType.video => AppColors.timelineVid,
-    TimelineEventType.memory => AppColors.timelineMem,
+  _TimelineActivityType get _type => _activityTypeFromStatus(event.status);
+
+  Color get _dotColor => switch (_type) {
+    _TimelineActivityType.call => AppColors.timelineCall,
+    _TimelineActivityType.message => AppColors.timelineMsg,
+    _TimelineActivityType.meeting => AppColors.timelineMeet,
+    _TimelineActivityType.video => AppColors.timelineVid,
+    _TimelineActivityType.memory => AppColors.timelineMem,
   };
 
-  String get _typeLabel => switch (event.type) {
-    TimelineEventType.call => 'Phone call',
-    TimelineEventType.message => 'Message',
-    TimelineEventType.meeting => 'In-person',
-    TimelineEventType.video => 'Video call',
-    TimelineEventType.memory => 'Memory',
+  String get _typeLabel => switch (_type) {
+    _TimelineActivityType.call => 'Call',
+    _TimelineActivityType.message => 'Message',
+    _TimelineActivityType.meeting => 'Meeting',
+    _TimelineActivityType.video => 'Video call',
+    _TimelineActivityType.memory => 'Memory',
   };
 
-  IconData get _typeIcon => switch (event.type) {
-    TimelineEventType.call => Icons.call_outlined,
-    TimelineEventType.message => Icons.chat_bubble_outline_rounded,
-    TimelineEventType.meeting => Icons.location_on_outlined,
-    TimelineEventType.video => Icons.videocam_outlined,
-    TimelineEventType.memory => Icons.auto_awesome_rounded,
+  IconData get _typeIcon => switch (_type) {
+    _TimelineActivityType.call => Icons.call_outlined,
+    _TimelineActivityType.message => Icons.chat_bubble_outline_rounded,
+    _TimelineActivityType.meeting => Icons.location_on_outlined,
+    _TimelineActivityType.video => Icons.videocam_outlined,
+    _TimelineActivityType.memory => Icons.auto_awesome_rounded,
   };
 
   @override
@@ -195,7 +322,7 @@ class _TimelineItem extends StatelessWidget {
                         ),
                         const Spacer(),
                         Text(
-                          _fmtShort(event.date),
+                          _fmtShort(event.createdAt),
                           style: TextStyle(
                             fontFamily: 'Rubik',
                             fontSize: 10.5,
@@ -211,7 +338,7 @@ class _TimelineItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          event.title,
+                          event.summary ?? '',
                           style: const TextStyle(
                             fontFamily: 'Rubik',
                             fontSize: 13.5,
@@ -221,14 +348,16 @@ class _TimelineItem extends StatelessWidget {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          event.subtitle,
+                          event.agoraChannelName.isEmpty
+                              ? event.status
+                              : event.agoraChannelName,
                           style: const TextStyle(
                             fontFamily: 'Rubik',
                             fontSize: 12.5,
                             color: AppColors.softTextGrey,
                           ),
                         ),
-                        if (event.extra != null) ...[
+                        if (event.status.trim().isNotEmpty) ...[
                           const SizedBox(height: 7),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -240,38 +369,12 @@ class _TimelineItem extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              event.extra!,
+                              event.status,
                               style: const TextStyle(
                                 fontFamily: 'Rubik',
                                 fontSize: 11.5,
                                 color: AppColors.softTextGrey,
                               ),
-                            ),
-                          ),
-                        ],
-                        if (event.type == TimelineEventType.video) ...[
-                          const SizedBox(height: 8),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.description_outlined,
-                                  size: 13,
-                                  color: AppColors.timelineVid,
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  'View transcript & extract memories',
-                                  style: TextStyle(
-                                    fontFamily: 'Rubik',
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.timelineVid,
-                                  ),
-                                ),
-                              ],
                             ),
                           ),
                         ],
@@ -306,4 +409,95 @@ class _TimelineItem extends StatelessWidget {
   ][month];
 }
 
-void _noop() {}
+class TimelineActivityLoadingSliver extends StatelessWidget {
+  const TimelineActivityLoadingSliver({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+class TimelineActivityStatusSliver extends StatelessWidget {
+  const TimelineActivityStatusSliver({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.message,
+  });
+
+  final IconData icon;
+  final String title;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.dividerColor),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: AppColors.primary, size: 34),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: 'Libre',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.softPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: 'Rubik',
+                  fontSize: 13,
+                  height: 1.5,
+                  color: AppColors.softTextGrey,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+enum _TimelineActivityType { call, message, meeting, video, memory }
+
+_TimelineActivityType _activityTypeFromStatus(String status) {
+  final normalized = status.trim().toLowerCase();
+  if (normalized.contains('video')) {
+    return _TimelineActivityType.video;
+  }
+  if (normalized.contains('meet')) {
+    return _TimelineActivityType.meeting;
+  }
+  if (normalized.contains('message') || normalized.contains('chat')) {
+    return _TimelineActivityType.message;
+  }
+  if (normalized.contains('memory')) {
+    return _TimelineActivityType.memory;
+  }
+  if (normalized.contains('call')) {
+    return _TimelineActivityType.call;
+  }
+  return _TimelineActivityType.call;
+}

@@ -71,7 +71,7 @@ class _TimelineProfileHeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.white,
-      padding: const EdgeInsets.fromLTRB(20, 26, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 46, 20, 0),
       child: Column(
         children: [
           _TimelineProfileIdentityRow(user: user),

@@ -4,10 +4,11 @@ import 'package:memo/core/di/injector.dart';
 import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 import 'package:memo/features/timeline/cubits/get_memories_cubit.dart';
-import 'package:memo/features/timeline/presentation/widgets/timeline_activity_tab.dart';
-import 'package:memo/features/timeline/presentation/widgets/timeline_face_data_tab.dart';
-import 'package:memo/features/timeline/presentation/widgets/timeline_memories_tab.dart';
-import 'package:memo/features/timeline/presentation/widgets/timeline_profile_header.dart';
+import 'package:memo/features/timeline/cubits/get_timeline_cubit.dart';
+import 'package:memo/features/timeline/presentation/widgets/timeline_activity/timeline_activity_tab.dart';
+import 'package:memo/features/timeline/presentation/widgets/face/timeline_face_data_tab.dart';
+import 'package:memo/features/timeline/presentation/widgets/memory/timeline_memories_tab.dart';
+import 'package:memo/features/timeline/presentation/widgets/header/timeline_profile_header.dart';
 
 class TimeLineScreen extends StatefulWidget {
   const TimeLineScreen({super.key, required this.otherUserProfileArgs});
@@ -36,10 +37,19 @@ class _TimeLineScreenState extends State<TimeLineScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          getIt<GetMemoriesCubit>()
-            ..getMemories(widget.otherUserProfileArgs.connectionId),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              getIt<GetMemoriesCubit>()
+                ..getMemories(widget.otherUserProfileArgs.connectionId),
+        ),
+        BlocProvider(
+          create: (_) =>
+              getIt<GetTimelineCubit>()
+                ..getTimeline(widget.otherUserProfileArgs.connectionId),
+        ),
+      ],
       child: Scaffold(
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
@@ -55,7 +65,9 @@ class _TimeLineScreenState extends State<TimeLineScreen>
               TimelineMemoriesTab(
                 connectionId: widget.otherUserProfileArgs.connectionId,
               ),
-              TimelineActivityTab(),
+              TimelineActivityTab(
+                connectionId: widget.otherUserProfileArgs.connectionId,
+              ),
               AiChatScreen(
                 connectionId: widget.otherUserProfileArgs.connectionId,
               ),

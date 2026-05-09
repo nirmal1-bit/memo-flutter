@@ -42,7 +42,9 @@ class GetMemoriesCubit extends Cubit<BaseApiState<List<MemoryResponse>>> {
     }
 
     final currentMemories = memories;
-    final memoryIndex = currentMemories.indexWhere((item) => item.id == memory.id);
+    final memoryIndex = currentMemories.indexWhere(
+      (item) => item.id == memory.id,
+    );
     final updatedMemories = List<MemoryResponse>.from(currentMemories);
 
     if (memoryIndex == -1) {

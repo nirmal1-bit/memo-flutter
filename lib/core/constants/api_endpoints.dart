@@ -43,5 +43,8 @@ class ApiEndpoints {
   static String memories(int id) => "/memories/$id";
   static String createMemory = "/memories";
 
+  // timeline
+  static String timeline(int id) => "/timeline/$id";
+
   // video call transcript
 }

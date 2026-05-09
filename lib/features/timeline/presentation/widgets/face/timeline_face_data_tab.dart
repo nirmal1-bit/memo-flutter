@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/features/timeline/presentation/widgets/timeline_shared_widgets.dart';
+import 'package:memo/features/timeline/presentation/widgets/common/timeline_shared_widgets.dart';
 
 class TimelineFaceDataTab extends StatelessWidget {
   const TimelineFaceDataTab({super.key});

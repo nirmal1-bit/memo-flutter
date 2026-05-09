@@ -59,6 +59,8 @@ import 'package:memo/features/profile/repository/profile_repository.dart'
 import 'package:memo/features/timeline/cubits/create_memories_cubit.dart'
     as _i910;
 import 'package:memo/features/timeline/cubits/get_memories_cubit.dart' as _i426;
+import 'package:memo/features/timeline/cubits/get_timeline_cubit.dart'
+    as _i1049;
 import 'package:memo/features/timeline/repository/timeline_repository.dart'
     as _i1029;
 import 'package:memo/features/video_call/cubit/end_video_call.dart' as _i1019;
@@ -133,6 +135,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i426.GetMemoriesCubit>(
       () => _i426.GetMemoriesCubit(gh<_i1029.TimelineRepository>()),
+    );
+    gh.factory<_i1049.GetTimelineCubit>(
+      () => _i1049.GetTimelineCubit(gh<_i1029.TimelineRepository>()),
     );
     gh.factory<_i1051.SetProfileCubit>(
       () => _i1051.SetProfileCubit(gh<_i533.ProfileRepository>()),
