@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
@@ -139,46 +140,56 @@ class _NetworkScreenState extends State<NetworkScreen> {
               ),
             ],
             child: Scaffold(
+              appBar: AppBar(
+                elevation: 0,
+                toolbarHeight: 0,
+                backgroundColor: AppColors.scaffoldBackground,
+              ),
               resizeToAvoidBottomInset: true,
               body: SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BlocBuilder<
-                        GetUserProfileCubit,
-                        BaseApiState<UserProfileResponse>
-                      >(
-                        builder: (context, state) {
-                          return state.when(
-                            initial: () => const SizedBox.shrink(),
-                            loading: () => ProductBannerShimmer(),
-                            success: (user) => NetworkAppBar(
-                              user: user,
-                              controller: _searchController,
-                              onSearchPressed: () => _receivedConnectionsCubit
-                                  .filterReceivedConnectionsByName(
-                                    _searchController.text,
-                                  ),
-                              onTap: () => context.push(AppRoutes.userProfile),
-                              onActionTap: () =>
-                                  context.push(AppRoutes.addConnection),
-                            ),
-                            error: (_) => const SizedBox.shrink(),
-                            noInternet: () => const SizedBox.shrink(),
-                            validationError: (_) => const SizedBox.shrink(),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      NetworkTabStrip(
-                        selected: _selectedTab,
-                        onChanged: (tab) => setState(() => _selectedTab = tab),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildTabContent(),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 10),
+                        BlocBuilder<
+                          GetUserProfileCubit,
+                          BaseApiState<UserProfileResponse>
+                        >(
+                          builder: (context, state) {
+                            return state.when(
+                              initial: () => const SizedBox.shrink(),
+                              loading: () => ProductBannerShimmer(),
+                              success: (user) => NetworkAppBar(
+                                user: user,
+                                controller: _searchController,
+                                onSearchPressed: () => _receivedConnectionsCubit
+                                    .filterReceivedConnectionsByName(
+                                      _searchController.text,
+                                    ),
+                                onTap: () =>
+                                    context.push(AppRoutes.userProfile),
+                                onActionTap: () =>
+                                    context.push(AppRoutes.addConnection),
+                              ),
+                              error: (_) => const SizedBox.shrink(),
+                              noInternet: () => const SizedBox.shrink(),
+                              validationError: (_) => const SizedBox.shrink(),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        NetworkTabStrip(
+                          selected: _selectedTab,
+                          onChanged: (tab) =>
+                              setState(() => _selectedTab = tab),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildTabContent(),
+                      ],
+                    ),
                   ),
                 ),
               ),

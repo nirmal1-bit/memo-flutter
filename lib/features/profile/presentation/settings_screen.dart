@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/routes/app_routes.dart';
+import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/profile/presentation/widgets/settings_group.dart';
 import 'package:memo/features/profile/presentation/widgets/settings_header_card.dart';
@@ -159,7 +160,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push(AppRoutes.login);
+                    SessionService().removeToken();
+                  },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.statusRed,
                     side: const BorderSide(color: AppColors.statusRed),

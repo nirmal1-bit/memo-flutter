@@ -18,6 +18,7 @@ import 'package:memo/core/di/register_modules.dart' as _i850;
 import 'package:memo/core/network/auth_interceptor.dart' as _i174;
 import 'package:memo/core/network/network_info.dart' as _i509;
 import 'package:memo/core/services/cloudinary_service.dart' as _i1009;
+import 'package:memo/core/services/device_info_helper.dart' as _i812;
 import 'package:memo/core/services/fcm_service.dart' as _i714;
 import 'package:memo/core/session/session_service.dart' as _i73;
 import 'package:memo/core/session/shared_prefrences_init.dart' as _i876;
@@ -81,7 +82,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModules = _$RegisterModules();
-    gh.factory<_i714.FCMService>(() => _i714.FCMService());
+    gh.factory<_i812.DeviceInfoHelper>(() => _i812.DeviceInfoHelper());
     gh.singleton<_i876.SharedPreferencesInit>(
       () => registerModules.sharedPreferences,
     );
@@ -94,6 +95,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i174.AuthInterceptor>(
       () => _i174.AuthInterceptor(gh<_i73.SessionService>()),
+    );
+    gh.factory<_i714.FCMService>(
+      () => _i714.FCMService(gh<_i812.DeviceInfoHelper>()),
     );
     gh.lazySingleton<_i509.NetworkInfo>(
       () => _i509.NetworkInfoImpl(gh<_i973.InternetConnectionChecker>()),

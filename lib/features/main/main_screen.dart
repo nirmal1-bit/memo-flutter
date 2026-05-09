@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
-import 'package:memo/features/ai_chat/presentation/widgets/ai_chat_app_bar.dart';
 import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
 import 'package:memo/features/network/presentation/screens/network_screen.dart';
 import 'package:memo/features/profile/presentation/settings_screen.dart';
@@ -11,163 +10,94 @@ class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen>
-    with SingleTickerProviderStateMixin {
-  late int currentPage;
-  late TabController tabController;
+class _MainScreenState extends State<MainScreen> {
+  int _currentIndex = 0;
 
-  final List<Color> colors = [
-    AppColors.statusGreen,
-    AppColors.statusGreen,
-    AppColors.statusGreen,
-    AppColors.statusGreen,
-    AppColors.statusGreen,
+  final List<Widget> _screens = [
+    NetworkScreen(),
+    AiChatScreen(connectionId: 1),
+    AddConnectionScreen(),
+    SettingsScreen(),
   ];
 
-  @override
-  void initState() {
-    currentPage = 0;
-    tabController = TabController(length: 4, vsync: this);
-    tabController.animation?.addListener(() {
-      final value = tabController.animation!.value.round();
-      if (value != currentPage && mounted) {
-        changePage(value);
-      }
-    });
-    super.initState();
-  }
-
-  void changePage(int newPage) {
-    setState(() {
-      currentPage = newPage;
-    });
-  }
-
-  @override
-  void dispose() {
-    tabController.dispose();
-    super.dispose();
-  }
+  // Each tab gets its own accent color from your palette
+  final List<Color> _tabColors = [
+    AppColors.primary, // Teal  — Home
+    AppColors.secondary, // Purple — Chat
+    AppColors.buttonPrimary, // Coral  — Search
+    AppColors.statusOrange, // Orange — Settings
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.scaffoldBackground,
-        toolbarHeight: 0,
-      ),
-      body: BottomBar(
-        clip: Clip.hardEdge,
-        fit: StackFit.expand,
-        icon: (width, height) => Center(
-          child: IconButton(
-            padding: EdgeInsets.zero,
-            onPressed: null,
-            icon: Icon(
-              Icons.arrow_upward_rounded,
-              color: AppColors.white,
-              size: width,
+      backgroundColor: AppColors.scaffoldBackground,
+      extendBody: true,
+      body: IndexedStack(index: _currentIndex, children: _screens),
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withOpacity(0.10),
+              blurRadius: 24,
+              offset: const Offset(0, 6),
             ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: SalomonBottomBar(
+            currentIndex: _currentIndex,
+            onTap: (index) => setState(() => _currentIndex = index),
+            selectedItemColor: _tabColors[_currentIndex],
+            unselectedItemColor: AppColors.textGrey,
+            selectedColorOpacity: 0.10,
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.easeOutCubic,
+            itemShape: const StadiumBorder(),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            items: [
+              SalomonBottomBarItem(
+                icon: const Icon(Icons.home_rounded, size: 24),
+                title: const Text(
+                  'Home',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+                selectedColor: _tabColors[0],
+              ),
+              SalomonBottomBarItem(
+                icon: const Icon(Icons.chat_bubble_rounded, size: 24),
+                title: const Text(
+                  'Chat',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+                selectedColor: _tabColors[1],
+              ),
+              SalomonBottomBarItem(
+                icon: const Icon(Icons.search_rounded, size: 24),
+                title: const Text(
+                  'Search',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+                selectedColor: _tabColors[2],
+              ),
+              SalomonBottomBarItem(
+                icon: const Icon(Icons.settings_rounded, size: 24),
+                title: const Text(
+                  'Settings',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+                selectedColor: _tabColors[3],
+              ),
+            ],
           ),
         ),
-        borderRadius: BorderRadius.circular(500),
-        duration: Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-        barColor: AppColors.textBlue,
-        width: 360,
-        start: 2,
-        end: 0,
-        scrollDeltaThreshold: 2,
-        offset: 2,
-        hideOnScroll: true,
-        barAlignment: Alignment.bottomCenter,
-        iconHeight: 30,
-        iconWidth: 30,
-        body: (context, controller) => IndexedStack(
-          index: currentPage,
-          children: [
-            NetworkScreen(),
-            AiChatScreen(connectionId: 1),
-            AddConnectionScreen(),
-            SettingsScreen(),
-          ],
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          clipBehavior: Clip.none,
-          children: [
-            TabBar(
-              indicatorPadding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
-              controller: tabController,
-              indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(
-                  color: currentPage <= 4
-                      ? colors[currentPage]
-                      : AppColors.white,
-                  width: 4,
-                ),
-                insets: EdgeInsets.fromLTRB(16, 0, 16, 8),
-              ),
-              tabs: [
-                _BottomTabIcon(
-                  icon: Icons.home_rounded,
-                  active: currentPage == 0,
-                  activeColor: colors[0],
-                  inactiveColor: AppColors.white,
-                ),
-
-                _BottomTabIcon(
-                  icon: Icons.chat_sharp,
-                  active: currentPage == 1,
-                  activeColor: colors[0],
-                  inactiveColor: AppColors.white,
-                ),
-
-                _BottomTabIcon(
-                  icon: Icons.search_rounded,
-                  active: currentPage == 2,
-                  activeColor: colors[0],
-                  inactiveColor: AppColors.white,
-                ),
-
-                _BottomTabIcon(
-                  icon: Icons.settings_rounded,
-                  active: currentPage == 3,
-                  activeColor: colors[0],
-                  inactiveColor: AppColors.white,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomTabIcon extends StatelessWidget {
-  const _BottomTabIcon({
-    required this.icon,
-    required this.active,
-    required this.activeColor,
-    required this.inactiveColor,
-  });
-
-  final IconData icon;
-  final bool active;
-  final Color activeColor;
-  final Color inactiveColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 55,
-      width: 40,
-      child: Center(
-        child: Icon(icon, color: active ? activeColor : inactiveColor),
       ),
     );
   }

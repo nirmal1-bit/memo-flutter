@@ -2,14 +2,16 @@ import 'dart:async';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:memo/core/di/injector.dart';
-import 'package:memo/core/services/device_id_service.dart';
+import 'package:memo/core/services/device_info_helper.dart';
 import 'package:memo/features/auth/data/models/request/fcm_request.dart';
 import 'package:memo/features/auth/domain/repository/auth_repository.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
 class FCMService {
-  FCMService();
+  FCMService(this._deviceInfoHelper);
+
+  final DeviceInfoHelper _deviceInfoHelper;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   StreamSubscription? _tokenSubscription;
@@ -51,7 +53,7 @@ class FCMService {
       final authRepository = getIt<AuthRepository>();
       final response = await authRepository.sendToken(
         DeviceTokenRequest(
-          deviceId: await DeviceIdService.getDeviceId(),
+          deviceId: await _deviceInfoHelper.getDeviceId(),
           fcmToken: token,
           platform: platform,
         ),

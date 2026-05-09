@@ -183,29 +183,6 @@ class _TimelineProfileNameBlock extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: [
-            _InfoChip(
-              label: user.activated ? 'Active' : 'Pending',
-              bg: const Color(0xFFE8F8F0),
-              fg: const Color(0xFF1A7A4A),
-            ),
-            _InfoChip(
-              label: user.isPremium ? 'Premium' : 'Standard',
-              bg: const Color(0xFFEFF7F8),
-              fg: const Color(0xFF055F6B),
-            ),
-            _InfoChip(
-              label: profile?.companyName.isNotEmpty ?? false
-                  ? profile!.companyName
-                  : '${user.trialLeft} days left',
-              bg: const Color(0xFFFFF0E5),
-              fg: const Color(0xFFB85C00),
-            ),
-          ],
-        ),
       ],
     );
   }
