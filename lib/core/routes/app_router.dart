@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memo/features/ai_chat/presentation/ai_voice/ai_voice_screen.dart';
 import 'package:memo/features/auth/presentation/models/auth_flow_args.dart';
 import 'package:memo/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:memo/features/auth/presentation/screens/login_screen.dart';
@@ -98,6 +99,7 @@ class AppRouter {
       AppRoutes.main.route((context, state) => const MainScreen()),
 
       AppRoutes.qrScanner.route((context, state) => const QrScannerPage()),
+      AppRoutes.voice.route((context, state) => const AiVoiceScreen()),
       AppRoutes.onboarding.route(
         (context, state) =>
             const Scaffold(body: Center(child: Text('Onboarding screen'))),

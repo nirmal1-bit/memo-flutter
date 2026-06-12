@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/di/injector.dart';
-import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
+import 'package:memo/features/ai_chat/presentation/aichat/ai_chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 import 'package:memo/features/timeline/cubits/get_memories_cubit.dart';
 import 'package:memo/features/timeline/cubits/get_timeline_cubit.dart';

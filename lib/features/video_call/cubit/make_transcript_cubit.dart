@@ -9,11 +9,12 @@ class MakeTranscriptCubit extends Cubit<BaseApiState<String>> {
   MakeTranscriptCubit({required this.videoCallRemoteSource})
     : super(const BaseApiState.initial());
   final VideoCallRepository videoCallRemoteSource;
-  void makeTranscript(int connectionId, String filepath) async {
+  void makeTranscript(int connectionId, String filepath, int sessionId) async {
     emit(const BaseApiState.loading());
     final response = await videoCallRemoteSource.makeTranscript(
       connectionId,
       filepath,
+      sessionId,
     );
     emit(
       response.fold(

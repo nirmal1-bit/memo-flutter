@@ -149,46 +149,60 @@ class _NetworkScreenState extends State<NetworkScreen> {
               body: SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 10),
-                        BlocBuilder<
-                          GetUserProfileCubit,
-                          BaseApiState<UserProfileResponse>
-                        >(
-                          builder: (context, state) {
-                            return state.when(
-                              initial: () => const SizedBox.shrink(),
-                              loading: () => ProductBannerShimmer(),
-                              success: (user) => NetworkAppBar(
-                                user: user,
-                                controller: _searchController,
-                                onSearchPressed: () => _receivedConnectionsCubit
-                                    .filterReceivedConnectionsByName(
-                                      _searchController.text,
-                                    ),
-                                onTap: () =>
-                                    context.push(AppRoutes.userProfile),
-                                onActionTap: () =>
-                                    context.push(AppRoutes.addConnection),
-                              ),
-                              error: (_) => const SizedBox.shrink(),
-                              noInternet: () => const SizedBox.shrink(),
-                              validationError: (_) => const SizedBox.shrink(),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        NetworkTabStrip(
-                          selected: _selectedTab,
-                          onChanged: (tab) =>
-                              setState(() => _selectedTab = tab),
-                        ),
-                        const SizedBox(height: 16),
-                        _buildTabContent(),
-                      ],
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<ConnectionsCubit>().listConnections();
+                      context
+                          .read<SentConnectionsCubit>()
+                          .listSentConnections();
+                      context
+                          .read<ReceivedConnectionsCubit>()
+                          .listReceivedConnections();
+                      context.read<GetUserProfileCubit>().getUserProfile();
+                    },
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10),
+                          BlocBuilder<
+                            GetUserProfileCubit,
+                            BaseApiState<UserProfileResponse>
+                          >(
+                            builder: (context, state) {
+                              return state.when(
+                                initial: () => const SizedBox.shrink(),
+                                loading: () => ProductBannerShimmer(),
+                                success: (user) => NetworkAppBar(
+                                  user: user,
+                                  controller: _searchController,
+                                  onSearchPressed: () =>
+                                      _receivedConnectionsCubit
+                                          .filterReceivedConnectionsByName(
+                                            _searchController.text,
+                                          ),
+                                  onTap: () =>
+                                      context.push(AppRoutes.userProfile),
+                                  onActionTap: () =>
+                                      context.push(AppRoutes.addConnection),
+                                ),
+                                error: (_) => const SizedBox.shrink(),
+                                noInternet: () => const SizedBox.shrink(),
+                                validationError: (_) => const SizedBox.shrink(),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          NetworkTabStrip(
+                            selected: _selectedTab,
+                            onChanged: (tab) =>
+                                setState(() => _selectedTab = tab),
+                          ),
+                          const SizedBox(height: 30),
+                          _buildTabContent(),
+                        ],
+                      ),
                     ),
                   ),
                 ),

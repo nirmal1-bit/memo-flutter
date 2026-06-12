@@ -367,6 +367,7 @@ class _State extends State<VideoCallPage> {
                             getIt<MakeTranscriptCubit>().makeTranscript(
                               widget.params.connectionId,
                               path,
+                              widget.params.requestModel.videoCallSessionId,
                             );
                           }
 

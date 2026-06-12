@@ -39,7 +39,8 @@ class AiChatCubit extends Cubit<ChatState> {
     try {
       userId = int.tryParse(await sessionService.userId);
       final token = await sessionService.token;
-      final uri = Uri.parse('ws://192.168.1.76:4000/v1/aiChat/$connectionId');
+      print("Connecting to chat with connection id: $connectionId");
+      final uri = Uri.parse('ws://10.30.198.138:4000/v1/aiChat/$connectionId');
       channel = IOWebSocketChannel.connect(
         uri,
         headers: {'Authorization': 'Bearer $token'},
