@@ -26,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
   // Each tab gets its own accent color from your palette
   final List<Color> _tabColors = [
     AppColors.primary, // Teal  — Home
-    AppColors.secondary, // Purple — Chat
+    AppColors.statusRed, // Purple — Chat
     AppColors.buttonPrimary, // Coral  — Search
     AppColors.statusOrange, // Orange — Settings
   ];
@@ -72,9 +72,9 @@ class _MainScreenState extends State<MainScreen> {
                 selectedColor: _tabColors[0],
               ),
               SalomonBottomBarItem(
-                icon: const Icon(Icons.chat_bubble_rounded, size: 24),
+                icon: const Icon(Icons.favorite, size: 24),
                 title: const Text(
-                  'Chat',
+                  'Matches',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                 ),
                 selectedColor: _tabColors[1],

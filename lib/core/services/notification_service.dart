@@ -34,7 +34,7 @@ const AndroidNotificationChannel _callNotificationChannel =
 
 abstract class NotificationType {
   static const String call = 'call';
-  static const String chat = 'chat';
+  static const String chat = 'message';
 }
 
 class FirebaseNotificationService {
