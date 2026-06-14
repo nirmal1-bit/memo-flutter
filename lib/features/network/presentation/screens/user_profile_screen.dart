@@ -9,6 +9,7 @@ import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
+import 'package:memo/features/profile/data/request/profile_request_model.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class UserProfileScreen extends StatelessWidget {
@@ -184,7 +185,18 @@ class _ProfileBody extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () => context.push(AppRoutes.setProfile),
+              onPressed: () => context.push(
+                AppRoutes.setProfile,
+                extra: ProfileRequestModel(
+                  headline: profile?.headline ?? '',
+                  bio: profile?.bio ?? '',
+                  profileUrl: profile?.profileUrl ?? '',
+                  avatarUrl: profile?.avatarUrl ?? '',
+                  website: profile?.website ?? '',
+                  location: profile?.location ?? '',
+                  companyName: profile?.companyName ?? '',
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,

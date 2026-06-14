@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:memo/features/matches/presentation/match_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/features/ai_chat/presentation/aichat/ai_chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
 import 'package:memo/features/network/presentation/screens/network_screen.dart';
 import 'package:memo/features/profile/presentation/settings_screen.dart';
@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     NetworkScreen(),
-    AiChatScreen(connectionId: 1),
+    MatchScreen(),
     AddConnectionScreen(),
     SettingsScreen(),
   ];
