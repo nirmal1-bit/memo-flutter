@@ -9,9 +9,9 @@ import 'package:memo/features/network/presentation/cubits/connections_cubit.dart
 import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart';
-import 'package:memo/features/network/presentation/widgets/avatar_badge.dart';
-import 'package:memo/features/network/presentation/widgets/network_connection_card.dart';
-import 'package:memo/features/network/presentation/widgets/network_widget_types.dart';
+import 'package:memo/features/network/presentation/widgets/network/avatar_badge.dart';
+import 'package:memo/features/network/presentation/widgets/network/network_connection_card.dart';
+import 'package:memo/features/network/presentation/widgets/network/network_widget_types.dart';
 
 class NetworkStateView extends StatelessWidget {
   const NetworkStateView({

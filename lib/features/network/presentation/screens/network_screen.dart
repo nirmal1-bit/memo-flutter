@@ -15,8 +15,8 @@ import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit
 import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart';
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
-import 'package:memo/features/network/presentation/widgets/app_bar.dart';
-import 'package:memo/features/network/presentation/widgets/network_screen_widgets.dart';
+import 'package:memo/features/network/presentation/widgets/network/app_bar.dart';
+import 'package:memo/features/network/presentation/widgets/network/network_screen_widgets.dart';
 
 class NetworkScreen extends StatefulWidget {
   const NetworkScreen({super.key});
@@ -227,6 +227,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
             onConnectionTap: (connection) => context.push(
               AppRoutes.timeLine,
               extra: OtherUserProfileArguments(
+                profile: connection.otherUserDetails.profile!,
                 details: connection.otherUserDetails,
                 connectionId: connection.id,
               ),
@@ -254,6 +255,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
             onSentTap: (connection) => context.push(
               AppRoutes.otherUserProfile,
               extra: OtherUserProfileArguments(
+                profile: connection.otherUserDetails.profile!,
                 details: connection.otherUserDetails,
                 isFromSent: true,
               ),
@@ -275,6 +277,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
             onReceivedTap: (connection) => context.push(
               AppRoutes.otherUserProfile,
               extra: OtherUserProfileArguments(
+                profile: connection.otherUserDetails.profile!,
                 details: connection.otherUserDetails,
                 isFromReceived: true,
               ),

@@ -3,7 +3,7 @@ import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/presentation/widgets/network_search_bar.dart';
+import 'package:memo/features/network/presentation/widgets/network/network_search_bar.dart';
 
 class NetworkAppBar extends StatefulWidget {
   const NetworkAppBar({

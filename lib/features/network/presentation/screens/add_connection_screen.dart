@@ -7,11 +7,13 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/core/utils/app_utils.dart';
+import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/data/models/response/user_search_response.dart';
 import 'package:memo/features/network/presentation/cubits/connection_action_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/search_users_cubit.dart';
-import 'package:memo/features/network/presentation/widgets/avatar_badge.dart';
-import 'package:memo/features/network/presentation/widgets/network_search_bar.dart';
+import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
+import 'package:memo/features/network/presentation/widgets/network/avatar_badge.dart';
+import 'package:memo/features/network/presentation/widgets/network/network_search_bar.dart';
 
 class AddConnectionScreen extends StatefulWidget {
   const AddConnectionScreen({super.key});
@@ -166,20 +168,109 @@ class _AddConnectionScreenState extends State<AddConnectionScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 12),
-                                      ...results.map(
-                                        (result) => Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 12,
-                                          ),
-                                          child: _SearchResultCard(
-                                            result: result,
-                                            onSendRequest: () => context
-                                                .read<ConnectionActionCubit>()
-                                                .sendConnectionRequest(
-                                                  result.user.id,
-                                                ),
-                                          ),
-                                        ),
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: results.length,
+                                        itemBuilder: (context, index) {
+                                          final result = results[index];
+
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 12,
+                                            ),
+                                            child: InkWell(
+                                              onTap: () {
+                                                context.push(
+                                                  AppRoutes.otherUserProfile,
+                                                  extra: OtherUserProfileArguments(
+                                                    profile: Profile(
+                                                      id:
+                                                          result.profile?.id ??
+                                                          0,
+                                                      userId:
+                                                          result
+                                                              .profile
+                                                              ?.userId ??
+                                                          0,
+                                                      headline:
+                                                          result
+                                                              .profile
+                                                              ?.headline ??
+                                                          '',
+                                                      bio:
+                                                          result.profile?.bio ??
+                                                          '',
+                                                      profileUrl:
+                                                          result
+                                                              .profile
+                                                              ?.profileUrl ??
+                                                          '',
+                                                      avatarUrl:
+                                                          result
+                                                              .profile
+                                                              ?.avatarUrl ??
+                                                          '',
+                                                      website:
+                                                          result
+                                                              .profile
+                                                              ?.website ??
+                                                          '',
+                                                      location:
+                                                          result
+                                                              .profile
+                                                              ?.location ??
+                                                          '',
+                                                      companyName:
+                                                          result
+                                                              .profile
+                                                              ?.companyName ??
+                                                          '',
+                                                      createdAt:
+                                                          result
+                                                              .profile
+                                                              ?.createdAt ??
+                                                          DateTime.now(),
+                                                      updatedAt:
+                                                          result
+                                                              .profile
+                                                              ?.updatedAt ??
+                                                          DateTime.now(),
+                                                    ),
+
+                                                    details: OtherUserDetails(
+                                                      id: result.user.id,
+                                                      createdAt:
+                                                          result.user.createdAt,
+                                                      name: result.user.name,
+                                                      email: result.user.email,
+                                                      activated:
+                                                          result.user.activated,
+                                                      role: result.user.role,
+                                                      trialLeft:
+                                                          result.user.trialLeft,
+                                                      isPremium:
+                                                          result.user.isPremium,
+                                                      revenueId:
+                                                          result.user.revenueId,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: _SearchResultCard(
+                                                result: result,
+                                                onSendRequest: () => context
+                                                    .read<
+                                                      ConnectionActionCubit
+                                                    >()
+                                                    .sendConnectionRequest(
+                                                      result.user.id,
+                                                    ),
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),
