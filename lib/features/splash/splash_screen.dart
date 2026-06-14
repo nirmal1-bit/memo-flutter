@@ -23,14 +23,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkSessionAndNavigate() async {
     final sessionService = SessionService();
     final hasSession = await sessionService.hasSession;
-    final onBoarding = await sessionService.hasOnboarding;
     if (hasSession) {
       if (!mounted) return;
 
-      context.push(AppRoutes.main);
+      context.replace(AppRoutes.main);
     } else if (!hasSession) {
       if (!mounted) return;
-      context.push(AppRoutes.authMain);
+      context.replace(AppRoutes.authMain);
     }
   }
 

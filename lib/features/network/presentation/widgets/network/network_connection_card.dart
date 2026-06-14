@@ -59,7 +59,7 @@ class NetworkConnectionCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: AppTextStyles.rubik.copyWith(
-                                  fontSize: 14,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                   color: const Color(0xFF1A2233),
                                 ),
@@ -73,7 +73,7 @@ class NetworkConnectionCard extends StatelessWidget {
                         Text(
                           details.role,
                           style: AppTextStyles.rubik.copyWith(
-                            fontSize: 12,
+                            fontSize: 14,
                             color: const Color(0xFF6B7A99),
                           ),
                         ),
@@ -84,7 +84,7 @@ class NetworkConnectionCard extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: AppTextStyles.rubik.copyWith(
-                              fontSize: 12,
+                              fontSize: 14,
                               color: const Color(0xFF8A98B8),
                               height: 1.5,
                             ),
@@ -140,8 +140,8 @@ class _Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 44,
-      height: 44,
+      width: 50,
+      height: 50,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: Color(0xFFE2E8F4),
@@ -151,8 +151,8 @@ class _Avatar extends StatelessWidget {
           ? ClipOval(
               child: Image.network(
                 avatarUrl,
-                width: 44,
-                height: 44,
+                width: 50,
+                height: 50,
                 fit: BoxFit.cover,
               ),
             )

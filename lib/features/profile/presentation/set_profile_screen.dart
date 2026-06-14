@@ -34,13 +34,17 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
 
   String _avatarUrl = '';
   bool _isUploadingAvatar = false;
-  bool _prefilled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _applyInitialProfile(widget.initialProfile);
+  }
 
   void _applyInitialProfile(ProfileRequestModel? profile) {
-    if (profile == null || _prefilled) {
+    if (profile == null) {
       return;
     }
-
     _headlineController.text = profile.headline;
     _bioController.text = profile.bio;
     _profileUrlController.text = profile.profileUrl;
@@ -48,7 +52,6 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     _locationController.text = profile.location;
     _companyController.text = profile.companyName;
     _avatarUrl = profile.avatarUrl;
-    _prefilled = true;
   }
 
   @override
@@ -130,6 +133,21 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
       return;
     }
 
+    if (widget.initialProfile != null) {
+      context.read<EditProfileCubit>().editProfile(
+        ProfileRequestModel(
+          headline: _headlineController.text.trim(),
+          bio: _bioController.text.trim(),
+          profileUrl: _profileUrlController.text.trim(),
+          avatarUrl: _avatarUrl,
+          website: _websiteController.text.trim(),
+          location: _locationController.text.trim(),
+          companyName: _companyController.text.trim(),
+        ),
+      );
+      return;
+    }
+
     context.read<SetProfileCubit>().setupProfile(
       ProfileRequestModel(
         headline: _headlineController.text.trim(),
@@ -147,52 +165,93 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) =>
-              EditProfileCubit()..setInitialProfile(widget.initialProfile),
-        ),
+        BlocProvider(create: (_) => getIt<EditProfileCubit>()),
         BlocProvider(create: (_) => getIt<SetProfileCubit>()),
       ],
-      child: BlocListener<SetProfileCubit, BaseApiState<String>>(
-        listener: (context, state) {
-          state.maybeWhen(
-            success: (_) {
-              AppUtils.showSuccessSnackbar(
-                context: context,
-                message: 'Profile saved successfully',
-              );
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<SetProfileCubit, BaseApiState<String>>(
+            listener: (context, state) {
+              state.maybeWhen(
+                success: (_) {
+                  AppUtils.showSuccessSnackbar(
+                    context: context,
+                    message: 'Profile saved successfully',
+                  );
 
-              if (context.canPop()) {
-                context.pop();
-                return;
-              }
+                  if (context.canPop()) {
+                    context.pop();
+                    return;
+                  }
 
-              context.go(AppRoutes.userProfile);
-            },
-            error: (message) {
-              AppUtils.showErrorSnackbar(context: context, message: message);
-            },
-            validationError: (validationError) {
-              AppUtils.showErrorSnackbar(
-                context: context,
-                message: validationError.message,
+                  context.go(AppRoutes.userProfile);
+                },
+                error: (message) {
+                  AppUtils.showErrorSnackbar(
+                    context: context,
+                    message: message,
+                  );
+                },
+                validationError: (validationError) {
+                  AppUtils.showErrorSnackbar(
+                    context: context,
+                    message: validationError.message,
+                  );
+                },
+                noInternet: () {
+                  AppUtils.showErrorSnackbar(
+                    context: context,
+                    message: 'No internet connection',
+                  );
+                },
+                orElse: () {},
               );
             },
-            noInternet: () {
-              AppUtils.showErrorSnackbar(
-                context: context,
-                message: 'No internet connection',
+          ),
+
+          BlocListener<EditProfileCubit, BaseApiState<String>>(
+            listener: (context, state) {
+              state.maybeWhen(
+                success: (_) {
+                  AppUtils.showSuccessSnackbar(
+                    context: context,
+                    message: 'Profile saved successfully',
+                  );
+
+                  if (context.canPop()) {
+                    context.pop();
+                    return;
+                  }
+
+                  context.go(AppRoutes.userProfile);
+                },
+                error: (message) {
+                  AppUtils.showErrorSnackbar(
+                    context: context,
+                    message: message,
+                  );
+                },
+                validationError: (validationError) {
+                  AppUtils.showErrorSnackbar(
+                    context: context,
+                    message: validationError.message,
+                  );
+                },
+                noInternet: () {
+                  AppUtils.showErrorSnackbar(
+                    context: context,
+                    message: 'No internet connection',
+                  );
+                },
+                orElse: () {},
               );
             },
-            orElse: () {},
-          );
-        },
+          ),
+        ],
         child: Builder(
           builder: (context) {
-            return BlocBuilder<EditProfileCubit, ProfileRequestModel?>(
+            return BlocBuilder<EditProfileCubit, BaseApiState<String>>(
               builder: (context, initialProfile) {
-                _applyInitialProfile(initialProfile);
-
                 return BlocBuilder<SetProfileCubit, BaseApiState<String>>(
                   builder: (context, state) {
                     final isLoading = state.maybeWhen(
@@ -207,9 +266,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                         elevation: 0,
                         foregroundColor: AppColors.softPrimary,
                         title: Text(
-                          initialProfile == null
-                              ? 'Set up profile'
-                              : 'Edit profile',
+                          'Edit profile',
                           style: AppTextStyles.libre.copyWith(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
@@ -272,12 +329,8 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                                     ? Image.network(
                                                         _avatarUrl,
                                                         fit: BoxFit.cover,
-                                                        errorBuilder:
-                                                            (
-                                                              _,
-                                                              __,
-                                                              ___,
-                                                            ) => _AvatarPlaceholder(
+                                                        errorBuilder: (_, _, _) =>
+                                                            _AvatarPlaceholder(
                                                               isUploading:
                                                                   _isUploadingAvatar,
                                                             ),

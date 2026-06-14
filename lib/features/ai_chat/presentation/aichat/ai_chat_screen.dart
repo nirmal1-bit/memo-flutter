@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:memo/core/chat/chat_state.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
+import 'package:memo/core/routes/app_routes.dart';
+import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/ai_chat/cubits/ai_chat_cubit.dart';
-import 'package:memo/features/ai_chat/presentation/widgets/ai_chat_app_bar.dart';
-import 'package:memo/features/ai_chat/presentation/widgets/ai_chat_panel.dart';
+import 'package:memo/features/ai_chat/presentation/aichat/widgets/ai_chat_panel.dart';
 import 'package:memo/features/network/presentation/widgets/chat/chat_composer.dart';
 
 class AiChatScreen extends StatefulWidget {
@@ -30,6 +32,19 @@ class _AiChatScreenState extends State<AiChatScreen> {
       child: Builder(
         builder: (context) {
           return Scaffold(
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.only(left: 0, right: 0, bottom: 80),
+              child: FloatingActionButton(
+                backgroundColor: AppColors.primary,
+                onPressed: () {
+                  context.push(AppRoutes.voice);
+                },
+                child: const Icon(
+                  Icons.record_voice_over,
+                  color: AppColors.scaffoldBackground,
+                ),
+              ),
+            ),
             resizeToAvoidBottomInset: true,
             backgroundColor: AppColors.scaffoldBackground,
             body: BlocConsumer<AiChatCubit, ChatState>(
@@ -67,6 +82,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                         errorMessage: state.errorMessage,
                       ),
                     ),
+
                     const SizedBox(height: 12),
                     ChatComposer(
                       controller: _messageController,
@@ -84,6 +100,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
   }
 
   void _sendMessage(BuildContext context) {
+    AppUtils.unfocusKeyboard(context);
     final text = _messageController.text.trim();
     if (text.isEmpty) {
       return;

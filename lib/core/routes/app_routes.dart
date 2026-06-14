@@ -20,4 +20,6 @@ class AppRoutes {
   static const String aiChat = '/aiChat';
 
   static const String qrScanner = '/qr-scanner';
+
+  static const String voice = '/voice';
 }

@@ -53,6 +53,8 @@ import 'package:memo/features/network/presentation/cubits/search_users_cubit.dar
     as _i294;
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart'
     as _i636;
+import 'package:memo/features/profile/presentation/cubits/edit_profile_cubit.dart'
+    as _i1023;
 import 'package:memo/features/profile/presentation/cubits/set_profile_cubit.dart'
     as _i1051;
 import 'package:memo/features/profile/repository/profile_repository.dart'
@@ -142,6 +144,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1049.GetTimelineCubit>(
       () => _i1049.GetTimelineCubit(gh<_i1029.TimelineRepository>()),
+    );
+    gh.factory<_i1023.EditProfileCubit>(
+      () => _i1023.EditProfileCubit(gh<_i533.ProfileRepository>()),
     );
     gh.factory<_i1051.SetProfileCubit>(
       () => _i1051.SetProfileCubit(gh<_i533.ProfileRepository>()),

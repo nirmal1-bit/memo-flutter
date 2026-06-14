@@ -9,9 +9,11 @@ class OtherUserProfileArguments {
     this.isFromReceived = false,
     this.isFromSent = false,
     this.connectionId = -1,
+    required this.profile,
   });
 
   final OtherUserDetails details;
+  final Profile profile;
   final bool isFromReceived;
   final bool isFromSent;
   final int connectionId;
@@ -28,6 +30,7 @@ class OthersUserProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = otherUserProfileArgs.details;
+    final profile = otherUserProfileArgs.profile;
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -109,40 +112,20 @@ class OthersUserProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
               _DetailCard(
                 title: 'Profile',
-                child: user.profile == null
-                    ? Text(
-                        'No profile details available yet.',
-                        style: AppTextStyles.rubik.copyWith(
-                          fontSize: 13.5,
-                          color: AppColors.softTextGrey,
-                        ),
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _DetailRow(
-                            label: 'Headline',
-                            value: user.profile!.headline,
-                          ),
-                          _DetailRow(label: 'Bio', value: user.profile!.bio),
-                          _DetailRow(
-                            label: 'Company',
-                            value: user.profile!.companyName,
-                          ),
-                          _DetailRow(
-                            label: 'Location',
-                            value: user.profile!.location,
-                          ),
-                          _DetailRow(
-                            label: 'Website',
-                            value: user.profile!.website,
-                          ),
-                          _DetailRow(
-                            label: 'Profile Link',
-                            value: user.profile!.profileUrl,
-                          ),
-                        ],
-                      ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _DetailRow(label: 'Headline', value: profile.headline),
+                    _DetailRow(label: 'Bio', value: profile.bio),
+                    _DetailRow(label: 'Company', value: profile.companyName),
+                    _DetailRow(label: 'Location', value: profile.location),
+                    _DetailRow(label: 'Website', value: profile.website),
+                    _DetailRow(
+                      label: 'Profile Link',
+                      value: profile.profileUrl,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:memo/features/matches/presentation/match_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/features/ai_chat/presentation/ai_chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
 import 'package:memo/features/network/presentation/screens/network_screen.dart';
 import 'package:memo/features/profile/presentation/settings_screen.dart';
@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     NetworkScreen(),
-    AiChatScreen(connectionId: 1),
+    MatchScreen(),
     AddConnectionScreen(),
     SettingsScreen(),
   ];
@@ -26,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
   // Each tab gets its own accent color from your palette
   final List<Color> _tabColors = [
     AppColors.primary, // Teal  — Home
-    AppColors.secondary, // Purple — Chat
+    AppColors.statusRed, // Purple — Chat
     AppColors.buttonPrimary, // Coral  — Search
     AppColors.statusOrange, // Orange — Settings
   ];
@@ -72,9 +72,9 @@ class _MainScreenState extends State<MainScreen> {
                 selectedColor: _tabColors[0],
               ),
               SalomonBottomBarItem(
-                icon: const Icon(Icons.chat_bubble_rounded, size: 24),
+                icon: const Icon(Icons.favorite, size: 24),
                 title: const Text(
-                  'Chat',
+                  'Matches',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                 ),
                 selectedColor: _tabColors[1],

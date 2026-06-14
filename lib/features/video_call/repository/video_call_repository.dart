@@ -16,6 +16,7 @@ abstract final class VideoCallRepository {
   EitherResponse<ApiResponse<String>> makeTranscript(
     int connectionId,
     String filepath,
+    int sessionId,
   );
 }
 
@@ -88,10 +89,13 @@ final class VideoCallRepositoryImpl extends BaseRemoteSource
   EitherResponse<ApiResponse<String>> makeTranscript(
     int connectionId,
     String filepath,
+    int sessionId,
   ) async {
     final formData = FormData.fromMap({
       "audio": await MultipartFile.fromFile(filepath),
+      "session_id": sessionId,
     });
+
     final response = await networkRequest(
       request: (dio) async {
         final response = await dio.post(

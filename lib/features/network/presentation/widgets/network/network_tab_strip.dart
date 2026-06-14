@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/features/network/presentation/widgets/network_widget_types.dart';
+import 'package:memo/features/network/presentation/widgets/network/network_widget_types.dart';
 
 class NetworkTabStrip extends StatelessWidget {
   const NetworkTabStrip({
