@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/features/common/build_initials.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 
@@ -53,7 +54,6 @@ class TimelineProfileSliverHeader extends StatelessWidget {
               Tab(text: 'Memories'),
               Tab(text: 'Timeline'),
               Tab(text: 'AI'),
-              Tab(text: 'Face Data'),
             ],
           ),
         ),
@@ -109,7 +109,7 @@ class _TimelineProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profile = user.profile;
-    final initials = _buildInitials(user.name);
+    final initials = buildInitials(user.name);
 
     return Container(
       width: 72,
@@ -209,34 +209,6 @@ class _InitialsAvatar extends StatelessWidget {
   }
 }
 
-class _InfoChip extends StatelessWidget {
-  const _InfoChip({required this.label, required this.bg, required this.fg});
-
-  final String label;
-  final Color bg;
-  final Color fg;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontFamily: 'Rubik',
-          fontSize: 10.5,
-          fontWeight: FontWeight.w600,
-          color: fg,
-        ),
-      ),
-    );
-  }
-}
-
 class _TimelineProfileInsightStrip extends StatelessWidget {
   const _TimelineProfileInsightStrip({required this.user});
 
@@ -249,47 +221,27 @@ class _TimelineProfileInsightStrip extends StatelessWidget {
         ? '${user.name} highlighted ${profile!.headline.toLowerCase()}.'
         : '${user.name} is active on the timeline and can be reached through this profile.';
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.aiSurfaceBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.aiSurfaceBorder),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.auto_awesome_rounded,
-            size: 14,
-            color: Color(0xFFFF8C42),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              note,
-              style: const TextStyle(
-                fontFamily: 'Rubik',
-                fontSize: 12,
-                height: 1.5,
-                color: AppColors.aiSurfaceText,
-              ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(
+          Icons.auto_awesome_rounded,
+          size: 14,
+          color: Color(0xFFFF8C42),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            note,
+            style: const TextStyle(
+              fontFamily: 'Rubik',
+              fontSize: 12,
+              height: 1.5,
+              color: AppColors.aiSurfaceText,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
-}
-
-void _noop() {}
-
-String _buildInitials(String name) {
-  final parts = name
-      .trim()
-      .split(RegExp(r'\s+'))
-      .where((part) => part.isNotEmpty);
-  final initials = parts.take(2).map((part) => part[0]).join();
-  return initials.isEmpty ? '?' : initials.toUpperCase();
 }
