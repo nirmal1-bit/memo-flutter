@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/constants/cloudinary_constants.dart';
 import 'package:memo/core/di/injector.dart';
@@ -13,6 +14,21 @@ import 'package:memo/features/common/form_widgets.dart';
 import 'package:memo/features/profile/data/request/profile_request_model.dart';
 import 'package:memo/features/profile/presentation/cubits/edit_profile_cubit.dart';
 import 'package:memo/features/profile/presentation/cubits/set_profile_cubit.dart';
+
+const List<String> _genderOptions = ['Male', 'Female'];
+
+const List<String> _baseInterestOptions = [
+  'Technology',
+  'Sports',
+  'Music',
+  'Travel',
+  'Reading',
+  'Gaming',
+  'Cooking',
+  'Photography',
+  'Art',
+  'Fitness',
+];
 
 class SetProfileScreen extends StatefulWidget {
   const SetProfileScreen({super.key, this.initialProfile});
@@ -27,17 +43,29 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _headlineController = TextEditingController();
   final _bioController = TextEditingController();
-  final _profileUrlController = TextEditingController();
-  final _websiteController = TextEditingController();
   final _locationController = TextEditingController();
-  final _companyController = TextEditingController();
+  final _ageController = TextEditingController();
+  final _customInterestController = TextEditingController();
 
-  String _avatarUrl = '';
   bool _isUploadingAvatar = false;
+  String _avatarUrl = '';
+
+  String? _selectedGender;
+
+  final MultiSelectController<String> _interestsController =
+      MultiSelectController<String>();
+  late List<DropdownItem<String>> _interestItems;
 
   @override
   void initState() {
     super.initState();
+
+    _interestItems = _baseInterestOptions
+        .map(
+          (interest) => DropdownItem<String>(label: interest, value: interest),
+        )
+        .toList();
+
     _applyInitialProfile(widget.initialProfile);
   }
 
@@ -47,21 +75,49 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     }
     _headlineController.text = profile.headline;
     _bioController.text = profile.bio;
-    _profileUrlController.text = profile.profileUrl;
-    _websiteController.text = profile.website;
     _locationController.text = profile.location;
-    _companyController.text = profile.companyName;
-    _avatarUrl = profile.avatarUrl;
+    _ageController.text = profile.age.toString();
+
+    // Gender
+    final matchedGender = _genderOptions.where(
+      (g) => g.toLowerCase() == profile.gender.toLowerCase(),
+    );
+    if (matchedGender.isNotEmpty) {
+      _selectedGender = matchedGender.first;
+    }
+
+    // Interests — add any saved interests that aren't in the base
+    // list, then select all that match once items are built.
+    for (final interest in profile.interests) {
+      final trimmed = interest.trim();
+      if (trimmed.isEmpty) {
+        continue;
+      }
+
+      final exists = _interestItems.any(
+        (item) => item.value.toLowerCase() == trimmed.toLowerCase(),
+      );
+      if (!exists) {
+        _interestItems.add(DropdownItem(label: trimmed, value: trimmed));
+      }
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _interestsController.selectWhere(
+        (item) => profile.interests
+            .map((e) => e.trim().toLowerCase())
+            .contains(item.value.toLowerCase()),
+      );
+    });
   }
 
   @override
   void dispose() {
     _headlineController.dispose();
     _bioController.dispose();
-    _profileUrlController.dispose();
-    _websiteController.dispose();
     _locationController.dispose();
-    _companyController.dispose();
+    _ageController.dispose();
+    _customInterestController.dispose();
     super.dispose();
   }
 
@@ -120,6 +176,33 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     }
   }
 
+  void _addCustomInterest() {
+    final value = _customInterestController.text.trim();
+    if (value.isEmpty) {
+      return;
+    }
+
+    final existing = _interestItems.where(
+      (item) => item.value.toLowerCase() == value.toLowerCase(),
+    );
+
+    if (existing.isEmpty) {
+      final newItem = DropdownItem<String>(label: value, value: value);
+      setState(() {
+        _interestItems.add(newItem);
+      });
+      _interestsController.addItem(newItem);
+      _interestsController.selectWhere((item) => item.value == value);
+    } else {
+      _interestsController.selectWhere(
+        (item) => item.value.toLowerCase() == value.toLowerCase(),
+      );
+    }
+
+    _customInterestController.clear();
+    FocusScope.of(context).unfocus();
+  }
+
   void _submitProfile(BuildContext context) {
     if (_avatarUrl.isEmpty) {
       AppUtils.showErrorSnackbar(
@@ -133,16 +216,36 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
       return;
     }
 
+    if (_selectedGender == null) {
+      AppUtils.showErrorSnackbar(
+        context: context,
+        message: 'Select your gender.',
+      );
+      return;
+    }
+
+    final selectedInterests = _interestsController.selectedItems
+        .map((item) => item.value)
+        .toList();
+
+    if (selectedInterests.isEmpty) {
+      AppUtils.showErrorSnackbar(
+        context: context,
+        message: 'Select at least one interest.',
+      );
+      return;
+    }
+
     if (widget.initialProfile != null) {
       context.read<EditProfileCubit>().editProfile(
         ProfileRequestModel(
           headline: _headlineController.text.trim(),
           bio: _bioController.text.trim(),
-          profileUrl: _profileUrlController.text.trim(),
-          avatarUrl: _avatarUrl,
-          website: _websiteController.text.trim(),
+          profileUrl: _avatarUrl,
           location: _locationController.text.trim(),
-          companyName: _companyController.text.trim(),
+          gender: _selectedGender!,
+          age: int.tryParse(_ageController.text.trim()) ?? 0,
+          interests: selectedInterests,
         ),
       );
       return;
@@ -152,11 +255,11 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
       ProfileRequestModel(
         headline: _headlineController.text.trim(),
         bio: _bioController.text.trim(),
-        profileUrl: _profileUrlController.text.trim(),
-        avatarUrl: _avatarUrl,
-        website: _websiteController.text.trim(),
+        profileUrl: _avatarUrl,
         location: _locationController.text.trim(),
-        companyName: _companyController.text.trim(),
+        gender: _selectedGender!,
+        age: int.tryParse(_ageController.text.trim()) ?? 0,
+        interests: selectedInterests,
       ),
     );
   }
@@ -417,27 +520,21 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                               ),
                               const SizedBox(height: 16),
                               InputField(
-                                controller: _profileUrlController,
-                                label: 'Profile URL',
-                                hint: 'https://example.com/janesmith',
-                                icon: Icons.link_rounded,
-                                keyboardType: TextInputType.url,
-                                validator: (value) =>
-                                    value == null || value.trim().isEmpty
-                                    ? 'Enter your profile URL'
-                                    : null,
-                              ),
-                              const SizedBox(height: 16),
-                              InputField(
-                                controller: _websiteController,
-                                label: 'Website',
-                                hint: 'https://janesmith.dev',
-                                icon: Icons.language_rounded,
-                                keyboardType: TextInputType.url,
-                                validator: (value) =>
-                                    value == null || value.trim().isEmpty
-                                    ? 'Enter your website'
-                                    : null,
+                                controller: _ageController,
+                                label: 'Age',
+                                hint: 'e.g. 25',
+                                icon: Icons.calendar_today_outlined,
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Enter your age';
+                                  }
+                                  final age = int.tryParse(value);
+                                  if (age == null || age <= 0) {
+                                    return 'Enter a valid age';
+                                  }
+                                  return null;
+                                },
                               ),
                               const SizedBox(height: 16),
                               InputField(
@@ -451,15 +548,119 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                     : null,
                               ),
                               const SizedBox(height: 16),
-                              InputField(
-                                controller: _companyController,
-                                label: 'Company',
-                                hint: 'Innovate Labs',
-                                icon: Icons.apartment_outlined,
+                              DropdownButtonFormField<String>(
+                                initialValue: _selectedGender,
+                                icon: const Icon(Icons.expand_more_rounded),
+                                decoration: InputDecoration(
+                                  labelText: 'Gender',
+                                  prefixIcon: const Icon(Icons.wc_rounded),
+                                  filled: true,
+                                  fillColor: AppColors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    borderSide: BorderSide(
+                                      color: AppColors.dividerColor,
+                                    ),
+                                  ),
+                                ),
+                                items: _genderOptions
+                                    .map(
+                                      (gender) => DropdownMenuItem<String>(
+                                        value: gender,
+                                        child: Text(
+                                          gender,
+                                          style: AppTextStyles.rubik.copyWith(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) =>
+                                    setState(() => _selectedGender = value),
                                 validator: (value) =>
-                                    value == null || value.trim().isEmpty
-                                    ? 'Enter your company name'
+                                    value == null || value.isEmpty
+                                    ? 'Select your gender'
                                     : null,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Interests',
+                                style: AppTextStyles.rubik.copyWith(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.softTextGrey,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              MultiDropdown<String>(
+                                items: _interestItems,
+                                controller: _interestsController,
+                                enabled: true,
+                                searchEnabled: true,
+                                chipDecoration: ChipDecoration(
+                                  backgroundColor: AppColors.primary
+                                      .withOpacity(0.1),
+                                  wrap: true,
+                                  runSpacing: 6,
+                                  spacing: 6,
+                                  labelStyle: AppTextStyles.rubik.copyWith(
+                                    fontSize: 12.5,
+                                    color: AppColors.softPrimary,
+                                  ),
+                                ),
+                                fieldDecoration: FieldDecoration(
+                                  hintText: 'Select your interests',
+                                  hintStyle: AppTextStyles.rubik.copyWith(
+                                    fontSize: 14,
+                                    color: AppColors.softTextGrey,
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.interests_outlined,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    borderSide: BorderSide(
+                                      color: AppColors.dividerColor,
+                                    ),
+                                  ),
+                                ),
+                                dropdownDecoration: DropdownDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                validator: (items) =>
+                                    items == null || items.isEmpty
+                                    ? 'Select at least one interest'
+                                    : null,
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: InputField(
+                                      controller: _customInterestController,
+                                      label: 'Add a custom interest',
+                                      hint: 'e.g. Hiking',
+                                      icon: Icons.add_circle_outline,
+                                      onFieldSubmitted: (_) =>
+                                          _addCustomInterest(),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: IconButton(
+                                      onPressed: _addCustomInterest,
+                                      icon: const Icon(Icons.add_rounded),
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: AppColors.primary,
+                                        foregroundColor: AppColors.white,
+                                        shape: const CircleBorder(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 24),
                               AuthPrimaryButton(

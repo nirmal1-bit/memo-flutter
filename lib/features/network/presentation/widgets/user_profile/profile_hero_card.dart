@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/presentation/screens/user_profile_screen.dart';
 import 'package:memo/features/network/presentation/widgets/user_profile/avatar_widget.dart';
 
 class ProfileHeroCard extends StatelessWidget {
   const ProfileHeroCard({super.key, required this.user});
-
   final UserProfileResponse user;
 
   @override
@@ -59,7 +57,6 @@ class ProfileHeroCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    RoleBadge(role: user.role),
                   ],
                 ),
               ),

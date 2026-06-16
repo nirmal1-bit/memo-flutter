@@ -14,6 +14,7 @@ class InputField extends StatelessWidget {
     this.maxLines = 1,
     this.validator,
     this.suffix,
+    this.onFieldSubmitted,
   });
 
   final TextEditingController controller;
@@ -25,6 +26,7 @@ class InputField extends StatelessWidget {
   final int maxLines;
   final String? Function(String?)? validator;
   final Widget? suffix;
+  final void Function(String)? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,7 @@ class InputField extends StatelessWidget {
           keyboardType: keyboardType,
           maxLines: maxLines,
           validator: validator,
+          onFieldSubmitted: onFieldSubmitted,
           style: AppTextStyles.rubik.copyWith(
             fontSize: 15,
             color: AppColors.softPrimary,
