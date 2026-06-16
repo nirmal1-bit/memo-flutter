@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/common/build_initials.dart';
-import 'package:memo/features/network/data/models/response/user_search_response.dart';
+import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 import 'package:memo/features/network/presentation/widgets/network/avatar_badge.dart';
 
 class SearchResultCard extends StatelessWidget {
@@ -12,13 +12,12 @@ class SearchResultCard extends StatelessWidget {
     required this.onSendRequest,
   });
 
-  final UserSearchResponse result;
+  final Profile result;
   final VoidCallback onSendRequest;
 
   @override
   Widget build(BuildContext context) {
-    final user = result.user;
-    final profile = result.profile;
+    final user = result;
 
     return Material(
       color: AppColors.white,
@@ -29,8 +28,8 @@ class SearchResultCard extends StatelessWidget {
         child: Row(
           children: [
             AvatarBadge(
-              profileLink: profile?.avatarUrl ?? '',
-              label: buildInitials(user.name),
+              profileLink: result.profileUrl,
+              label: buildInitials(user.name ?? ''),
               size: 54,
             ),
             const SizedBox(width: 12),
@@ -39,7 +38,7 @@ class SearchResultCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user.name,
+                    user.name ?? '',
                     style: AppTextStyles.rubik.copyWith(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -47,17 +46,11 @@ class SearchResultCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    user.email,
-                    style: AppTextStyles.rubik.copyWith(
-                      fontSize: 12.5,
-                      color: AppColors.ironGrey,
-                    ),
-                  ),
-                  if ((profile?.headline ?? '').isNotEmpty) ...[
+
+                  if ((user.headline).isNotEmpty) ...[
                     const SizedBox(height: 6),
                     Text(
-                      profile!.headline,
+                      user.headline,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.rubik.copyWith(

@@ -509,7 +509,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                               InputField(
                                 controller: _bioController,
                                 label: 'Bio',
-                                hint: 'Tell people what you are building',
+                                hint: 'Tell people about yourself',
                                 icon: Icons.notes_outlined,
                                 maxLines: 4,
                                 keyboardType: TextInputType.multiline,

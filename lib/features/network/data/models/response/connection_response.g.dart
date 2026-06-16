@@ -51,31 +51,3 @@ Map<String, dynamic> _$OtherUserDetailsToJson(_OtherUserDetails instance) =>
       'revenue_id': instance.revenueId,
       'profile': instance.profile,
     };
-
-_Profile _$ProfileFromJson(Map<String, dynamic> json) => _Profile(
-  id: (json['id'] as num).toInt(),
-  userId: (json['user_id'] as num).toInt(),
-  headline: json['headline'] as String,
-  bio: json['bio'] as String,
-  profileUrl: json['profile_url'] as String,
-  avatarUrl: json['avatar_url'] as String,
-  website: json['website'] as String,
-  location: json['location'] as String,
-  companyName: json['company_name'] as String,
-  createdAt: DateTime.parse(json['created_at'] as String),
-  updatedAt: DateTime.parse(json['updated_at'] as String),
-);
-
-Map<String, dynamic> _$ProfileToJson(_Profile instance) => <String, dynamic>{
-  'id': instance.id,
-  'user_id': instance.userId,
-  'headline': instance.headline,
-  'bio': instance.bio,
-  'profile_url': instance.profileUrl,
-  'avatar_url': instance.avatarUrl,
-  'website': instance.website,
-  'location': instance.location,
-  'company_name': instance.companyName,
-  'created_at': instance.createdAt.toIso8601String(),
-  'updated_at': instance.updatedAt.toIso8601String(),
-};

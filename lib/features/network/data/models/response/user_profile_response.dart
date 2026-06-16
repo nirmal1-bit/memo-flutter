@@ -36,6 +36,7 @@ abstract class Profile with _$Profile {
 
     required String headline,
     required String bio,
+    String? name,
 
     @JsonKey(name: 'profile_url') required String profileUrl,
 

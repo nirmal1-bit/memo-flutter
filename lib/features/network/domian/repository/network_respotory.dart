@@ -6,7 +6,6 @@ import 'package:memo/core/response/base_api_response.dart';
 import 'package:memo/core/typedef/typedef.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/data/models/response/user_search_response.dart';
 
 abstract class NetworkRepository {
   EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
@@ -21,9 +20,7 @@ abstract class NetworkRepository {
 
   EitherResponse<ApiResponse<String>> sendConnectionRequest(int userId);
 
-  EitherResponse<ApiResponse<List<UserSearchResponse>>> searchUser(
-    String query,
-  );
+  EitherResponse<ApiResponse<List<Profile>>> searchUser(String query);
 
   EitherResponse<ApiResponse<String>> acceptConnectionRequest(int requestId);
 
@@ -135,9 +132,7 @@ class NetworkRepositoryImpl extends BaseRemoteSource
   }
 
   @override
-  EitherResponse<ApiResponse<List<UserSearchResponse>>> searchUser(
-    String query,
-  ) async {
+  EitherResponse<ApiResponse<List<Profile>>> searchUser(String query) async {
     final response = await networkRequest(
       request: (dio) async {
         final response = await dio.get(
@@ -158,10 +153,7 @@ class NetworkRepositoryImpl extends BaseRemoteSource
         return ApiResponse(
           success: response.data['status'] ?? true,
           data: users
-              .map(
-                (item) =>
-                    UserSearchResponse.fromJson(item as Map<String, dynamic>),
-              )
+              .map((item) => Profile.fromJson(item as Map<String, dynamic>))
               .toList(),
           message: (response.data['message'] ?? 'success').toString(),
         );

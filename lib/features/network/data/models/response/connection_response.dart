@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 
 part 'connection_response.freezed.dart';
 part 'connection_response.g.dart';
@@ -33,24 +34,4 @@ abstract class OtherUserDetails with _$OtherUserDetails {
 
   factory OtherUserDetails.fromJson(Map<String, dynamic> json) =>
       _$OtherUserDetailsFromJson(json);
-}
-
-@freezed
-abstract class Profile with _$Profile {
-  const factory Profile({
-    required int id,
-    @JsonKey(name: 'user_id') required int userId,
-    required String headline,
-    required String bio,
-    @JsonKey(name: 'profile_url') required String profileUrl,
-    @JsonKey(name: 'avatar_url') required String avatarUrl,
-    required String website,
-    required String location,
-    @JsonKey(name: 'company_name') required String companyName,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
-    @JsonKey(name: 'updated_at') required DateTime updatedAt,
-  }) = _Profile;
-
-  factory Profile.fromJson(Map<String, dynamic> json) =>
-      _$ProfileFromJson(json);
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 
 class OtherUserProfileArguments {
   const OtherUserProfileArguments({
@@ -117,9 +118,6 @@ class OthersUserProfileScreen extends StatelessWidget {
                   children: [
                     _DetailRow(label: 'Headline', value: profile.headline),
                     _DetailRow(label: 'Bio', value: profile.bio),
-                    _DetailRow(label: 'Company', value: profile.companyName),
-                    _DetailRow(label: 'Location', value: profile.location),
-                    _DetailRow(label: 'Website', value: profile.website),
                     _DetailRow(
                       label: 'Profile Link',
                       value: profile.profileUrl,
@@ -180,9 +178,9 @@ class _HeaderCard extends StatelessWidget {
               width: 68,
               height: 68,
               color: AppColors.brandBackground,
-              child: profile?.avatarUrl.isNotEmpty ?? false
+              child: profile?.profileUrl.isNotEmpty ?? false
                   ? Image.network(
-                      profile!.avatarUrl,
+                      profile!.profileUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
                           CircleAvatar(

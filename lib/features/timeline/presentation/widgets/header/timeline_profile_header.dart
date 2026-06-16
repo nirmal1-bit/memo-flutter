@@ -119,11 +119,11 @@ class _TimelineProfileAvatar extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 2),
       ),
-      child: profile?.avatarUrl.isNotEmpty ?? false
+      child: profile?.profileUrl.isNotEmpty ?? false
           ? ClipRRect(
               borderRadius: BorderRadius.circular(22),
               child: Image.network(
-                profile!.avatarUrl,
+                profile!.profileUrl,
                 width: 72,
                 height: 72,
                 fit: BoxFit.cover,

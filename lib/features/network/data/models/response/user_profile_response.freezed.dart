@@ -326,7 +326,7 @@ $ProfileCopyWith<$Res>? get profile {
 /// @nodoc
 mixin _$Profile {
 
- int get id;@JsonKey(name: 'user_id') int get userId; String get headline; String get bio;@JsonKey(name: 'profile_url') String get profileUrl;@JsonKey(name: 'avatar_url') String? get avatarUrl; String get location; int get age; String get gender; List<String> get interests;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt;
+ int get id;@JsonKey(name: 'user_id') int get userId; String get headline; String get bio; String? get name;@JsonKey(name: 'profile_url') String get profileUrl;@JsonKey(name: 'avatar_url') String? get avatarUrl; String get location; int get age; String get gender; List<String> get interests;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt;
 /// Create a copy of Profile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -339,16 +339,16 @@ $ProfileCopyWith<Profile> get copyWith => _$ProfileCopyWithImpl<Profile>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Profile&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.headline, headline) || other.headline == headline)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.profileUrl, profileUrl) || other.profileUrl == profileUrl)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other.interests, interests)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Profile&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.headline, headline) || other.headline == headline)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.name, name) || other.name == name)&&(identical(other.profileUrl, profileUrl) || other.profileUrl == profileUrl)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other.interests, interests)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,headline,bio,profileUrl,avatarUrl,location,age,gender,const DeepCollectionEquality().hash(interests),createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,headline,bio,name,profileUrl,avatarUrl,location,age,gender,const DeepCollectionEquality().hash(interests),createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'Profile(id: $id, userId: $userId, headline: $headline, bio: $bio, profileUrl: $profileUrl, avatarUrl: $avatarUrl, location: $location, age: $age, gender: $gender, interests: $interests, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Profile(id: $id, userId: $userId, headline: $headline, bio: $bio, name: $name, profileUrl: $profileUrl, avatarUrl: $avatarUrl, location: $location, age: $age, gender: $gender, interests: $interests, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -359,7 +359,7 @@ abstract mixin class $ProfileCopyWith<$Res>  {
   factory $ProfileCopyWith(Profile value, $Res Function(Profile) _then) = _$ProfileCopyWithImpl;
 @useResult
 $Res call({
- int id,@JsonKey(name: 'user_id') int userId, String headline, String bio,@JsonKey(name: 'profile_url') String profileUrl,@JsonKey(name: 'avatar_url') String? avatarUrl, String location, int age, String gender, List<String> interests,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt
+ int id,@JsonKey(name: 'user_id') int userId, String headline, String bio, String? name,@JsonKey(name: 'profile_url') String profileUrl,@JsonKey(name: 'avatar_url') String? avatarUrl, String location, int age, String gender, List<String> interests,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt
 });
 
 
@@ -376,13 +376,14 @@ class _$ProfileCopyWithImpl<$Res>
 
 /// Create a copy of Profile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? headline = null,Object? bio = null,Object? profileUrl = null,Object? avatarUrl = freezed,Object? location = null,Object? age = null,Object? gender = null,Object? interests = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? headline = null,Object? bio = null,Object? name = freezed,Object? profileUrl = null,Object? avatarUrl = freezed,Object? location = null,Object? age = null,Object? gender = null,Object? interests = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,headline: null == headline ? _self.headline : headline // ignore: cast_nullable_to_non_nullable
 as String,bio: null == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
-as String,profileUrl: null == profileUrl ? _self.profileUrl : profileUrl // ignore: cast_nullable_to_non_nullable
+as String,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,profileUrl: null == profileUrl ? _self.profileUrl : profileUrl // ignore: cast_nullable_to_non_nullable
 as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,age: null == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
@@ -475,10 +476,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio, @JsonKey(name: 'profile_url')  String profileUrl, @JsonKey(name: 'avatar_url')  String? avatarUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio,  String? name, @JsonKey(name: 'profile_url')  String profileUrl, @JsonKey(name: 'avatar_url')  String? avatarUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Profile() when $default != null:
-return $default(_that.id,_that.userId,_that.headline,_that.bio,_that.profileUrl,_that.avatarUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.userId,_that.headline,_that.bio,_that.name,_that.profileUrl,_that.avatarUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -496,10 +497,10 @@ return $default(_that.id,_that.userId,_that.headline,_that.bio,_that.profileUrl,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio, @JsonKey(name: 'profile_url')  String profileUrl, @JsonKey(name: 'avatar_url')  String? avatarUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio,  String? name, @JsonKey(name: 'profile_url')  String profileUrl, @JsonKey(name: 'avatar_url')  String? avatarUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Profile():
-return $default(_that.id,_that.userId,_that.headline,_that.bio,_that.profileUrl,_that.avatarUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.userId,_that.headline,_that.bio,_that.name,_that.profileUrl,_that.avatarUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -516,10 +517,10 @@ return $default(_that.id,_that.userId,_that.headline,_that.bio,_that.profileUrl,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio, @JsonKey(name: 'profile_url')  String profileUrl, @JsonKey(name: 'avatar_url')  String? avatarUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio,  String? name, @JsonKey(name: 'profile_url')  String profileUrl, @JsonKey(name: 'avatar_url')  String? avatarUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Profile() when $default != null:
-return $default(_that.id,_that.userId,_that.headline,_that.bio,_that.profileUrl,_that.avatarUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.userId,_that.headline,_that.bio,_that.name,_that.profileUrl,_that.avatarUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -531,13 +532,14 @@ return $default(_that.id,_that.userId,_that.headline,_that.bio,_that.profileUrl,
 @JsonSerializable()
 
 class _Profile implements Profile {
-  const _Profile({required this.id, @JsonKey(name: 'user_id') required this.userId, required this.headline, required this.bio, @JsonKey(name: 'profile_url') required this.profileUrl, @JsonKey(name: 'avatar_url') this.avatarUrl, required this.location, required this.age, required this.gender, required final  List<String> interests, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt}): _interests = interests;
+  const _Profile({required this.id, @JsonKey(name: 'user_id') required this.userId, required this.headline, required this.bio, this.name, @JsonKey(name: 'profile_url') required this.profileUrl, @JsonKey(name: 'avatar_url') this.avatarUrl, required this.location, required this.age, required this.gender, required final  List<String> interests, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt}): _interests = interests;
   factory _Profile.fromJson(Map<String, dynamic> json) => _$ProfileFromJson(json);
 
 @override final  int id;
 @override@JsonKey(name: 'user_id') final  int userId;
 @override final  String headline;
 @override final  String bio;
+@override final  String? name;
 @override@JsonKey(name: 'profile_url') final  String profileUrl;
 @override@JsonKey(name: 'avatar_url') final  String? avatarUrl;
 @override final  String location;
@@ -566,16 +568,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Profile&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.headline, headline) || other.headline == headline)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.profileUrl, profileUrl) || other.profileUrl == profileUrl)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other._interests, _interests)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Profile&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.headline, headline) || other.headline == headline)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.name, name) || other.name == name)&&(identical(other.profileUrl, profileUrl) || other.profileUrl == profileUrl)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other._interests, _interests)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,headline,bio,profileUrl,avatarUrl,location,age,gender,const DeepCollectionEquality().hash(_interests),createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,headline,bio,name,profileUrl,avatarUrl,location,age,gender,const DeepCollectionEquality().hash(_interests),createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'Profile(id: $id, userId: $userId, headline: $headline, bio: $bio, profileUrl: $profileUrl, avatarUrl: $avatarUrl, location: $location, age: $age, gender: $gender, interests: $interests, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Profile(id: $id, userId: $userId, headline: $headline, bio: $bio, name: $name, profileUrl: $profileUrl, avatarUrl: $avatarUrl, location: $location, age: $age, gender: $gender, interests: $interests, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -586,7 +588,7 @@ abstract mixin class _$ProfileCopyWith<$Res> implements $ProfileCopyWith<$Res> {
   factory _$ProfileCopyWith(_Profile value, $Res Function(_Profile) _then) = __$ProfileCopyWithImpl;
 @override @useResult
 $Res call({
- int id,@JsonKey(name: 'user_id') int userId, String headline, String bio,@JsonKey(name: 'profile_url') String profileUrl,@JsonKey(name: 'avatar_url') String? avatarUrl, String location, int age, String gender, List<String> interests,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt
+ int id,@JsonKey(name: 'user_id') int userId, String headline, String bio, String? name,@JsonKey(name: 'profile_url') String profileUrl,@JsonKey(name: 'avatar_url') String? avatarUrl, String location, int age, String gender, List<String> interests,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt
 });
 
 
@@ -603,13 +605,14 @@ class __$ProfileCopyWithImpl<$Res>
 
 /// Create a copy of Profile
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? headline = null,Object? bio = null,Object? profileUrl = null,Object? avatarUrl = freezed,Object? location = null,Object? age = null,Object? gender = null,Object? interests = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? headline = null,Object? bio = null,Object? name = freezed,Object? profileUrl = null,Object? avatarUrl = freezed,Object? location = null,Object? age = null,Object? gender = null,Object? interests = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_Profile(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,headline: null == headline ? _self.headline : headline // ignore: cast_nullable_to_non_nullable
 as String,bio: null == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
-as String,profileUrl: null == profileUrl ? _self.profileUrl : profileUrl // ignore: cast_nullable_to_non_nullable
+as String,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,profileUrl: null == profileUrl ? _self.profileUrl : profileUrl // ignore: cast_nullable_to_non_nullable
 as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,age: null == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
