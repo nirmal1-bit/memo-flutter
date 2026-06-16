@@ -19,9 +19,9 @@ class NetworkConnectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final details = connection.otherUserDetails;
-    final profile = details.profile;
-    final isActive = details.activated;
+    final details = connection.userProfile;
+    final profile = connection.userProfile;
+    final isActive = true;
 
     return Material(
       color: AppColors.primary.withAlpha(40),
@@ -43,7 +43,7 @@ class NetworkConnectionCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _Avatar(
-                    avatarUrl: profile?.avatarUrl ?? '',
+                    avatarUrl: profile.profileUrl,
                     initials: _initials(details.name),
                   ),
                   const SizedBox(width: 12),
@@ -70,17 +70,11 @@ class NetworkConnectionCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 3),
-                        Text(
-                          details.role,
-                          style: AppTextStyles.rubik.copyWith(
-                            fontSize: 14,
-                            color: const Color(0xFF6B7A99),
-                          ),
-                        ),
-                        if ((profile?.headline ?? '').isNotEmpty) ...[
+
+                        if ((profile.headline).isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
-                            profile!.headline,
+                            profile.headline,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: AppTextStyles.rubik.copyWith(

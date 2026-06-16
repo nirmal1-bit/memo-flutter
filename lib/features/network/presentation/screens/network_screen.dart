@@ -224,20 +224,13 @@ class _NetworkScreenState extends State<NetworkScreen> {
           builder: (context, state) => NetworkStateView(
             state: state,
             emptyMessage: 'No connections yet.\nStart building your network.',
-            onConnectionTap: (connection) => context.push(
-              AppRoutes.timeLine,
-              extra: OtherUserProfileArguments(
-                profile: connection.otherUserDetails.profile!,
-                details: connection.otherUserDetails,
-                connectionId: connection.id,
-              ),
-            ),
+            onConnectionTap: (connection) => context.push(AppRoutes.timeLine),
             onChatTap: (connection) =>
                 context.push(AppRoutes.chat, extra: connection),
             onCallTap: (connection) => ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'Starting a video call with ${connection.otherUserDetails.name}...',
+                  'Starting a video call with ${connection.userProfile.name}...',
                 ),
               ),
             ),
@@ -252,14 +245,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
             state: state,
             emptyMessage: 'No sent requests yet.',
             cardStyle: NetworkCardStyle.sent,
-            onSentTap: (connection) => context.push(
-              AppRoutes.otherUserProfile,
-              extra: OtherUserProfileArguments(
-                profile: connection.otherUserDetails.profile!,
-                details: connection.otherUserDetails,
-                isFromSent: true,
-              ),
-            ),
+            onSentTap: (connection) => context.push(AppRoutes.otherUserProfile),
             onCancelTap: (connection) => context
                 .read<ConnectionActionCubit>()
                 .cancelConnectionRequest(connection.id),
@@ -274,14 +260,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
             state: state,
             emptyMessage: 'No received requests yet.',
             cardStyle: NetworkCardStyle.received,
-            onReceivedTap: (connection) => context.push(
-              AppRoutes.otherUserProfile,
-              extra: OtherUserProfileArguments(
-                profile: connection.otherUserDetails.profile!,
-                details: connection.otherUserDetails,
-                isFromReceived: true,
-              ),
-            ),
+            onReceivedTap: (connection) =>
+                context.push(AppRoutes.otherUserProfile),
             onAcceptTap: (connection) => context
                 .read<ConnectionActionCubit>()
                 .acceptConnectionRequest(connection.id),

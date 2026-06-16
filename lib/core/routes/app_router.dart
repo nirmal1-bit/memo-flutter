@@ -72,18 +72,15 @@ class AppRouter {
       AppRoutes.userProfile.route(
         (context, state) => const UserProfileScreen(),
       ),
-      AppRoutes.otherUserProfile.route(
-        (context, state) => OthersUserProfileScreen(
-          otherUserProfileArgs: state.extra as OtherUserProfileArguments,
-        ),
-      ),
 
-      AppRoutes.timeLine.route(
-        (context, state) => TimeLineScreen(
-          otherUserProfileArgs: state.extra as OtherUserProfileArguments,
-        ),
-      ),
-
+      // AppRoutes.otherUserProfile.route(
+      //   (context, state) => OthersUserProfileScreen(
+      //     otherUserProfileArgs: state.extra,
+      //   ),
+      // ),
+      // AppRoutes.timeLine.route(
+      //   (context, state) => TimeLineScreen(otherUserProfileArgs: state.extra),
+      // ),
       AppRoutes.videoScreen.route(
         (context, state) =>
             VideoCallPage(params: state.extra as VideoCallPageParams),

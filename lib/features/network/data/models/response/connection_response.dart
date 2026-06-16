@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 
 part 'connection_response.freezed.dart';
 part 'connection_response.g.dart';
@@ -8,9 +7,7 @@ part 'connection_response.g.dart';
 abstract class ConnectionResponse with _$ConnectionResponse {
   const factory ConnectionResponse({
     required int id,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
-    @JsonKey(name: 'other_user_details')
-    required OtherUserDetails otherUserDetails,
+    @JsonKey(name: 'user_profile') required UserProfile userProfile,
   }) = _ConnectionResponse;
 
   factory ConnectionResponse.fromJson(Map<String, dynamic> json) =>
@@ -18,20 +15,22 @@ abstract class ConnectionResponse with _$ConnectionResponse {
 }
 
 @freezed
-abstract class OtherUserDetails with _$OtherUserDetails {
-  const factory OtherUserDetails({
+abstract class UserProfile with _$UserProfile {
+  const factory UserProfile({
     required int id,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'user_id') required int userId,
     required String name,
-    required String email,
-    required bool activated,
-    required String role,
-    @JsonKey(name: 'trial_left') required int trialLeft,
-    @JsonKey(name: 'is_premium') required bool isPremium,
-    @JsonKey(name: 'revenue_id') required String revenueId,
-    Profile? profile,
-  }) = _OtherUserDetails;
+    required String headline,
+    required String bio,
+    @JsonKey(name: 'profile_url') required String profileUrl,
+    required String location,
+    required int age,
+    required String gender,
+    required List<String> interests,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') required DateTime updatedAt,
+  }) = _UserProfile;
 
-  factory OtherUserDetails.fromJson(Map<String, dynamic> json) =>
-      _$OtherUserDetailsFromJson(json);
+  factory UserProfile.fromJson(Map<String, dynamic> json) =>
+      _$UserProfileFromJson(json);
 }
