@@ -13,7 +13,6 @@ import 'package:memo/firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   configureInjection();
   FirebaseNotificationService().init();
   runApp(const MyApp());
