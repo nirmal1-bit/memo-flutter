@@ -13,7 +13,6 @@ import 'package:memo/features/main/main_screen.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/presentation/screens/chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
-import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 import 'package:memo/features/network/presentation/screens/qr_scanner.dart';
 import 'package:memo/features/network/presentation/screens/user_profile_screen.dart';
 import 'package:memo/features/profile/data/request/profile_request_model.dart';
@@ -74,13 +73,13 @@ class AppRouter {
       ),
 
       // AppRoutes.otherUserProfile.route(
-      //   (context, state) => OthersUserProfileScreen(
-      //     otherUserProfileArgs: state.extra,
-      //   ),
+      //   (context, state) =>
+      //       OthersUserProfileScreen(otherUserProfileArgs: state.extra),
       // ),
-      // AppRoutes.timeLine.route(
-      //   (context, state) => TimeLineScreen(otherUserProfileArgs: state.extra),
-      // ),
+      AppRoutes.timeLine.route((context, state) {
+        return TimeLineScreen(params: state.extra as TimeLineScreenParams);
+      }),
+
       AppRoutes.videoScreen.route(
         (context, state) =>
             VideoCallPage(params: state.extra as VideoCallPageParams),

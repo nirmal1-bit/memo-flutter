@@ -17,6 +17,7 @@ import 'package:memo/features/network/presentation/cubits/sent_connections_cubit
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 import 'package:memo/features/network/presentation/widgets/network/app_bar.dart';
 import 'package:memo/features/network/presentation/widgets/network/network_screen_widgets.dart';
+import 'package:memo/features/timeline/presentation/time_line_screen.dart';
 
 class NetworkScreen extends StatefulWidget {
   const NetworkScreen({super.key});
@@ -224,7 +225,13 @@ class _NetworkScreenState extends State<NetworkScreen> {
           builder: (context, state) => NetworkStateView(
             state: state,
             emptyMessage: 'No connections yet.\nStart building your network.',
-            onConnectionTap: (connection) => context.push(AppRoutes.timeLine),
+            onConnectionTap: (connection) => context.push(
+              AppRoutes.timeLine,
+              extra: TimeLineScreenParams(
+                profile: connection.userProfile,
+                connectionId: connection.id,
+              ),
+            ),
             onChatTap: (connection) =>
                 context.push(AppRoutes.chat, extra: connection),
             onCallTap: (connection) => ScaffoldMessenger.of(context).showSnackBar(
