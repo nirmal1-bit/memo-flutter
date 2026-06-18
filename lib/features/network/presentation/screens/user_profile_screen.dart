@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
-import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/features/common/custom_app_bar.dart';
 import 'package:memo/features/common/feed_back_state_widget.dart';
 import 'package:memo/features/common/loading_animation.dart';
 import 'package:memo/features/common/shimmer.dart';
@@ -34,20 +32,7 @@ class _ProfileScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.scaffoldBackground,
-        elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        foregroundColor: AppColors.softPrimary,
-        title: Text(
-          'Profile',
-          style: AppTextStyles.libre.copyWith(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: AppColors.softPrimary,
-          ),
-        ),
-      ),
+      appBar: CustomAppBar(title: 'Profile'),
       body: BlocBuilder<GetUserProfileCubit, BaseApiState<UserProfileResponse>>(
         builder: (context, state) => state.when(
           initial: () => const AppLoadingWidget.small(),

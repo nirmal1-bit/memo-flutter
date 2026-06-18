@@ -252,7 +252,22 @@ class _NetworkScreenState extends State<NetworkScreen> {
             state: state,
             emptyMessage: 'No sent requests yet.',
             cardStyle: NetworkCardStyle.sent,
-            onSentTap: (connection) => context.push(AppRoutes.otherUserProfile),
+            onSentTap: (connection) => context.push(
+              AppRoutes.otherUserProfile,
+              extra: Profile(
+                id: connection.userProfile.id,
+                userId: connection.userProfile.userId,
+                headline: connection.userProfile.headline,
+                bio: connection.userProfile.bio,
+                profileUrl: connection.userProfile.profileUrl,
+                location: connection.userProfile.location,
+                age: connection.userProfile.age,
+                gender: connection.userProfile.gender,
+                interests: connection.userProfile.interests,
+                createdAt: connection.userProfile.createdAt,
+                updatedAt: connection.userProfile.updatedAt,
+              ),
+            ),
             onCancelTap: (connection) => context
                 .read<ConnectionActionCubit>()
                 .cancelConnectionRequest(connection.id),
@@ -267,8 +282,22 @@ class _NetworkScreenState extends State<NetworkScreen> {
             state: state,
             emptyMessage: 'No received requests yet.',
             cardStyle: NetworkCardStyle.received,
-            onReceivedTap: (connection) =>
-                context.push(AppRoutes.otherUserProfile),
+            onReceivedTap: (connection) => context.push(
+              AppRoutes.otherUserProfile,
+              extra: Profile(
+                id: connection.userProfile.id,
+                userId: connection.userProfile.userId,
+                headline: connection.userProfile.headline,
+                bio: connection.userProfile.bio,
+                profileUrl: connection.userProfile.profileUrl,
+                location: connection.userProfile.location,
+                age: connection.userProfile.age,
+                gender: connection.userProfile.gender,
+                interests: connection.userProfile.interests,
+                createdAt: connection.userProfile.createdAt,
+                updatedAt: connection.userProfile.updatedAt,
+              ),
+            ),
             onAcceptTap: (connection) => context
                 .read<ConnectionActionCubit>()
                 .acceptConnectionRequest(connection.id),
