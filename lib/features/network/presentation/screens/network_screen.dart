@@ -14,9 +14,9 @@ import 'package:memo/features/network/presentation/cubits/connection_action_cubi
 import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart';
-import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 import 'package:memo/features/network/presentation/widgets/network/app_bar.dart';
 import 'package:memo/features/network/presentation/widgets/network/network_screen_widgets.dart';
+import 'package:memo/features/timeline/presentation/time_line_screen.dart';
 
 class NetworkScreen extends StatefulWidget {
   const NetworkScreen({super.key});
@@ -226,9 +226,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
             emptyMessage: 'No connections yet.\nStart building your network.',
             onConnectionTap: (connection) => context.push(
               AppRoutes.timeLine,
-              extra: OtherUserProfileArguments(
-                profile: connection.otherUserDetails.profile!,
-                details: connection.otherUserDetails,
+              extra: TimeLineScreenParams(
+                profile: connection.userProfile,
                 connectionId: connection.id,
               ),
             ),
@@ -237,7 +236,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
             onCallTap: (connection) => ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'Starting a video call with ${connection.otherUserDetails.name}...',
+                  'Starting a video call with ${connection.userProfile.name}...',
                 ),
               ),
             ),
@@ -254,10 +253,18 @@ class _NetworkScreenState extends State<NetworkScreen> {
             cardStyle: NetworkCardStyle.sent,
             onSentTap: (connection) => context.push(
               AppRoutes.otherUserProfile,
-              extra: OtherUserProfileArguments(
-                profile: connection.otherUserDetails.profile!,
-                details: connection.otherUserDetails,
-                isFromSent: true,
+              extra: Profile(
+                id: connection.userProfile.id,
+                userId: connection.userProfile.userId,
+                headline: connection.userProfile.headline,
+                bio: connection.userProfile.bio,
+                profileUrl: connection.userProfile.profileUrl,
+                location: connection.userProfile.location,
+                age: connection.userProfile.age,
+                gender: connection.userProfile.gender,
+                interests: connection.userProfile.interests,
+                createdAt: connection.userProfile.createdAt,
+                updatedAt: connection.userProfile.updatedAt,
               ),
             ),
             onCancelTap: (connection) => context
@@ -276,10 +283,18 @@ class _NetworkScreenState extends State<NetworkScreen> {
             cardStyle: NetworkCardStyle.received,
             onReceivedTap: (connection) => context.push(
               AppRoutes.otherUserProfile,
-              extra: OtherUserProfileArguments(
-                profile: connection.otherUserDetails.profile!,
-                details: connection.otherUserDetails,
-                isFromReceived: true,
+              extra: Profile(
+                id: connection.userProfile.id,
+                userId: connection.userProfile.userId,
+                headline: connection.userProfile.headline,
+                bio: connection.userProfile.bio,
+                profileUrl: connection.userProfile.profileUrl,
+                location: connection.userProfile.location,
+                age: connection.userProfile.age,
+                gender: connection.userProfile.gender,
+                interests: connection.userProfile.interests,
+                createdAt: connection.userProfile.createdAt,
+                updatedAt: connection.userProfile.updatedAt,
               ),
             ),
             onAcceptTap: (connection) => context

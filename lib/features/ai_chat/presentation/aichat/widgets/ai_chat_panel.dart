@@ -49,20 +49,20 @@ class AiChatPanel extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                if (isAnswering) ...[
-                  Text(
-                    isConnected
-                        ? 'Connected'
-                        : isConnecting
-                        ? 'Connecting...'
-                        : '',
-                    style: AppTextStyles.libre.copyWith(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.softPrimary,
-                    ),
+                Text(
+                  isConnected
+                      ? 'Connected'
+                      : isConnecting
+                      ? 'Connecting...'
+                      : isAnswering
+                      ? 'Answering...'
+                      : '',
+                  style: AppTextStyles.libre.copyWith(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.softPrimary,
                   ),
-                ],
+                ),
               ],
             ),
             if (errorMessage != null) ...[
@@ -101,22 +101,39 @@ class AiChatPanel extends StatelessWidget {
                         ),
                       ),
                     )
-                  : ListView.separated(
-                      controller: messagesController,
-                      padding: const EdgeInsets.only(top: 2, bottom: 4),
-                      itemCount: messages.length,
-                      separatorBuilder: (context, index) =>
+                  : Column(
+                      children: [
+                        Expanded(
+                          child: ListView.separated(
+                            controller: messagesController,
+                            padding: const EdgeInsets.only(top: 2, bottom: 4),
+                            itemCount: messages.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 8),
+                            itemBuilder: (context, index) {
+                              final message = messages[index];
+                              return ChatBubble(
+                                alignEnd: message.isMe,
+                                senderName: message.name,
+                                text: message.message,
+                                timeLabel: message.timeLabel,
+                                status: context
+                                    .read<AiChatCubit>()
+                                    .state
+                                    .status,
+                              );
+                            },
+                          ),
+                        ),
+                        if (isAnswering) ...[
                           const SizedBox(height: 8),
-                      itemBuilder: (context, index) {
-                        final message = messages[index];
-                        return ChatBubble(
-                          alignEnd: message.isMe,
-                          senderName: message.name,
-                          text: message.message,
-                          timeLabel: message.timeLabel,
-                          status: context.read<AiChatCubit>().state.status,
-                        );
-                      },
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Menmo is Thinking..."),
+                          ),
+                          const SizedBox(height: 4),
+                        ],
+                      ],
                     ),
             ),
           ],

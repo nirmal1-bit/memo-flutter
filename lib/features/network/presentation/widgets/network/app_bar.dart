@@ -73,9 +73,9 @@ class _NetworkAppBarState extends State<NetworkAppBar> {
                 ],
               ),
               child: ClipOval(
-                child: profile?.avatarUrl.isNotEmpty ?? false
+                child: (profile?.profileUrl ?? '').isNotEmpty
                     ? Image.network(
-                        profile!.avatarUrl,
+                        profile!.profileUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (_, _, _) => _AvatarFallback(
                           initials: _initials(widget.user.name),

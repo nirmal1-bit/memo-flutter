@@ -2,23 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/features/common/build_initials.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
-import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 
 class TimelineProfileSliverHeader extends StatelessWidget {
   const TimelineProfileSliverHeader({
     super.key,
     required this.tabController,
     required this.innerBoxIsScrolled,
-    required this.otherUserProfileArgs,
+    required this.profile,
   });
 
   final TabController tabController;
   final bool innerBoxIsScrolled;
-  final OtherUserProfileArguments otherUserProfileArgs;
+  final UserProfile profile;
 
   @override
   Widget build(BuildContext context) {
-    final user = otherUserProfileArgs.details;
+    final user = profile;
 
     return SliverAppBar(
       automaticallyImplyLeading: false,
@@ -65,7 +64,7 @@ class TimelineProfileSliverHeader extends StatelessWidget {
 class _TimelineProfileHeroCard extends StatelessWidget {
   const _TimelineProfileHeroCard({required this.user});
 
-  final OtherUserDetails user;
+  final UserProfile user;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +85,7 @@ class _TimelineProfileHeroCard extends StatelessWidget {
 class _TimelineProfileIdentityRow extends StatelessWidget {
   const _TimelineProfileIdentityRow({required this.user});
 
-  final OtherUserDetails user;
+  final UserProfile user;
 
   @override
   Widget build(BuildContext context) {
@@ -104,12 +103,12 @@ class _TimelineProfileIdentityRow extends StatelessWidget {
 class _TimelineProfileAvatar extends StatelessWidget {
   const _TimelineProfileAvatar({required this.user});
 
-  final OtherUserDetails user;
+  final UserProfile user;
 
   @override
   Widget build(BuildContext context) {
-    final profile = user.profile;
-    final initials = buildInitials(user.name);
+    final profile = user;
+    final initials = buildInitials(profile.name ?? '');
 
     return Container(
       width: 72,
@@ -119,11 +118,11 @@ class _TimelineProfileAvatar extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 2),
       ),
-      child: profile?.avatarUrl.isNotEmpty ?? false
+      child: profile.profileUrl.isNotEmpty
           ? ClipRRect(
               borderRadius: BorderRadius.circular(22),
               child: Image.network(
-                profile!.avatarUrl,
+                profile.profileUrl,
                 width: 72,
                 height: 72,
                 fit: BoxFit.cover,
@@ -139,24 +138,22 @@ class _TimelineProfileAvatar extends StatelessWidget {
 class _TimelineProfileNameBlock extends StatelessWidget {
   const _TimelineProfileNameBlock({required this.user});
 
-  final OtherUserDetails user;
+  final UserProfile user;
 
   @override
   Widget build(BuildContext context) {
-    final profile = user.profile;
-    final headline = profile?.headline.isNotEmpty ?? false
-        ? profile!.headline
-        : user.role;
-    final location = profile?.location.isNotEmpty ?? false
-        ? profile!.location
-        : user.email;
+    final profile = user;
+    final headline = profile.headline;
+    final location = profile.location.isNotEmpty
+        ? profile.location
+        : user.location;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 4),
         Text(
-          user.name,
+          user.name ?? '',
           style: const TextStyle(
             fontFamily: 'Libre',
             fontSize: 22,
@@ -212,13 +209,13 @@ class _InitialsAvatar extends StatelessWidget {
 class _TimelineProfileInsightStrip extends StatelessWidget {
   const _TimelineProfileInsightStrip({required this.user});
 
-  final OtherUserDetails user;
+  final UserProfile user;
 
   @override
   Widget build(BuildContext context) {
-    final profile = user.profile;
-    final note = profile?.headline.isNotEmpty ?? false
-        ? '${user.name} highlighted ${profile!.headline.toLowerCase()}.'
+    final profile = user;
+    final note = profile.headline.isNotEmpty
+        ? '${user.name} highlighted ${profile.headline.toLowerCase()}.'
         : '${user.name} is active on the timeline and can be reached through this profile.';
 
     return Row(

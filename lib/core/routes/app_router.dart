@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:memo/features/main/auth_main_screen.dart';
 import 'package:memo/features/main/main_screen.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 import 'package:memo/features/network/presentation/screens/chat_screen.dart';
 import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
@@ -72,17 +73,13 @@ class AppRouter {
       AppRoutes.userProfile.route(
         (context, state) => const UserProfileScreen(),
       ),
-      AppRoutes.otherUserProfile.route(
-        (context, state) => OthersUserProfileScreen(
-          otherUserProfileArgs: state.extra as OtherUserProfileArguments,
-        ),
-      ),
 
-      AppRoutes.timeLine.route(
-        (context, state) => TimeLineScreen(
-          otherUserProfileArgs: state.extra as OtherUserProfileArguments,
-        ),
+      AppRoutes.otherUserProfile.route(
+        (context, state) => OtherUserProfile(user: state.extra as Profile),
       ),
+      AppRoutes.timeLine.route((context, state) {
+        return TimeLineScreen(params: state.extra as TimeLineScreenParams);
+      }),
 
       AppRoutes.videoScreen.route(
         (context, state) =>

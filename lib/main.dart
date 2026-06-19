@@ -46,7 +46,6 @@ class _MyAppState extends State<MyApp> {
           providers: [BlocProvider(create: (_) => getIt<AiChatCubit>())],
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
-
             theme: AppTheme.appTheme(context),
             routerConfig: AppRouter.router,
           ),

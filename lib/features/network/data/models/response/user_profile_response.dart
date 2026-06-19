@@ -13,7 +13,6 @@ abstract class UserProfileResponse with _$UserProfileResponse {
     required String name,
     required String email,
     required bool activated,
-    required String role,
 
     @JsonKey(name: 'trial_left') required int trialLeft,
 
@@ -37,15 +36,18 @@ abstract class Profile with _$Profile {
 
     required String headline,
     required String bio,
+    String? name,
 
     @JsonKey(name: 'profile_url') required String profileUrl,
 
-    @JsonKey(name: 'avatar_url') required String avatarUrl,
+    @JsonKey(name: 'avatar_url') String? avatarUrl,
 
-    required String website,
     required String location,
 
-    @JsonKey(name: 'company_name') required String companyName,
+    required int age,
+    required String gender,
+
+    required List<String> interests,
 
     @JsonKey(name: 'created_at') required DateTime createdAt,
 

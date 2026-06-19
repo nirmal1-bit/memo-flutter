@@ -8,7 +8,7 @@ import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
-import 'package:memo/features/network/data/models/response/user_search_response.dart';
+import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 import 'package:memo/features/network/presentation/cubits/connection_action_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/search_users_cubit.dart';
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
@@ -138,7 +138,7 @@ class _AddConnectionScreenState extends State<AddConnectionScreen> {
                       const SizedBox(height: 20),
                       BlocBuilder<
                         SearchUsersCubit,
-                        BaseApiState<List<UserSearchResponse>>
+                        BaseApiState<List<Profile>>
                       >(
                         builder: (context, state) {
                           return state.when(
@@ -184,78 +184,7 @@ class _AddConnectionScreenState extends State<AddConnectionScreen> {
                                               onTap: () {
                                                 context.push(
                                                   AppRoutes.otherUserProfile,
-                                                  extra: OtherUserProfileArguments(
-                                                    profile: Profile(
-                                                      id:
-                                                          result.profile?.id ??
-                                                          0,
-                                                      userId:
-                                                          result
-                                                              .profile
-                                                              ?.userId ??
-                                                          0,
-                                                      headline:
-                                                          result
-                                                              .profile
-                                                              ?.headline ??
-                                                          '',
-                                                      bio:
-                                                          result.profile?.bio ??
-                                                          '',
-                                                      profileUrl:
-                                                          result
-                                                              .profile
-                                                              ?.profileUrl ??
-                                                          '',
-                                                      avatarUrl:
-                                                          result
-                                                              .profile
-                                                              ?.avatarUrl ??
-                                                          '',
-                                                      website:
-                                                          result
-                                                              .profile
-                                                              ?.website ??
-                                                          '',
-                                                      location:
-                                                          result
-                                                              .profile
-                                                              ?.location ??
-                                                          '',
-                                                      companyName:
-                                                          result
-                                                              .profile
-                                                              ?.companyName ??
-                                                          '',
-                                                      createdAt:
-                                                          result
-                                                              .profile
-                                                              ?.createdAt ??
-                                                          DateTime.now(),
-                                                      updatedAt:
-                                                          result
-                                                              .profile
-                                                              ?.updatedAt ??
-                                                          DateTime.now(),
-                                                    ),
-
-                                                    details: OtherUserDetails(
-                                                      id: result.user.id,
-                                                      createdAt:
-                                                          result.user.createdAt,
-                                                      name: result.user.name,
-                                                      email: result.user.email,
-                                                      activated:
-                                                          result.user.activated,
-                                                      role: result.user.role,
-                                                      trialLeft:
-                                                          result.user.trialLeft,
-                                                      isPremium:
-                                                          result.user.isPremium,
-                                                      revenueId:
-                                                          result.user.revenueId,
-                                                    ),
-                                                  ),
+                                                  extra: result,
                                                 );
                                               },
                                               child: _SearchResultCard(
@@ -265,7 +194,7 @@ class _AddConnectionScreenState extends State<AddConnectionScreen> {
                                                       ConnectionActionCubit
                                                     >()
                                                     .sendConnectionRequest(
-                                                      result.user.id,
+                                                      result.userId,
                                                     ),
                                               ),
                                             ),
@@ -391,13 +320,12 @@ class _QrActionCard extends StatelessWidget {
 class _SearchResultCard extends StatelessWidget {
   const _SearchResultCard({required this.result, required this.onSendRequest});
 
-  final UserSearchResponse result;
+  final Profile result;
   final VoidCallback onSendRequest;
 
   @override
   Widget build(BuildContext context) {
-    final user = result.user;
-    final profile = result.profile;
+    final user = result;
 
     return Material(
       color: AppColors.white,
@@ -408,8 +336,8 @@ class _SearchResultCard extends StatelessWidget {
         child: Row(
           children: [
             AvatarBadge(
-              profileLink: profile?.avatarUrl ?? '',
-              label: _initials(user.name),
+              profileLink: user.profileUrl,
+              label: _initials(user.name ?? ''),
               size: 54,
             ),
             const SizedBox(width: 12),
@@ -418,7 +346,7 @@ class _SearchResultCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user.name,
+                    user.name ?? '',
                     style: AppTextStyles.rubik.copyWith(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -426,17 +354,11 @@ class _SearchResultCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    user.email,
-                    style: AppTextStyles.rubik.copyWith(
-                      fontSize: 12.5,
-                      color: AppColors.ironGrey,
-                    ),
-                  ),
-                  if ((profile?.headline ?? '').isNotEmpty) ...[
+
+                  if ((user.headline).isNotEmpty) ...[
                     const SizedBox(height: 6),
                     Text(
-                      profile!.headline,
+                      user.headline,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.rubik.copyWith(

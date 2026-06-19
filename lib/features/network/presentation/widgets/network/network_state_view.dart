@@ -133,7 +133,7 @@ class _SentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final details = connection.otherUserDetails;
+    final details = connection.userProfile;
 
     return Material(
       color: AppColors.white,
@@ -152,7 +152,7 @@ class _SentCard extends StatelessWidget {
               Row(
                 children: [
                   AvatarBadge(
-                    profileLink: details.profile?.avatarUrl ?? '',
+                    profileLink: details.profileUrl,
                     label: _initials(details.name),
                     size: 52,
                   ),
@@ -170,13 +170,7 @@ class _SentCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          details.role,
-                          style: AppTextStyles.rubik.copyWith(
-                            fontSize: 12.5,
-                            color: AppColors.ironGrey,
-                          ),
-                        ),
+
                         const SizedBox(height: 6),
                         Text(
                           'Pending response',
@@ -236,7 +230,7 @@ class _ReceivedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final details = connection.otherUserDetails;
+    final details = connection.userProfile;
 
     return Material(
       color: AppColors.white,
@@ -255,7 +249,7 @@ class _ReceivedCard extends StatelessWidget {
               Row(
                 children: [
                   AvatarBadge(
-                    profileLink: details.profile?.avatarUrl ?? '',
+                    profileLink: details.profileUrl,
                     label: _initials(details.name),
                     size: 52,
                   ),
@@ -270,14 +264,6 @@ class _ReceivedCard extends StatelessWidget {
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: AppColors.softBlack,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          details.role,
-                          style: AppTextStyles.rubik.copyWith(
-                            fontSize: 12.5,
-                            color: AppColors.ironGrey,
                           ),
                         ),
                       ],

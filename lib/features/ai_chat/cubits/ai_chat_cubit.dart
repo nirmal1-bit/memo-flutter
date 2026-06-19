@@ -21,6 +21,10 @@ class AiChatCubit extends Cubit<ChatState> {
   // making this a future function cause problems i don't know why
   //when doing form getIt it causes some problems
 
+  void updateToAnswering() {
+    emit(state.copyWith(status: ChatConnectionStatus.answering));
+  }
+
   void connect(int connectionId) async {
     if (_hasConnected || state.status == ChatConnectionStatus.connecting) {
       return;
@@ -79,16 +83,6 @@ class AiChatCubit extends Cubit<ChatState> {
       return;
     }
 
-    if (state.status != ChatConnectionStatus.connected || channel == null) {
-      emit(
-        state.copyWith(
-          status: ChatConnectionStatus.error,
-          errorMessage: 'Chat is not connected yet.',
-        ),
-      );
-      return;
-    }
-
     final outgoingMessage = ChatMessage(
       name: 'You',
       message: message,
@@ -107,7 +101,8 @@ class AiChatCubit extends Cubit<ChatState> {
 
     try {
       // this is to send the message to the websocket server and if
-      //there is an error in sending the message we need to remove that message from the chat and show the error message
+      //there is an error in sending the message
+      //we need to remove that message from the chat and show the error message
       channel!.sink.add(message);
     } catch (error) {
       _removeLastOptimisticMessage(message);
@@ -148,7 +143,7 @@ class AiChatCubit extends Cubit<ChatState> {
       emit(
         state.copyWith(
           messages: [...state.messages, newMsg],
-          status: ChatConnectionStatus.connected,
+          status: ChatConnectionStatus.answered,
         ),
       );
     }

@@ -7,9 +7,7 @@ part 'connection_response.g.dart';
 abstract class ConnectionResponse with _$ConnectionResponse {
   const factory ConnectionResponse({
     required int id,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
-    @JsonKey(name: 'other_user_details')
-    required OtherUserDetails otherUserDetails,
+    @JsonKey(name: 'user_profile') required UserProfile userProfile,
   }) = _ConnectionResponse;
 
   factory ConnectionResponse.fromJson(Map<String, dynamic> json) =>
@@ -17,40 +15,22 @@ abstract class ConnectionResponse with _$ConnectionResponse {
 }
 
 @freezed
-abstract class OtherUserDetails with _$OtherUserDetails {
-  const factory OtherUserDetails({
-    required int id,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
-    required String name,
-    required String email,
-    required bool activated,
-    required String role,
-    @JsonKey(name: 'trial_left') required int trialLeft,
-    @JsonKey(name: 'is_premium') required bool isPremium,
-    @JsonKey(name: 'revenue_id') required String revenueId,
-    Profile? profile,
-  }) = _OtherUserDetails;
-
-  factory OtherUserDetails.fromJson(Map<String, dynamic> json) =>
-      _$OtherUserDetailsFromJson(json);
-}
-
-@freezed
-abstract class Profile with _$Profile {
-  const factory Profile({
+abstract class UserProfile with _$UserProfile {
+  const factory UserProfile({
     required int id,
     @JsonKey(name: 'user_id') required int userId,
+    required String name,
     required String headline,
     required String bio,
     @JsonKey(name: 'profile_url') required String profileUrl,
-    @JsonKey(name: 'avatar_url') required String avatarUrl,
-    required String website,
     required String location,
-    @JsonKey(name: 'company_name') required String companyName,
+    required int age,
+    required String gender,
+    required List<String> interests,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
-  }) = _Profile;
+  }) = _UserProfile;
 
-  factory Profile.fromJson(Map<String, dynamic> json) =>
-      _$ProfileFromJson(json);
+  factory UserProfile.fromJson(Map<String, dynamic> json) =>
+      _$UserProfileFromJson(json);
 }

@@ -38,7 +38,7 @@ class ReceivedConnectionsCubit
     if (_searchQuery.isEmpty) return _allConnections;
 
     return _allConnections.where((c) {
-      return c.otherUserDetails.name.toLowerCase().contains(_searchQuery);
+      return c.userProfile.name.toLowerCase().contains(_searchQuery);
     }).toList();
   }
 }
