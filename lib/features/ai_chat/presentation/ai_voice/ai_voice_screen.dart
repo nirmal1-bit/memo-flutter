@@ -13,7 +13,8 @@ import 'widgets/status_label.dart';
 import 'widgets/transcript_card.dart';
 
 class AiVoiceScreen extends StatefulWidget {
-  const AiVoiceScreen({super.key});
+  const AiVoiceScreen({super.key, required this.connectionId});
+  final int connectionId;
 
   @override
   State<AiVoiceScreen> createState() => _AiVoiceScreenState();
@@ -64,7 +65,7 @@ class _AiVoiceScreenState extends State<AiVoiceScreen>
 
     _initSpeech();
     _initTts();
-    context.read<AiChatCubit>().connect(1);
+    context.read<AiChatCubit>().connect(widget.connectionId);
   }
 
   @override
@@ -201,7 +202,9 @@ class _AiVoiceScreenState extends State<AiVoiceScreen>
       return;
     }
 
-    context.read<AiChatCubit>().sendMessage(text);
+    context.read<AiChatCubit>().sendMessage(
+      "$text Extra Instruction: answer in plain text no markdown required as your response is being read out loud by a text to speech engine and markdown formatting will not be read correctly. Also keep the response concise and to the point.",
+    );
 
     setState(() {
       _transcribedText = '';
