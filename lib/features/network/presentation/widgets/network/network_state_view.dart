@@ -62,7 +62,7 @@ class NetworkStateView extends StatelessWidget {
                 child: Column(
                   children: data.map((connection) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 25),
+                      padding: const EdgeInsets.only(bottom: 30),
                       child: switch (cardStyle) {
                         NetworkCardStyle.connections => NetworkConnectionCard(
                           connection: connection,

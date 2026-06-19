@@ -46,5 +46,7 @@ class ApiEndpoints {
   // timeline
   static String timeline(int id) => "/timeline/$id";
 
-  // video call transcript
+  // matches
+
+  static const String matches = "/matches";
 }

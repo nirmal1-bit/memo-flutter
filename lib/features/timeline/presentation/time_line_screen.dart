@@ -24,6 +24,7 @@ class TimeLineScreen extends StatefulWidget {
   State<TimeLineScreen> createState() => _TimeLineScreenState();
 }
 
+
 class _TimeLineScreenState extends State<TimeLineScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
@@ -31,7 +32,7 @@ class _TimeLineScreenState extends State<TimeLineScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
