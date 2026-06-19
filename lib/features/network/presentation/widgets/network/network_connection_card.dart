@@ -106,15 +106,6 @@ class NetworkConnectionCard extends StatelessWidget {
                       onPressed: onChatTap ?? onTap ?? () {},
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _ActionButton(
-                      label: 'Call',
-                      icon: Icons.videocam_outlined,
-                      filled: true,
-                      onPressed: onCallTap ?? onTap ?? () {},
-                    ),
-                  ),
                 ],
               ),
             ],
@@ -209,9 +200,8 @@ class _ActionButton extends StatelessWidget {
           backgroundColor: filled
               ? const Color(0xFF1A2233)
               : const Color(0xFFE2E8F4),
-          foregroundColor: filled
-              ? const Color(0xFFF5F7FA)
-              : const Color(0xFF3A517A),
+
+          foregroundColor: filled ? AppColors.primary : const Color(0xFF3A517A),
           side: BorderSide.none,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(horizontal: 12),

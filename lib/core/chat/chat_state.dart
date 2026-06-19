@@ -5,6 +5,7 @@ enum ChatConnectionStatus {
   disconnected,
   error,
   answering,
+  answered,
 }
 
 // this is the message class

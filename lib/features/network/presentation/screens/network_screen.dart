@@ -14,7 +14,6 @@ import 'package:memo/features/network/presentation/cubits/connection_action_cubi
 import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart';
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart';
-import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 import 'package:memo/features/network/presentation/widgets/network/app_bar.dart';
 import 'package:memo/features/network/presentation/widgets/network/network_screen_widgets.dart';
 import 'package:memo/features/timeline/presentation/time_line_screen.dart';
