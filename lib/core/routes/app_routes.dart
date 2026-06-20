@@ -22,4 +22,6 @@ class AppRoutes {
   static const String qrScanner = '/qr-scanner';
 
   static const String voice = '/voice';
+
+  static const String notifications = '/notifications';
 }

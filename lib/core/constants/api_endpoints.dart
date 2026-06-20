@@ -49,4 +49,5 @@ class ApiEndpoints {
   // matches
 
   static const String matches = "/matches";
+  static const String notifications = "/notifications";
 }

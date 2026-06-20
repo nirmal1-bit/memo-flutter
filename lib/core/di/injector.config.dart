@@ -56,6 +56,14 @@ import 'package:memo/features/network/presentation/cubits/search_users_cubit.dar
     as _i294;
 import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart'
     as _i636;
+import 'package:memo/features/notification/cubit/get_notification_cubit.dart'
+    as _i84;
+import 'package:memo/features/notification/cubit/get_unread_count_cubit.dart'
+    as _i11;
+import 'package:memo/features/notification/cubit/mark_as_read_cubit.dart'
+    as _i105;
+import 'package:memo/features/notification/repository/notification_repository.dart'
+    as _i915;
 import 'package:memo/features/profile/presentation/cubits/edit_profile_cubit.dart'
     as _i1023;
 import 'package:memo/features/profile/presentation/cubits/set_profile_cubit.dart'
@@ -155,6 +163,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1049.GetTimelineCubit>(
       () => _i1049.GetTimelineCubit(gh<_i1029.TimelineRepository>()),
     );
+    gh.lazySingleton<_i915.NotificationRepository>(
+      () => _i915.NotificationRepositoryImpl(
+        gh<_i361.Dio>(),
+        gh<_i509.NetworkInfo>(),
+      ),
+    );
     gh.factory<_i1023.EditProfileCubit>(
       () => _i1023.EditProfileCubit(gh<_i533.ProfileRepository>()),
     );
@@ -216,6 +230,15 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i256.StartVideoCallCubit(
         videoCallRemoteSource: gh<_i818.VideoCallRepository>(),
       ),
+    );
+    gh.factory<_i84.GetNotificationCubit>(
+      () => _i84.GetNotificationCubit(gh<_i915.NotificationRepository>()),
+    );
+    gh.factory<_i11.GetUnreadCountCubit>(
+      () => _i11.GetUnreadCountCubit(gh<_i915.NotificationRepository>()),
+    );
+    gh.factory<_i105.MarkAsReadCubit>(
+      () => _i105.MarkAsReadCubit(gh<_i915.NotificationRepository>()),
     );
     return this;
   }

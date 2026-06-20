@@ -1,3 +1,4 @@
+import 'package:downloadsfolder/downloadsfolder.dart';
 import 'package:flutter/material.dart';
 import 'package:memo/features/ai_chat/presentation/ai_voice/ai_voice_screen.dart';
 import 'package:memo/features/auth/presentation/models/auth_flow_args.dart';
@@ -17,6 +18,7 @@ import 'package:memo/features/network/presentation/screens/add_connection_screen
 import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
 import 'package:memo/features/network/presentation/screens/qr_scanner.dart';
 import 'package:memo/features/network/presentation/screens/user_profile_screen.dart';
+import 'package:memo/features/notification/presentation/notification_screen.dart';
 import 'package:memo/features/profile/data/request/profile_request_model.dart';
 import 'package:memo/features/profile/presentation/set_profile_screen.dart';
 import 'package:memo/features/splash/splash_screen.dart';
@@ -102,6 +104,10 @@ class AppRouter {
       AppRoutes.onboarding.route(
         (context, state) =>
             const Scaffold(body: Center(child: Text('Onboarding screen'))),
+      ),
+
+      AppRoutes.notifications.route(
+        (context, state) => const NotificationScreen(),
       ),
     ],
   );

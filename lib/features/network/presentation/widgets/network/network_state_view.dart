@@ -207,6 +207,7 @@ class _SentCard extends StatelessWidget {
                       color: AppColors.dividerColor,
                       width: 0.5,
                     ),
+
                     padding: const EdgeInsets.symmetric(vertical: 9),
                     textStyle: AppTextStyles.rubik.copyWith(fontSize: 13),
                     shape: RoundedRectangleBorder(

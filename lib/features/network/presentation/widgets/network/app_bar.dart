@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
@@ -93,23 +95,19 @@ class _NetworkAppBarState extends State<NetworkAppBar> {
             ),
           ),
           const SizedBox(width: 8),
-          SizedBox(
-            height: 52,
-            child: ElevatedButton.icon(
-              onPressed: widget.onSearchPressed,
-              icon: const Icon(Icons.search_rounded, size: 18),
-              label: const Text('Search'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                textStyle: AppTextStyles.rubik.copyWith(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
+          InkWell(
+            onTap: () {
+              context.push(AppRoutes.notifications);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Icon(Icons.notifications, color: AppColors.white),
                 ),
               ),
             ),
