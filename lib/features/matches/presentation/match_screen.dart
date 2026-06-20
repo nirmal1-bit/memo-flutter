@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/state/base_api_state.dart';
+import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/matches/cubits/get_matches_cubit.dart';
 import 'package:memo/features/matches/data/models/response/matches_response.dart';
@@ -78,37 +79,6 @@ class _MatchScreenState extends State<MatchScreen>
     setState(() => _dragOffset += details.delta);
   }
 
-  void _onPanEnd(DragEndDetails details) {
-    setState(() => _isDragging = false);
-    if (_dragOffset.dx.abs() > _swipeThreshold) {
-      _animateSwipe(_dragOffset.dx > 0 ? _SwipeAction.like : _SwipeAction.nope);
-    } else {
-      _animateReset();
-    }
-  }
-
-  void _animateSwipe(_SwipeAction action) {
-    final size = MediaQuery.of(context).size;
-    double endX = _dragOffset.dx;
-    double endY = _dragOffset.dy;
-
-    switch (action) {
-      case _SwipeAction.like:
-        endX = size.width * 1.4;
-        break;
-      case _SwipeAction.nope:
-        endX = -size.width * 1.4;
-        break;
-    }
-
-    _pendingAction = action;
-    _swipeAnimation = Tween<Offset>(begin: _dragOffset, end: Offset(endX, endY))
-        .animate(
-          CurvedAnimation(parent: _swipeController, curve: Curves.easeInCubic),
-        );
-    _swipeController.forward(from: 0);
-  }
-
   void _animateReset() {
     _pendingAction = null;
     _swipeAnimation = Tween<Offset>(begin: _dragOffset, end: Offset.zero)
@@ -157,56 +127,146 @@ class _MatchScreenState extends State<MatchScreen>
             BlocProvider(
               create: (context) => getIt<GetMatchesCubit>()..getMatches(),
             ),
-
             BlocProvider(create: (_) => getIt<ConnectionActionCubit>()),
           ],
-          child:
-              BlocBuilder<GetMatchesCubit, BaseApiState<List<MatchesResponse>>>(
-                builder: (context, state) {
-                  return state.maybeWhen(
-                    orElse: () => const SizedBox.shrink(),
-                    loading: () => Center(
-                      child: SizedBox(
-                        height: 600,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: DatingProfileShimmer(),
-                        ),
-                      ),
-                    ),
-                    success: (data) => Stack(
-                      children: [
-                        Column(
-                          children: [
-                            const MatchHeader(),
-                            Expanded(
-                              child: CardDeck(
-                                profiles: data,
-                                currentIndex: _currentIndex,
-                                dragOffset: _dragOffset,
-                                swipeThreshold: _swipeThreshold,
-                                onPanStart: _onPanStart,
-                                onPanUpdate: _onPanUpdate,
-                                onPanEnd: _onPanEnd,
-                                emptyState: MatchEmptyState(
-                                  onRefresh: _resetDeck,
-                                ),
-                              ),
-                            ),
-
-                            MatchActionBar(
-                              onRewind: _rewind,
-                              onNope: () => _animateSwipe(_SwipeAction.nope),
-                              onLike: () => _animateSwipe(_SwipeAction.like),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
-                        ),
-                      ],
-                    ),
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<ConnectionActionCubit, BaseApiState<String>>(
+                listener: (context, state) {
+                  state.maybeWhen(
+                    success: (message) {
+                      AppUtils.showSuccessSnackbar(
+                        context: context,
+                        message: message,
+                      );
+                    },
+                    error: (message) {
+                      AppUtils.showErrorSnackbar(
+                        context: context,
+                        message: message,
+                      );
+                    },
+                    validationError: (validationError) {
+                      AppUtils.showErrorSnackbar(
+                        context: context,
+                        message: validationError.message,
+                      );
+                    },
+                    noInternet: () {
+                      AppUtils.showErrorSnackbar(
+                        context: context,
+                        message: 'No internet connection',
+                      );
+                    },
+                    orElse: () {},
                   );
                 },
               ),
+            ],
+            child:
+                BlocBuilder<
+                  GetMatchesCubit,
+                  BaseApiState<List<MatchesResponse>>
+                >(
+                  builder: (context, state) {
+                    return state.maybeWhen(
+                      orElse: () => const SizedBox.shrink(),
+                      loading: () => Center(
+                        child: SizedBox(
+                          height: 600,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: DatingProfileShimmer(),
+                          ),
+                        ),
+                      ),
+                      success: (data) {
+                        void animateSwipe(_SwipeAction action) {
+                          if (_SwipeAction.like == action) {
+                            context
+                                .read<ConnectionActionCubit>()
+                                .sendConnectionRequest(
+                                  _currentIndex < data.length
+                                      ? data[_currentIndex].userId
+                                      : 0,
+                                );
+                          }
+
+                          final size = MediaQuery.of(context).size;
+                          double endX = _dragOffset.dx;
+                          double endY = _dragOffset.dy;
+
+                          switch (action) {
+                            case _SwipeAction.like:
+                              endX = size.width * 1.4;
+                              break;
+                            case _SwipeAction.nope:
+                              endX = -size.width * 1.4;
+                              break;
+                          }
+
+                          _pendingAction = action;
+                          _swipeAnimation =
+                              Tween<Offset>(
+                                begin: _dragOffset,
+                                end: Offset(endX, endY),
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: _swipeController,
+                                  curve: Curves.easeInCubic,
+                                ),
+                              );
+                          _swipeController.forward(from: 0);
+                        }
+
+                        void onPanEnd(DragEndDetails details) {
+                          setState(() => _isDragging = false);
+                          if (_dragOffset.dx.abs() > _swipeThreshold) {
+                            animateSwipe(
+                              _dragOffset.dx > 0
+                                  ? _SwipeAction.like
+                                  : _SwipeAction.nope,
+                            );
+                          } else {
+                            _animateReset();
+                          }
+                        }
+
+                        return Stack(
+                          children: [
+                            Column(
+                              children: [
+                                const MatchHeader(),
+                                Expanded(
+                                  child: CardDeck(
+                                    profiles: data,
+                                    currentIndex: _currentIndex,
+                                    dragOffset: _dragOffset,
+                                    swipeThreshold: _swipeThreshold,
+                                    onPanStart: _onPanStart,
+                                    onPanUpdate: _onPanUpdate,
+                                    onPanEnd: onPanEnd,
+                                    emptyState: MatchEmptyState(
+                                      onRefresh: _resetDeck,
+                                    ),
+                                  ),
+                                ),
+
+                                MatchActionBar(
+                                  onRewind: _rewind,
+                                  onNope: () => animateSwipe(_SwipeAction.nope),
+                                  onLike: () => animateSwipe(_SwipeAction.like),
+                                ),
+                                const SizedBox(height: 8),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+          ),
         ),
       ),
     );
