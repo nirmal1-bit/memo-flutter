@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/features/common/build_initials.dart';
 import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/presentation/cubits/connections_cubit.dart';
@@ -57,50 +58,51 @@ class NetworkStateView extends StatelessWidget {
                     .listReceivedConnections();
                 context.read<GetUserProfileCubit>().getUserProfile();
               },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  children: data.map((connection) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 25),
-                      child: switch (cardStyle) {
-                        NetworkCardStyle.connections => NetworkConnectionCard(
-                          connection: connection,
-                          onTap: onConnectionTap == null
-                              ? null
-                              : () => onConnectionTap!(connection),
-                          onChatTap: onChatTap == null
-                              ? null
-                              : () => onChatTap!(connection),
-                          onCallTap: onCallTap == null
-                              ? null
-                              : () => onCallTap!(connection),
-                        ),
-                        NetworkCardStyle.sent => _SentCard(
-                          connection: connection,
-                          onTap: onSentTap == null
-                              ? null
-                              : () => onSentTap!(connection),
-                          onCancelTap: onCancelTap == null
-                              ? null
-                              : () => onCancelTap!(connection),
-                        ),
-                        NetworkCardStyle.received => _ReceivedCard(
-                          connection: connection,
-                          onTap: onReceivedTap == null
-                              ? null
-                              : () => onReceivedTap!(connection),
-                          onAcceptTap: onAcceptTap == null
-                              ? null
-                              : () => onAcceptTap!(connection),
-                          onRejectTap: onRejectTap == null
-                              ? null
-                              : () => onRejectTap!(connection),
-                        ),
-                      },
-                    );
-                  }).toList(),
-                ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: data.length,
+                itemBuilder: (context, index) {
+                  final connection = data[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: switch (cardStyle) {
+                      NetworkCardStyle.connections => NetworkConnectionCard(
+                        connection: connection,
+                        onTap: onConnectionTap == null
+                            ? null
+                            : () => onConnectionTap!(connection),
+                        onChatTap: onChatTap == null
+                            ? null
+                            : () => onChatTap!(connection),
+                        onCallTap: onCallTap == null
+                            ? null
+                            : () => onCallTap!(connection),
+                      ),
+                      NetworkCardStyle.sent => _SentCard(
+                        connection: connection,
+                        onTap: onSentTap == null
+                            ? null
+                            : () => onSentTap!(connection),
+                        onCancelTap: onCancelTap == null
+                            ? null
+                            : () => onCancelTap!(connection),
+                      ),
+                      NetworkCardStyle.received => _ReceivedCard(
+                        connection: connection,
+                        onTap: onReceivedTap == null
+                            ? null
+                            : () => onReceivedTap!(connection),
+                        onAcceptTap: onAcceptTap == null
+                            ? null
+                            : () => onAcceptTap!(connection),
+                        onRejectTap: onRejectTap == null
+                            ? null
+                            : () => onRejectTap!(connection),
+                      ),
+                    },
+                  );
+                },
               ),
             ),
       error: (message) => _StatusState(
@@ -126,7 +128,6 @@ class NetworkStateView extends StatelessWidget {
 
 class _SentCard extends StatelessWidget {
   const _SentCard({required this.connection, this.onTap, this.onCancelTap});
-
   final ConnectionResponse connection;
   final VoidCallback? onTap;
   final VoidCallback? onCancelTap;
@@ -134,18 +135,19 @@ class _SentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final details = connection.userProfile;
-
     return Material(
       color: AppColors.white,
-      elevation: 6,
-      shadowColor: AppColors.softBlack.withValues(alpha: 0.16),
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.dividerColor, width: 0.5),
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -153,10 +155,10 @@ class _SentCard extends StatelessWidget {
                 children: [
                   AvatarBadge(
                     profileLink: details.profileUrl,
-                    label: _initials(details.name),
-                    size: 52,
+                    label: buildInitials(details.name),
+                    size: 40,
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,18 +166,18 @@ class _SentCard extends StatelessWidget {
                         Text(
                           details.name,
                           style: AppTextStyles.rubik.copyWith(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.softBlack,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textDark,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 4),
-
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 3),
                         Text(
                           'Pending response',
                           style: AppTextStyles.rubik.copyWith(
-                            fontSize: 11.5,
+                            fontSize: 12,
                             color: AppColors.textLight,
                           ),
                         ),
@@ -183,29 +185,35 @@ class _SentCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    width: 10,
-                    height: 10,
+                    width: 7,
+                    height: 7,
                     decoration: const BoxDecoration(
-                      color: Color(0xFFFF8C42),
+                      color: AppColors.statusOrange,
                       shape: BoxShape.circle,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: _ActionButton(
-                      label: 'Cancel',
-                      icon: Icons.cancel_outlined,
-                      backgroundColor: AppColors.white,
-                      foregroundColor: AppColors.primary,
-                      borderColor: AppColors.brandBackgroundLight,
-                      onPressed: onCancelTap ?? () {},
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: onCancelTap,
+                  icon: const Icon(Icons.close, size: 15),
+                  label: const Text('Cancel request'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.textLightDark,
+                    side: const BorderSide(
+                      color: AppColors.dividerColor,
+                      width: 0.5,
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 9),
+                    textStyle: AppTextStyles.rubik.copyWith(fontSize: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                ],
+                ),
               ),
             ],
           ),
@@ -222,7 +230,6 @@ class _ReceivedCard extends StatelessWidget {
     this.onAcceptTap,
     this.onRejectTap,
   });
-
   final ConnectionResponse connection;
   final VoidCallback? onTap;
   final VoidCallback? onAcceptTap;
@@ -231,18 +238,19 @@ class _ReceivedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final details = connection.userProfile;
-
     return Material(
       color: AppColors.white,
-      elevation: 6,
-      shadowColor: AppColors.softBlack.withValues(alpha: 0.16),
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.dividerColor, width: 0.5),
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -250,23 +258,20 @@ class _ReceivedCard extends StatelessWidget {
                 children: [
                   AvatarBadge(
                     profileLink: details.profileUrl,
-                    label: _initials(details.name),
-                    size: 52,
+                    label: buildInitials(details.name),
+                    size: 40,
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          details.name,
-                          style: AppTextStyles.rubik.copyWith(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.softBlack,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      details.name,
+                      style: AppTextStyles.rubik.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textDark,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -275,219 +280,45 @@ class _ReceivedCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: _ActionButton(
-                      label: 'Accept',
-                      icon: Icons.check_rounded,
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
-                      borderColor: AppColors.primary,
-                      onPressed: onAcceptTap ?? () {},
+                    child: FilledButton.icon(
+                      onPressed: onAcceptTap,
+                      icon: const Icon(Icons.check_rounded, size: 15),
+                      label: const Text('Accept'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 9),
+                        textStyle: AppTextStyles.rubik.copyWith(fontSize: 13),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _ActionButton(
-                      label: 'Decline',
-                      icon: Icons.close_rounded,
-                      backgroundColor: AppColors.white,
-                      foregroundColor: AppColors.primary,
-                      borderColor: AppColors.brandBackgroundLight,
-                      onPressed: onRejectTap ?? () {},
+                    child: OutlinedButton.icon(
+                      onPressed: onRejectTap,
+                      icon: const Icon(Icons.close_rounded, size: 15),
+                      label: const Text('Decline'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.textLightDark,
+                        side: const BorderSide(
+                          color: AppColors.dividerColor,
+                          width: 0.5,
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 9),
+                        textStyle: AppTextStyles.rubik.copyWith(fontSize: 13),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.label,
-    required this.icon,
-    required this.backgroundColor,
-    required this.foregroundColor,
-    required this.borderColor,
-    required this.onPressed,
-  });
-
-  final String label;
-  final IconData icon;
-  final Color backgroundColor;
-  final Color foregroundColor;
-  final Color borderColor;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 44,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
-          side: BorderSide(color: borderColor),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 16),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                label,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.rubik.copyWith(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: foregroundColor,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ListSkeleton extends StatefulWidget {
-  const _ListSkeleton();
-
-  @override
-  State<_ListSkeleton> createState() => _ListSkeletonState();
-}
-
-class _ListSkeletonState extends State<_ListSkeleton>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1100),
-    )..repeat(reverse: true);
-    _animation = Tween<double>(
-      begin: 0.3,
-      end: 0.8,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        3,
-        (index) => _SkeletonCard(animation: _animation, index: index),
-      ),
-    );
-  }
-}
-
-class _SkeletonCard extends StatelessWidget {
-  const _SkeletonCard({required this.animation, required this.index});
-
-  final Animation<double> animation;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          children: [
-            AnimatedBuilder(
-              animation: animation,
-              builder: (context, child) => Opacity(
-                opacity: animation.value - (index * 0.05),
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: AppColors.border.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(13),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AnimatedBuilder(
-                    animation: animation,
-                    builder: (context, child) => Opacity(
-                      opacity: animation.value,
-                      child: Container(
-                        width: 130,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: AppColors.border.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  AnimatedBuilder(
-                    animation: animation,
-                    builder: (context, child) => Opacity(
-                      opacity: animation.value * 0.7,
-                      child: Container(
-                        width: 90,
-                        height: 11,
-                        decoration: BoxDecoration(
-                          color: AppColors.border.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  AnimatedBuilder(
-                    animation: animation,
-                    builder: (context, child) => Opacity(
-                      opacity: animation.value * 0.5,
-                      child: Container(
-                        width: double.infinity,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: AppColors.border.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -595,12 +426,4 @@ class _StatusState extends StatelessWidget {
       ),
     );
   }
-}
-
-String _initials(String name) {
-  final parts = name.trim().split(RegExp(r'\s+'));
-  if (parts.isEmpty) return 'N';
-  final first = parts.first.isNotEmpty ? parts.first[0] : 'N';
-  final second = parts.length > 1 && parts[1].isNotEmpty ? parts[1][0] : '';
-  return (first + second).toUpperCase();
 }

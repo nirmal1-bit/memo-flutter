@@ -37,7 +37,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
               child: FloatingActionButton(
                 backgroundColor: AppColors.primary,
                 onPressed: () {
-                  context.push(AppRoutes.voice);
+                  context.push(AppRoutes.voice, extra: widget.connectionId);
                 },
                 child: const Icon(
                   Icons.record_voice_over,

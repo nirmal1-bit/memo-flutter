@@ -282,12 +282,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                     message: 'Profile saved successfully',
                   );
 
-                  if (context.canPop()) {
-                    context.pop();
-                    return;
-                  }
-
-                  context.go(AppRoutes.userProfile);
+                  context.replace(AppRoutes.main);
                 },
                 error: (message) {
                   AppUtils.showErrorSnackbar(
@@ -321,12 +316,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                     message: 'Profile saved successfully',
                   );
 
-                  if (context.canPop()) {
-                    context.pop();
-                    return;
-                  }
-
-                  context.go(AppRoutes.userProfile);
+                  context.replace(AppRoutes.main);
                 },
                 error: (message) {
                   AppUtils.showErrorSnackbar(

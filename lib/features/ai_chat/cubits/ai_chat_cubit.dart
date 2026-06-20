@@ -21,10 +21,6 @@ class AiChatCubit extends Cubit<ChatState> {
   // making this a future function cause problems i don't know why
   //when doing form getIt it causes some problems
 
-  void updateToAnswering() {
-    emit(state.copyWith(status: ChatConnectionStatus.answering));
-  }
-
   void connect(int connectionId) async {
     if (_hasConnected || state.status == ChatConnectionStatus.connecting) {
       return;
@@ -79,10 +75,6 @@ class AiChatCubit extends Cubit<ChatState> {
 
   void sendMessage(String text) {
     final message = text.trim();
-    if (message.isEmpty) {
-      return;
-    }
-
     final outgoingMessage = ChatMessage(
       name: 'You',
       message: message,
@@ -143,7 +135,7 @@ class AiChatCubit extends Cubit<ChatState> {
       emit(
         state.copyWith(
           messages: [...state.messages, newMsg],
-          status: ChatConnectionStatus.answered,
+          status: ChatConnectionStatus.connected,
         ),
       );
     }

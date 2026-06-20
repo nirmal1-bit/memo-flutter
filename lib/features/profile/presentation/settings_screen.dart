@@ -161,7 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    context.push(AppRoutes.login);
+                    context.replace(AppRoutes.login);
                     SessionService().removeToken();
                   },
                   style: OutlinedButton.styleFrom(

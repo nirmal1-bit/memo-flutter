@@ -80,7 +80,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                   state.maybeWhen(
                     success: (data) {
                       if (data.profile == null) {
-                        context.push(AppRoutes.setProfile);
+                        context.replace(AppRoutes.setProfile);
                       }
                     },
                     error: (message) {},

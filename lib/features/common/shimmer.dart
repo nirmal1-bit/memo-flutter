@@ -168,98 +168,6 @@ class ProductBannerShimmer extends StatelessWidget {
   }
 }
 
-class ProductListingShimmer extends StatelessWidget {
-  const ProductListingShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: _shimmerBaseColor(context),
-      highlightColor: _shimmerHighlightColor(context),
-      enabled: true,
-      child: ListView.separated(
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16),
-        itemCount: 6,
-        separatorBuilder: (context, index) => 16.verticalSpace,
-        itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: AppColors.white,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Product Image
-                Container(
-                  height: 120,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: AppColors.white,
-                  ),
-                ),
-                12.horizontalSpace,
-                // Product Details
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Product Title
-                        Container(
-                          height: 16,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: AppColors.white,
-                          ),
-                        ),
-                        8.verticalSpace,
-                        Container(
-                          height: 16,
-                          width: _screenWidth(context) * 0.4,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: AppColors.white,
-                          ),
-                        ),
-                        12.verticalSpace,
-                        // Rating
-                        Container(
-                          height: 14,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: AppColors.white,
-                          ),
-                        ),
-                        12.verticalSpace,
-                        // Price
-                        Container(
-                          height: 18,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: AppColors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                12.horizontalSpace,
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
 class ListShimmer extends StatelessWidget {
   final int itemCount;
   final double? itemHeight;
@@ -300,6 +208,299 @@ class ListShimmer extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class DatingProfileShimmer extends StatelessWidget {
+  const DatingProfileShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: _shimmerBaseColor(context),
+      highlightColor: _shimmerHighlightColor(context),
+      enabled: true,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Profile Image
+            Container(
+              height: 380,
+              width: double.infinity,
+              color: AppColors.white,
+            ),
+            16.verticalSpace,
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Name + Age
+                  Row(
+                    children: [
+                      Container(
+                        height: 24,
+                        width: 140,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: AppColors.white,
+                        ),
+                      ),
+                      12.horizontalSpace,
+                      Container(
+                        height: 24,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  10.verticalSpace,
+
+                  // Location
+                  Row(
+                    children: [
+                      Container(
+                        height: 14,
+                        width: 14,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.white,
+                        ),
+                      ),
+                      8.horizontalSpace,
+                      Container(
+                        height: 14,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  16.verticalSpace,
+
+                  // Job / Occupation
+                  Row(
+                    children: [
+                      Container(
+                        height: 14,
+                        width: 14,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.white,
+                        ),
+                      ),
+                      8.horizontalSpace,
+                      Container(
+                        height: 14,
+                        width: 160,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  10.verticalSpace,
+
+                  // Education
+                  Row(
+                    children: [
+                      Container(
+                        height: 14,
+                        width: 14,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.white,
+                        ),
+                      ),
+                      8.horizontalSpace,
+                      Container(
+                        height: 14,
+                        width: 130,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  20.verticalSpace,
+
+                  // About Me label
+                  Container(
+                    height: 16,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.white,
+                    ),
+                  ),
+                  10.verticalSpace,
+
+                  // Bio lines
+                  Container(
+                    height: 13,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.white,
+                    ),
+                  ),
+                  7.verticalSpace,
+                  Container(
+                    height: 13,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.white,
+                    ),
+                  ),
+                  7.verticalSpace,
+                  Container(
+                    height: 13,
+                    width: MediaQuery.sizeOf(context).width * 0.65,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.white,
+                    ),
+                  ),
+                  20.verticalSpace,
+
+                  // Interests label
+                  Container(
+                    height: 16,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.white,
+                    ),
+                  ),
+                  10.verticalSpace,
+
+                  // Interest tag pills
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [72.0, 58.0, 64.0, 80.0, 54.0, 70.0]
+                        .map(
+                          (w) => Container(
+                            height: 32,
+                            width: w,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: AppColors.white,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  20.verticalSpace,
+
+                  // Looking for label
+                  Container(
+                    height: 16,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.white,
+                    ),
+                  ),
+                  10.verticalSpace,
+
+                  // Looking for value
+                  Container(
+                    height: 14,
+                    width: 160,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.white,
+                    ),
+                  ),
+                  20.verticalSpace,
+
+                  // Height / Lifestyle row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ),
+                      12.horizontalSpace,
+                      Expanded(
+                        child: Container(
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ),
+                      12.horizontalSpace,
+                      Expanded(
+                        child: Container(
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  24.verticalSpace,
+
+                  // Action buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 52,
+                        width: 52,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.white,
+                        ),
+                      ),
+                      20.horizontalSpace,
+                      Container(
+                        height: 64,
+                        width: 64,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.white,
+                        ),
+                      ),
+                      20.horizontalSpace,
+                      Container(
+                        height: 52,
+                        width: 52,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  24.verticalSpace,
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -100,7 +100,7 @@ class NetworkConnectionCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _ActionButton(
-                      label: 'Chat',
+                      label: 'Chat / Call',
                       icon: Icons.chat_bubble_outline_rounded,
                       filled: false,
                       onPressed: onChatTap ?? onTap ?? () {},
@@ -197,11 +197,7 @@ class _ActionButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: filled
-              ? const Color(0xFF1A2233)
-              : const Color(0xFFE2E8F4),
-
-          foregroundColor: filled ? AppColors.primary : const Color(0xFF3A517A),
+          backgroundColor: AppColors.primary.withAlpha(122),
           side: BorderSide.none,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(horizontal: 12),
