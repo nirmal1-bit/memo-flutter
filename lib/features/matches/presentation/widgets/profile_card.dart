@@ -2,12 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/matches/data/models/response/matches_response.dart';
 import 'package:memo/features/matches/presentation/widgets/profile_tag_chip.dart';
 import 'package:memo/features/matches/presentation/widgets/similarity_badge.dart';
 import 'package:memo/features/matches/presentation/widgets/swipe_stamps.dart';
+import 'package:memo/features/network/data/models/response/user_profile_response.dart';
 
 class ProfileCard extends StatelessWidget {
   const ProfileCard({
@@ -54,45 +57,72 @@ class ProfileCard extends StatelessWidget {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.network(
-            profile.profileUrl,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, progress) {
-              if (progress == null) return child;
-              return Container(
+      child: InkWell(
+        onTap: () {
+          context.push(
+            AppRoutes.otherUserProfile,
+            extra: Profile(
+              id: profile.userId,
+              userId: profile.userId,
+              headline: profile.headline,
+              bio: profile.bio,
+              profileUrl: profile.profileUrl,
+              location: profile.location,
+              age: profile.age,
+              gender: profile.gender,
+              interests: profile.interests,
+              createdAt: profile.createdAt,
+              updatedAt: profile.updatedAt,
+            ),
+          );
+        },
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.network(
+              profile.profileUrl,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return Container(
+                  color: AppColors.lightGrey,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stack) => Container(
                 color: AppColors.lightGrey,
                 child: const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
+                  child: Icon(
+                    Icons.person,
+                    size: 80,
+                    color: AppColors.textLight,
+                  ),
                 ),
-              );
-            },
-            errorBuilder: (context, error, stack) => Container(
-              color: AppColors.lightGrey,
-              child: const Center(
-                child: Icon(Icons.person, size: 80, color: AppColors.textLight),
               ),
             ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _ProfileCardInfo(profile: profile),
-          ),
-          Positioned(
-            top: 10,
-            right: 0,
-            child: SizedBox(
-              height: 40,
-              child: SimilarityBadge(score: profile.similarity),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _ProfileCardInfo(profile: profile),
             ),
-          ),
-          if (isTop)
-            SwipeStamps(dragOffset: dragOffset, swipeThreshold: swipeThreshold),
-        ],
+            Positioned(
+              top: 10,
+              right: 0,
+              child: SizedBox(
+                height: 40,
+                child: SimilarityBadge(score: profile.similarity),
+              ),
+            ),
+            if (isTop)
+              SwipeStamps(
+                dragOffset: dragOffset,
+                swipeThreshold: swipeThreshold,
+              ),
+          ],
+        ),
       ),
     );
 
