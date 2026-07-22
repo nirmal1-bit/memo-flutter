@@ -21,8 +21,11 @@ class ProfileBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ProfileHeaderCard(user: user),
-          const SizedBox(height: 16),
+          if (!isOther) ...[
+            ProfileHeaderCard(user: user),
+            const SizedBox(height: 16),
+          ],
+
           if (!isOther) EditProfileButton(user: user),
           if (!isOther) ...[
             const SizedBox(height: 16),
