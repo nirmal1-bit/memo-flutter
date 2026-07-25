@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
       context.replace(AppRoutes.main);
     } else if (!hasSession) {
       if (!mounted) return;
-      context.replace(AppRoutes.authMain);
+      context.replace(AppRoutes.onboarding);
     }
   }
 

@@ -37,6 +37,8 @@ import 'package:memo/features/auth/presentation/cubits/signup_cubit.dart'
     as _i495;
 import 'package:memo/features/auth/presentation/cubits/verify_token_cubit.dart'
     as _i783;
+import 'package:memo/features/face_verification/repository/face_repository.dart'
+    as _i611;
 import 'package:memo/features/matches/cubits/get_matches_cubit.dart' as _i927;
 import 'package:memo/features/matches/repository/matches_repository.dart'
     as _i953;
@@ -136,6 +138,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i361.Dio>(),
         gh<_i509.NetworkInfo>(),
       ),
+    );
+    gh.lazySingleton<_i611.FaceRepository>(
+      () => _i611.FaceRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
     );
     gh.lazySingleton<_i818.VideoCallRepository>(
       () => _i818.VideoCallRepositoryImpl(

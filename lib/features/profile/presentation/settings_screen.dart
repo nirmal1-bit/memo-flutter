@@ -51,7 +51,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 description:
                     'Customize your account, privacy, and preferences.',
                 onEditProfile: () => context.push(AppRoutes.userProfile),
-                onSetupProfile: () => context.push(AppRoutes.setProfile),
+                onSetupProfile: () =>
+                    context.push(AppRoutes.faceVerificationSteps),
               ),
               const SizedBox(height: 20),
               Text(

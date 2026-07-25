@@ -5,8 +5,8 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/auth/presentation/widgets/auth_widgets.dart';
 
-class AuthMainScreen extends StatelessWidget {
-  const AuthMainScreen({super.key});
+class OnboardingScreen extends StatelessWidget {
+  const OnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class AuthMainScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'A calm place to capture notes, revisit them, and keep your flow organized.',
+                      '',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.rubik.copyWith(
                         fontSize: 15,

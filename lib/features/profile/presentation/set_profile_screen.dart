@@ -359,7 +359,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                         elevation: 0,
                         foregroundColor: AppColors.softPrimary,
                         title: Text(
-                          'Edit profile',
+                          'Set up your profile',
                           style: AppTextStyles.libre.copyWith(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
@@ -537,19 +537,33 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                     ? 'Enter your location'
                                     : null,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 20),
                               DropdownButtonFormField<String>(
                                 initialValue: _selectedGender,
+
                                 icon: const Icon(Icons.expand_more_rounded),
+
                                 decoration: InputDecoration(
                                   labelText: 'Gender',
-                                  prefixIcon: const Icon(Icons.wc_rounded),
+                                  labelStyle: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.softPrimary,
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.wc_rounded,
+                                    color: AppColors.primary,
+                                  ),
                                   filled: true,
                                   fillColor: AppColors.white,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    borderSide: BorderSide.none,
+                                  ),
+
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(14),
                                     borderSide: BorderSide(
-                                      color: AppColors.dividerColor,
+                                      color: AppColors.white,
                                     ),
                                   ),
                                 ),
@@ -561,6 +575,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                           gender,
                                           style: AppTextStyles.rubik.copyWith(
                                             fontSize: 14,
+                                            color: AppColors.softPrimary,
                                           ),
                                         ),
                                       ),
@@ -579,7 +594,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                 style: AppTextStyles.rubik.copyWith(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.softTextGrey,
+                                  color: AppColors.softPrimary,
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -603,15 +618,16 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                   hintText: 'Select your interests',
                                   hintStyle: AppTextStyles.rubik.copyWith(
                                     fontSize: 14,
-                                    color: AppColors.softTextGrey,
+                                    color: AppColors.softPrimary,
                                   ),
                                   prefixIcon: const Icon(
                                     Icons.interests_outlined,
+                                    color: AppColors.primary,
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(14),
                                     borderSide: BorderSide(
-                                      color: AppColors.dividerColor,
+                                      color: AppColors.white,
                                     ),
                                   ),
                                 ),
