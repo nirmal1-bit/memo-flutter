@@ -9,6 +9,8 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'dart:io' as _i497;
+
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -37,6 +39,10 @@ import 'package:memo/features/auth/presentation/cubits/signup_cubit.dart'
     as _i495;
 import 'package:memo/features/auth/presentation/cubits/verify_token_cubit.dart'
     as _i783;
+import 'package:memo/features/face_verification/cubit/image_capture_cubit.dart'
+    as _i5;
+import 'package:memo/features/face_verification/cubit/image_capture_state.dart'
+    as _i565;
 import 'package:memo/features/face_verification/repository/face_repository.dart'
     as _i611;
 import 'package:memo/features/matches/cubits/get_matches_cubit.dart' as _i927;
@@ -98,6 +104,7 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModules = _$RegisterModules();
     gh.factory<_i812.DeviceInfoHelper>(() => _i812.DeviceInfoHelper());
+    gh.factory<_i5.ImageCaptureCubit>(() => _i5.ImageCaptureCubit());
     gh.singleton<_i876.SharedPreferencesInit>(
       () => registerModules.sharedPreferences,
     );
@@ -125,6 +132,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModules.dio(gh<_i174.AuthInterceptor>()),
+    );
+    gh.factory<_i565.ImageCaptureState>(
+      () => _i565.ImageCaptureState(image: gh<_i497.File>()),
     );
     gh.lazySingleton<_i420.NetworkRepository>(
       () =>
