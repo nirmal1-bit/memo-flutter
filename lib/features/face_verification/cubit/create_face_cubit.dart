@@ -7,11 +7,11 @@ import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/features/face_verification/repository/face_repository.dart';
 
 @injectable
-class VerifyFaceCubit extends Cubit<BaseApiState<String>> {
-  VerifyFaceCubit(this.faceRepository) : super(const BaseApiState.initial());
+class CreateFaceCubit extends Cubit<BaseApiState<String>> {
+  CreateFaceCubit(this.faceRepository) : super(const BaseApiState.initial());
   final FaceRepository faceRepository;
 
-  Future<void> verifyFace(File image) async {
+  Future<void> createEmbedding(File image) async {
     // emit a loading state so listeners always see a state transition
     emit(const BaseApiState.loading());
     final response = await faceRepository.generateEmbeddings(image);

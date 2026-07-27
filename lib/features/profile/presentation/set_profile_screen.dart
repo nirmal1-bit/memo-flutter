@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:memo/core/utils/ui_helper.dart';
+import 'package:memo/features/face_verification/cubit/create_face_cubit.dart';
 import 'package:memo/features/face_verification/service/face_check_service.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:memo/core/constants/app_colors.dart';
@@ -125,11 +126,12 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _pickAvatar() async {
+  Future<void> _pickAvatar(BuildContext context) async {
     if (_isUploadingAvatar) {
       return;
     }
 
+    Uihelper.showloaderdialog(context);
     final pickedFile = await AppUtils.pickImage();
     if (pickedFile == null) {
       return;
@@ -140,7 +142,6 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     });
 
     try {
-      Uihelper.showloaderdialog(context);
       final hasClearFace = await checkImageHasClearFace(File(pickedFile.path));
 
       if (!mounted) {
@@ -160,11 +161,10 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
         file: pickedFile,
         folder: CloudinaryConstants.profileFolder,
       );
-
       if (!mounted) {
         return;
       }
-
+      context.read<CreateFaceCubit>().createEmbedding(File(pickedFile.path));
       if (uploadedUrl == null || uploadedUrl.isEmpty) {
         AppUtils.showErrorSnackbar(
           context: context,
@@ -290,6 +290,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
       providers: [
         BlocProvider(create: (_) => getIt<EditProfileCubit>()),
         BlocProvider(create: (_) => getIt<SetProfileCubit>()),
+        BlocProvider(create: (_) => getIt<CreateFaceCubit>()),
       ],
       child: MultiBlocListener(
         listeners: [
@@ -301,8 +302,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                     context: context,
                     message: 'Profile saved successfully',
                   );
-
-                  context.replace(AppRoutes.main);
+                  context.replace(AppRoutes.faceVerificationSteps);
                 },
                 error: (message) {
                   AppUtils.showErrorSnackbar(
@@ -335,8 +335,6 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                     context: context,
                     message: 'Profile saved successfully',
                   );
-
-                  context.replace(AppRoutes.main);
                 },
                 error: (message) {
                   AppUtils.showErrorSnackbar(
@@ -415,7 +413,9 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                 child: Column(
                                   children: [
                                     GestureDetector(
-                                      onTap: _pickAvatar,
+                                      onTap: () {
+                                        _pickAvatar(context);
+                                      },
                                       child: Stack(
                                         alignment: Alignment.center,
                                         children: [
@@ -493,7 +493,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      'Images are uploaded to Cloudinary before the profile is saved.',
+                                      'Please upload a clear photo of yourself where your face is clearly visible as this image will be used to verify your identity later .',
                                       textAlign: TextAlign.center,
                                       style: AppTextStyles.rubik.copyWith(
                                         fontSize: 12.5,

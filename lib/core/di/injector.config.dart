@@ -212,8 +212,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i636.SentConnectionsCubit>(
       () => _i636.SentConnectionsCubit(gh<_i420.NetworkRepository>()),
     );
-    gh.factory<_i185.VerifyFaceCubit>(
-      () => _i185.VerifyFaceCubit(gh<_i611.FaceRepository>()),
+    gh.factory<_i185.CreateFaceCubit>(
+      () => _i185.CreateFaceCubit(gh<_i611.FaceRepository>()),
     );
     gh.factory<_i67.VerifyFaceCubit>(
       () => _i67.VerifyFaceCubit(gh<_i611.FaceRepository>()),
