@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:memo/core/utils/ui_helper.dart';
+import 'package:memo/features/face_verification/service/face_check_service.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/constants/cloudinary_constants.dart';
@@ -136,6 +140,22 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     });
 
     try {
+      Uihelper.showloaderdialog(context);
+      final hasClearFace = await checkImageHasClearFace(File(pickedFile.path));
+
+      if (!mounted) {
+        return;
+      }
+      Uihelper.hideloader(context);
+
+      if (hasClearFace.hasClearFace == false) {
+        AppUtils.showErrorSnackbar(
+          context: context,
+          message: hasClearFace.message,
+        );
+        return;
+      }
+
       final uploadedUrl = await AppUtils.uploadImage(
         file: pickedFile,
         folder: CloudinaryConstants.profileFolder,
