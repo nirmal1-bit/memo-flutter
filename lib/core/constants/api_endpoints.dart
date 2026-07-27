@@ -47,7 +47,14 @@ class ApiEndpoints {
   static String timeline(int id) => "/timeline/$id";
 
   // matches
-
   static const String matches = "/matches";
+
+  //notification
   static const String notifications = "/notifications";
+
+  //face
+
+  static const String verifyFace = "/face/verify";
+  static const String createFace = "/face/create";
+  static const String getFaces = "/face/get-similar";
 }

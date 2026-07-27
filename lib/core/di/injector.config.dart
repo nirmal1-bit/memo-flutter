@@ -39,10 +39,14 @@ import 'package:memo/features/auth/presentation/cubits/signup_cubit.dart'
     as _i495;
 import 'package:memo/features/auth/presentation/cubits/verify_token_cubit.dart'
     as _i783;
+import 'package:memo/features/face_verification/cubit/create_face_cubit.dart'
+    as _i185;
 import 'package:memo/features/face_verification/cubit/image_capture_cubit.dart'
     as _i5;
 import 'package:memo/features/face_verification/cubit/image_capture_state.dart'
     as _i565;
+import 'package:memo/features/face_verification/cubit/verify_face_cubit.dart'
+    as _i67;
 import 'package:memo/features/face_verification/repository/face_repository.dart'
     as _i611;
 import 'package:memo/features/matches/cubits/get_matches_cubit.dart' as _i927;
@@ -207,6 +211,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i636.SentConnectionsCubit>(
       () => _i636.SentConnectionsCubit(gh<_i420.NetworkRepository>()),
+    );
+    gh.factory<_i185.VerifyFaceCubit>(
+      () => _i185.VerifyFaceCubit(gh<_i611.FaceRepository>()),
+    );
+    gh.factory<_i67.VerifyFaceCubit>(
+      () => _i67.VerifyFaceCubit(gh<_i611.FaceRepository>()),
     );
     gh.factory<_i560.LoginCubit>(
       () => _i560.LoginCubit(gh<_i1052.AuthRepository>()),

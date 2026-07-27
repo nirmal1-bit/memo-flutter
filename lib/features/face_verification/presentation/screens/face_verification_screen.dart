@@ -3,9 +3,12 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/core/utils/app_utils.dart';
+import 'package:memo/features/face_verification/cubit/image_capture_cubit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -58,7 +61,7 @@ class FaceVerificationScreen extends StatefulWidget {
 }
 
 class _State extends State<FaceVerificationScreen>
-    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   CameraController? _cam;
   final _detector = FaceDetector(
     options: FaceDetectorOptions(
@@ -71,6 +74,10 @@ class _State extends State<FaceVerificationScreen>
     vsync: this,
     duration: const Duration(milliseconds: 1400),
   )..repeat(reverse: true);
+  // Drives the progress ring. We animateTo() the target value instead of
+  // rebuilding a fresh Tween each frame, so it eases smoothly from wherever
+  // it currently is rather than snapping back to 0 on every setState.
+  late final AnimationController _ring = AnimationController(vsync: this);
 
   _Status _status = _Status.noFace;
   int _streak = 0;
@@ -94,6 +101,7 @@ class _State extends State<FaceVerificationScreen>
     _cam?.dispose();
     _detector.close();
     _scan.dispose();
+    _ring.dispose();
     super.dispose();
   }
 
@@ -172,7 +180,7 @@ class _State extends State<FaceVerificationScreen>
       if (!mounted) return;
       if (faces.isEmpty) {
         _set(_Status.noFace);
-        _streak = 0;
+        _resetStreak();
         return;
       }
       final box = faces.first.boundingBox;
@@ -191,16 +199,28 @@ class _State extends State<FaceVerificationScreen>
           : _Status.good;
       _set(status);
       if (status != _Status.good) {
-        _streak = 0;
+        _resetStreak();
         return;
       }
-      if (++_streak >= _needed) {
+      _streak++;
+      _ring.animateTo(
+        (_streak / _needed).clamp(0.0, 1.0),
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+      );
+      if (_streak >= _needed) {
         _streak = 0;
         await _capture();
       }
     } finally {
       _detecting = false;
     }
+  }
+
+  void _resetStreak() {
+    if (_streak == 0) return;
+    _streak = 0;
+    _ring.animateTo(0, duration: const Duration(milliseconds: 150));
   }
 
   void _set(_Status s) {
@@ -232,6 +252,7 @@ class _State extends State<FaceVerificationScreen>
   }
 
   Future<void> _retake() async {
+    _ring.value = 0;
     setState(() {
       _captured = null;
       _streak = 0;
@@ -253,7 +274,6 @@ class _State extends State<FaceVerificationScreen>
   @override
   Widget build(BuildContext context) => Container(
     color: AppColors.black,
-
     child: LayoutBuilder(builder: (_, c) => _body(c.biggest)),
   );
 
@@ -376,6 +396,8 @@ class _State extends State<FaceVerificationScreen>
         ),
       );
 
+  // Static oval outline with no scanning animation — used once a photo has
+  // been captured, since the sweep only makes sense while actively scanning.
   Widget _postCapture(Size size) {
     final oval = _ovalRect(size);
     return Stack(
@@ -390,7 +412,6 @@ class _State extends State<FaceVerificationScreen>
         CustomPaint(
           painter: _OvalPainter(oval: oval, color: AppColors.primary),
         ),
-        _sweepLine(oval, AppColors.primary),
         Positioned(
           bottom: 60,
           left: 0,
@@ -421,7 +442,16 @@ class _State extends State<FaceVerificationScreen>
                     vertical: 14,
                   ),
                 ),
-                onPressed: () => Navigator.of(context).pop<File>(_captured),
+                onPressed: () {
+                  if (_captured != null) {
+                    context.read<ImageCaptureCubit>().setImage(_captured!);
+                    AppUtils.showSuccessSnackbar(
+                      context: context,
+                      message:
+                          "The photo has been selected you can move to next step",
+                    );
+                  }
+                },
                 child: const Text('Use Photo'),
               ),
             ],
@@ -452,16 +482,15 @@ class _State extends State<FaceVerificationScreen>
           isGood ? AppColors.statusGreen : AppColors.primary,
           opacity: _status != _Status.noFace ? 0.95 : 0.5,
         ),
-        if (isGood)
-          Positioned.fromRect(
-            rect: oval.inflate(8),
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: (_streak / _needed).clamp(0.0, 1.0)),
-              duration: const Duration(milliseconds: 120),
-              builder: (_, v, _) =>
-                  CustomPaint(painter: _RingPainter(v, AppColors.statusGreen)),
+        Positioned.fromRect(
+          rect: oval.inflate(8),
+          child: AnimatedBuilder(
+            animation: _ring,
+            builder: (_, _) => CustomPaint(
+              painter: _RingPainter(_ring.value, AppColors.statusGreen),
             ),
           ),
+        ),
         Positioned(
           bottom: 100,
           left: 0,
@@ -509,8 +538,6 @@ class _State extends State<FaceVerificationScreen>
     );
   }
 }
-
-// ── Painters & Clippers ──────────────────────────────────────────────────────
 
 class _OvalPainter extends CustomPainter {
   _OvalPainter({required this.oval, required this.color, this.scrim = false});
