@@ -10,6 +10,7 @@ import 'package:memo/core/services/call_keep_service.dart';
 final FlutterLocalNotificationsPlugin localNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
+// background message handler
 @pragma('vm:entry-point')
 Future<void> onBackgroundMessageReceived(RemoteMessage message) async {
   developer.log(
@@ -61,7 +62,7 @@ class FirebaseNotificationService {
     );
   }
 
-  // ─── Permissions ─────────────────────────────────────────────────────────────
+  //permisssions
 
   Future<void> _requestPermissions() async {
     if (Platform.isIOS) {
@@ -169,7 +170,7 @@ class FirebaseNotificationService {
     // TODO: handle deep-link / navigation based on message.data
   }
 
-  // ─── Display helpers ─────────────────────────────────────────────────────────
+  //display helpers
 
   void _showChatNotification(RemoteNotification notification) {
     localNotificationsPlugin

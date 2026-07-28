@@ -7,11 +7,13 @@ class ChatComposer extends StatelessWidget {
     required this.controller,
     required this.onSend,
     required this.isBusy,
+    this.scrollPadding = const EdgeInsets.all(20),
   });
 
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool isBusy;
+  final EdgeInsets scrollPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,7 @@ class ChatComposer extends StatelessWidget {
               controller: controller,
               minLines: 1,
               maxLines: 4,
+              scrollPadding: scrollPadding,
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => onSend(),
               decoration: InputDecoration(

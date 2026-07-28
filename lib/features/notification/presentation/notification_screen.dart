@@ -4,8 +4,12 @@ import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/core/utils/app_utils.dart';
+import 'package:memo/features/common/feed_back_state_widget.dart';
 import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/notification/cubit/get_notification_cubit.dart';
+import 'package:memo/features/notification/cubit/get_unread_count_cubit.dart';
+import 'package:memo/features/notification/cubit/mark_as_read_cubit.dart';
 import 'package:memo/features/notification/data/response/notifications_response.dart';
 
 enum NotificationType { call, message, request }
@@ -25,45 +29,65 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
+    return MultiBlocProvider(
+      providers: [
         BlocProvider(
           create: (_) => getIt<GetNotificationCubit>()..getNotifications(),
         ),
+        BlocProvider(
+          create: (_) => getIt<GetUnreadCountCubit>()..getUnreadCount(),
+        ),
+        BlocProvider(create: (_) => getIt<MarkAsReadCubit>()),
       ],
-      child: Scaffold(
-        backgroundColor: AppColors.scaffoldBackground,
-        body: SafeArea(
-          child:
+      child: BlocListener<MarkAsReadCubit, BaseApiState<String>>(
+        listener: (context, state) {
+          state.maybeWhen<void>(
+            success: (_) {
+              context.read<GetNotificationCubit>().getNotifications();
+              context.read<GetUnreadCountCubit>().getUnreadCount();
+            },
+            error: (message) =>
+                AppUtils.showErrorSnackbar(context: context, message: message),
+            validationError: (error) => AppUtils.showErrorSnackbar(
+              context: context,
+              message: error.message,
+            ),
+            noInternet: () => AppUtils.showErrorSnackbar(
+              context: context,
+              message: 'No internet connection',
+            ),
+            orElse: () {},
+          );
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Notifications',
+              style: AppTextStyles.rubik.copyWith(
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+                color: AppColors.softPrimary,
+              ),
+            ),
+            backgroundColor: AppColors.scaffoldBackground,
+          ),
+          backgroundColor: AppColors.scaffoldBackground,
+          body:
               BlocBuilder<
                 GetNotificationCubit,
                 BaseApiState<List<NotificationsResponse>>
               >(
                 builder: (context, state) {
                   return state.maybeWhen(
-                    orElse: () => SizedBox.shrink(),
-                    loading: () => ListShimmer(),
+                    orElse: () => const SizedBox.shrink(),
+                    loading: () => const ListShimmer(),
 
-                    success: (data) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _Header(unreadCount: 3, onMarkAllRead: null),
-                        const SizedBox(height: 4),
-                        _SectionLabel(label: 'Today'),
-                        Expanded(
-                          child: ListView.separated(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            itemCount: data.length,
-                            separatorBuilder: (_, _) => const Divider(
-                              height: 1,
-                              indent: 10,
-                              endIndent: 10,
-                            ),
-                            itemBuilder: (context, index) =>
-                                _NotificationTile(item: data[index]),
-                          ),
-                        ),
-                      ],
+                    success: (data) => _NotificationContent(data: data),
+                    error: (message) => _NotificationError(message: message),
+                    validationError: (error) =>
+                        _NotificationError(message: error.message),
+                    noInternet: () => const _NotificationError(
+                      message: 'Check your connection and try again.',
                     ),
                   );
                 },
@@ -72,6 +96,134 @@ class _NotificationScreenState extends State<NotificationScreen> {
       ),
     );
   }
+}
+
+class _NotificationContent extends StatelessWidget {
+  const _NotificationContent({required this.data});
+
+  final List<NotificationsResponse> data;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GetUnreadCountCubit, BaseApiState<int>>(
+      builder: (context, unreadState) {
+        final unreadCount = unreadState.maybeWhen(
+          success: (count) => count,
+          orElse: () => data.where((item) => !item.isRead).length,
+        );
+        final isMarkingRead = context.select<MarkAsReadCubit, bool>(
+          (cubit) =>
+              cubit.state.maybeWhen(loading: () => true, orElse: () => false),
+        );
+        final groupedNotifications = _groupNotifications(data);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _Header(
+              unreadCount: unreadCount,
+              onMarkAllRead: unreadCount > 0 && !isMarkingRead
+                  ? () => context.read<MarkAsReadCubit>().markAsRead()
+                  : null,
+            ),
+            if (data.isEmpty)
+              const Expanded(
+                child: Center(
+                  child: FeedbackState(
+                    icon: Icons.notifications_none_rounded,
+                    title: 'No notifications yet',
+                    message:
+                        'When you receive notifications, they will appear here.',
+                  ),
+                ),
+              )
+            else ...[
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<GetNotificationCubit>().getNotifications();
+                    context.read<GetUnreadCountCubit>().getUnreadCount();
+                  },
+                  child: ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    itemCount: groupedNotifications.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final entry = groupedNotifications[index];
+                      if (entry is String) {
+                        return _SectionLabel(label: entry);
+                      }
+                      return _NotificationTile(
+                        item: (entry as NotificationsResponse),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+List<Object> _groupNotifications(List<NotificationsResponse> notifications) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final yesterday = today.subtract(const Duration(days: 1));
+  final grouped = <String, List<NotificationsResponse>>{};
+
+  for (final notification in notifications) {
+    final date = notification.createdAt.toLocal();
+    final dateOnly = DateTime(date.year, date.month, date.day);
+    final label = dateOnly == today
+        ? 'Today'
+        : dateOnly == yesterday
+        ? 'Yesterday'
+        : _formatDate(dateOnly);
+    grouped.putIfAbsent(label, () => []).add(notification);
+  }
+
+  final result = <Object>[];
+  for (final entry in grouped.entries) {
+    result.add(entry.key);
+    result.addAll(entry.value);
+  }
+  return result;
+}
+
+String _formatDate(DateTime date) {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  return '${months[date.month - 1]} ${date.day}, ${date.year}';
+}
+
+class _NotificationError extends StatelessWidget {
+  const _NotificationError({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: FeedbackState(
+      icon: Icons.error_outline_rounded,
+      title: 'Could not load notifications',
+      message: message,
+    ),
+  );
 }
 
 class _Header extends StatelessWidget {
@@ -83,43 +235,33 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 16, 8),
+      padding: const EdgeInsets.fromLTRB(20, 2, 16, 6),
       child: Row(
         children: [
           Text(
-            'Notifications',
+            'Unread count',
             style: AppTextStyles.rubik.copyWith(
-              fontSize: 22,
+              fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: AppColors.softPrimary,
+              color: AppColors.black.withValues(alpha: 0.55),
             ),
           ),
-          if (unreadCount > 0) ...[
-            const SizedBox(width: 10),
-            _UnreadBadge(count: unreadCount),
-          ],
+          const SizedBox(width: 8),
+          _UnreadBadge(count: unreadCount),
           const Spacer(),
-          AnimatedOpacity(
-            opacity: onMarkAllRead != null ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: TextButton(
-              onPressed: onMarkAllRead,
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                foregroundColor: const Color(0xFF534AB7),
-              ),
-              child: Text(
-                'Mark all read',
-                style: AppTextStyles.rubik.copyWith(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.primary,
-                ),
+          TextButton(
+            onPressed: onMarkAllRead,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            ),
+            child: Text(
+              'Mark all as read',
+              style: AppTextStyles.rubik.copyWith(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: onMarkAllRead == null
+                    ? AppColors.black.withValues(alpha: 0.35)
+                    : AppColors.primary,
               ),
             ),
           ),
@@ -160,13 +302,13 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
       child: Text(
         label.toUpperCase(),
         style: AppTextStyles.rubik.copyWith(
           fontSize: 11,
           fontWeight: FontWeight.w500,
-          color: AppColors.black.withOpacity(0.4),
+          color: AppColors.black.withValues(alpha: 0.4),
           letterSpacing: 0.8,
         ),
       ),
@@ -213,17 +355,15 @@ class _NotificationTile extends StatelessWidget {
                     item.body,
                     style: AppTextStyles.rubik.copyWith(
                       fontSize: 13,
-                      color: AppColors.black.withOpacity(0.5),
+                      color: AppColors.black.withValues(alpha: 0.5),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _formatTime(item.createdAt),
                     style: AppTextStyles.rubik.copyWith(
                       fontSize: 11,
-                      color: AppColors.black.withOpacity(0.35),
+                      color: AppColors.black.withValues(alpha: 0.35),
                     ),
                   ),
                 ],

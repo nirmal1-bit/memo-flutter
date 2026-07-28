@@ -40,7 +40,7 @@ class NotificationRepositoryImpl extends BaseRemoteSource
   EitherResponse<ApiResponse<int>> getUnreadCount() {
     final response = networkRequest(
       request: (dio) async {
-        final response = await dio.get(ApiEndpoints.notifications);
+        final response = await dio.get(ApiEndpoints.notificationsCount);
         return ApiResponse(
           success: true,
           data: response.data['unread_count'] as int,
@@ -55,7 +55,7 @@ class NotificationRepositoryImpl extends BaseRemoteSource
   EitherResponse<ApiResponse<String>> markAsRead() {
     final response = networkRequest(
       request: (dio) async {
-        final response = await dio.get(ApiEndpoints.notifications);
+        await dio.patch(ApiEndpoints.notifications);
         return ApiResponse(success: true, data: "success", message: "success");
       },
     );
