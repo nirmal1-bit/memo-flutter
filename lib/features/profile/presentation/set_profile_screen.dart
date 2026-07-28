@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:memo/core/utils/ui_helper.dart';
 import 'package:memo/features/face_verification/cubit/create_face_cubit.dart';
 import 'package:memo/features/face_verification/service/face_check_service.dart';
@@ -78,6 +79,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     if (profile == null) {
       return;
     }
+    _avatarUrl = profile.profileUrl;
     _headlineController.text = profile.headline;
     _bioController.text = profile.bio;
     _locationController.text = profile.location;
@@ -126,13 +128,14 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     super.dispose();
   }
 
+  XFile? pickedFile;
   Future<void> _pickAvatar(BuildContext context) async {
     if (_isUploadingAvatar) {
       return;
     }
 
     Uihelper.showloaderdialog(context);
-    final pickedFile = await AppUtils.pickImage();
+    pickedFile = await AppUtils.pickImage();
     if (pickedFile == null) {
       return;
     }
@@ -142,7 +145,9 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     });
 
     try {
-      final hasClearFace = await checkImageHasClearFace(File(pickedFile.path));
+      final hasClearFace = await checkImageHasClearFace(
+        File(pickedFile?.path ?? ''),
+      );
 
       if (!mounted) {
         return;
@@ -158,13 +163,12 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
       }
 
       final uploadedUrl = await AppUtils.uploadImage(
-        file: pickedFile,
+        file: pickedFile ?? XFile(''),
         folder: CloudinaryConstants.profileFolder,
       );
       if (!mounted) {
         return;
       }
-      context.read<CreateFaceCubit>().createEmbedding(File(pickedFile.path));
       if (uploadedUrl == null || uploadedUrl.isEmpty) {
         AppUtils.showErrorSnackbar(
           context: context,
@@ -255,6 +259,10 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
       );
       return;
     }
+
+    context.read<CreateFaceCubit>().createEmbedding(
+      File(pickedFile?.path ?? ''),
+    );
 
     if (widget.initialProfile != null) {
       context.read<EditProfileCubit>().editProfile(

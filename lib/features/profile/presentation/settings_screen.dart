@@ -19,7 +19,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushNotifications = true;
   bool _messageAlerts = true;
   bool _darkMode = false;
-  final bool _autoPlayVideos = false;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +119,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     icon: Icons.help_outline_rounded,
                     title: 'Help center',
                     subtitle: 'Get answers and troubleshooting tips',
-                    onTap: () {},
+                    onTap: () {
+                      context.push(AppRoutes.faceVerificationSteps);
+                    },
                   ),
                   SettingsTile(
                     icon: Icons.info_outline_rounded,

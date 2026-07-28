@@ -12,18 +12,16 @@ import 'package:memo/features/timeline/presentation/widgets/header/timeline_prof
 class TimeLineScreenParams {
   final UserProfile profile;
   final int connectionId;
-
   TimeLineScreenParams({required this.profile, required this.connectionId});
 }
 
 class TimeLineScreen extends StatefulWidget {
   const TimeLineScreen({super.key, required this.params, Object? profile});
-
   final TimeLineScreenParams params;
+
   @override
   State<TimeLineScreen> createState() => _TimeLineScreenState();
 }
-
 
 class _TimeLineScreenState extends State<TimeLineScreen>
     with SingleTickerProviderStateMixin {
@@ -57,20 +55,29 @@ class _TimeLineScreenState extends State<TimeLineScreen>
         ),
       ],
       child: Scaffold(
-        body: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            TimelineProfileSliverHeader(
-              tabController: _tabController,
-              innerBoxIsScrolled: innerBoxIsScrolled,
-              profile: widget.params.profile,
-            ),
-          ],
-          body: TabBarView(
-            controller: _tabController,
+        body: SafeArea(
+          child: Column(
             children: [
-              TimelineMemoriesTab(connectionId: widget.params.connectionId),
-              TimelineActivityTab(connectionId: widget.params.connectionId),
-              AiChatScreen(connectionId: widget.params.connectionId),
+              // Non-sliver header. No innerBoxIsScrolled needed since
+              // it's not reacting to a coordinated scroll offset anymore.
+              TimelineProfileHeader(
+                tabController: _tabController,
+                profile: widget.params.profile,
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    TimelineMemoriesTab(
+                      connectionId: widget.params.connectionId,
+                    ),
+                    TimelineActivityTab(
+                      connectionId: widget.params.connectionId,
+                    ),
+                    AiChatScreen(connectionId: widget.params.connectionId),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
