@@ -27,6 +27,8 @@ import 'package:memo/core/session/shared_prefrences_init.dart' as _i876;
 import 'package:memo/features/ai_chat/cubits/ai_chat_cubit.dart' as _i20;
 import 'package:memo/features/auth/domain/repository/auth_repository.dart'
     as _i1052;
+import 'package:memo/features/auth/presentation/cubits/face_verified_cubit.dart'
+    as _i426;
 import 'package:memo/features/auth/presentation/cubits/login_cubit.dart'
     as _i560;
 import 'package:memo/features/auth/presentation/cubits/make_new_password_cubit.dart'
@@ -54,12 +56,20 @@ import 'package:memo/features/matches/repository/matches_repository.dart'
     as _i953;
 import 'package:memo/features/network/domian/repository/network_respotory.dart'
     as _i420;
+import 'package:memo/features/network/domian/repository/recent_images_repository.dart'
+    as _i255;
 import 'package:memo/features/network/presentation/cubits/chat_cubit.dart'
     as _i228;
 import 'package:memo/features/network/presentation/cubits/connection_action_cubit.dart'
     as _i575;
 import 'package:memo/features/network/presentation/cubits/connections_cubit.dart'
     as _i762;
+import 'package:memo/features/network/presentation/cubits/create_recent_image_cubit.dart'
+    as _i617;
+import 'package:memo/features/network/presentation/cubits/delete_recent_image_cubit.dart'
+    as _i126;
+import 'package:memo/features/network/presentation/cubits/get_recent_images_cubit.dart'
+    as _i958;
 import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart'
     as _i680;
 import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart'
@@ -173,6 +183,12 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i533.ProfileRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
     );
+    gh.lazySingleton<_i255.RecentImagesRepository>(
+      () => _i255.RecentImagesRepositoryImpl(
+        gh<_i361.Dio>(),
+        gh<_i509.NetworkInfo>(),
+      ),
+    );
     gh.factory<_i910.CreateMemoriesCubit>(
       () => _i910.CreateMemoriesCubit(gh<_i1029.TimelineRepository>()),
     );
@@ -218,6 +234,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i67.VerifyFaceCubit>(
       () => _i67.VerifyFaceCubit(gh<_i611.FaceRepository>()),
     );
+    gh.factory<_i426.FaceVerifiedCubit>(
+      () => _i426.FaceVerifiedCubit(gh<_i1052.AuthRepository>()),
+    );
     gh.factory<_i560.LoginCubit>(
       () => _i560.LoginCubit(gh<_i1052.AuthRepository>()),
     );
@@ -235,6 +254,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i783.VerifyTokenCubit>(
       () => _i783.VerifyTokenCubit(gh<_i1052.AuthRepository>()),
+    );
+    gh.factory<_i617.CreateRecentImageCubit>(
+      () => _i617.CreateRecentImageCubit(gh<_i255.RecentImagesRepository>()),
+    );
+    gh.factory<_i126.DeleteRecentImageCubit>(
+      () => _i126.DeleteRecentImageCubit(gh<_i255.RecentImagesRepository>()),
+    );
+    gh.factory<_i958.GetRecentImagesCubit>(
+      () => _i958.GetRecentImagesCubit(gh<_i255.RecentImagesRepository>()),
     );
     gh.factory<_i1019.EndVideoCall>(
       () => _i1019.EndVideoCall(
