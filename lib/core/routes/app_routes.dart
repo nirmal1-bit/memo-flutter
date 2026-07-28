@@ -1,7 +1,6 @@
 class AppRoutes {
   static const String splash = '/splash';
-  static const String authMain = '/auth-main';
-
+  static const String faceVerificationSteps = '/face-verification-steps';
   static const String main = '/main';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
@@ -24,4 +23,7 @@ class AppRoutes {
   static const String voice = '/voice';
 
   static const String notifications = '/notifications';
+
+  static const String verification = '/verification';
+  static const String loginFaceVerification = '/login-face-verification';
 }

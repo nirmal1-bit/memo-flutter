@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:memo/core/api/base_api_response.dart';
 import 'package:memo/core/constants/api_endpoints.dart';
@@ -14,6 +17,10 @@ abstract class AuthRepository {
   EitherResponse<ApiResponse<String>> verifyToken(String otp);
   EitherResponse<ApiResponse<String>> resendToken(String email);
   EitherResponse<ApiResponse<AuthenticationToken>> login(
+    LoginRequestModel request, {
+    File? image,
+  });
+  EitherResponse<ApiResponse<bool>> getFaceVerificationStatus(
     LoginRequestModel request,
   );
   EitherResponse<ApiResponse<String>> requestToken(String email);
@@ -69,13 +76,23 @@ class AuthRepositoryImpl extends BaseRemoteSource implements AuthRepository {
 
   @override
   EitherResponse<ApiResponse<AuthenticationToken>> login(
-    LoginRequestModel request,
-  ) async {
+    LoginRequestModel request, {
+    File? image,
+  }) async {
     final response = await networkRequest(
       request: (dio) async {
         final response = await dio.post(
           ApiEndpoints.login,
-          data: request.toJson(),
+          // The Go login handler always parses multipart form fields. The image
+          // is optional for users who have not enrolled face verification.
+          data: FormData.fromMap({
+            ...request.toJson(),
+            if (image != null)
+              'image': await MultipartFile.fromFile(
+                image.path,
+                filename: image.uri.pathSegments.last,
+              ),
+          }),
         );
         return ApiResponse(
           success: true,
@@ -83,6 +100,27 @@ class AuthRepositoryImpl extends BaseRemoteSource implements AuthRepository {
             response.data["authentication_token"],
           ),
           message: "success",
+        );
+      },
+    );
+
+    return response;
+  }
+
+  @override
+  EitherResponse<ApiResponse<bool>> getFaceVerificationStatus(
+    LoginRequestModel request,
+  ) async {
+    final response = await networkRequest(
+      request: (dio) async {
+        final response = await dio.get(
+          ApiEndpoints.faceVerificationStatus,
+          data: request.toJson(),
+        );
+        return ApiResponse(
+          success: true,
+          data: response.data['face_verified'] as bool,
+          message: 'success',
         );
       },
     );

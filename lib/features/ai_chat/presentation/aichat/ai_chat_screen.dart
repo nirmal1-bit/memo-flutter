@@ -22,6 +22,13 @@ class _AiChatScreenState extends State<AiChatScreen> {
   final ScrollController _messagesController = ScrollController();
 
   @override
+  void dispose() {
+    _messageController.dispose();
+    _messagesController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -45,7 +52,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                 ),
               ),
             ),
-            resizeToAvoidBottomInset: true,
+
             backgroundColor: AppColors.scaffoldBackground,
             body: BlocConsumer<AiChatCubit, ChatState>(
               listenWhen: (previous, current) =>
@@ -88,6 +95,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                       controller: _messageController,
                       onSend: () => _sendMessage(context),
                       isBusy: state.status == ChatConnectionStatus.connecting,
+                      scrollPadding: EdgeInsets.zero,
                     ),
                   ],
                 );

@@ -1,15 +1,17 @@
-import 'package:downloadsfolder/downloadsfolder.dart';
 import 'package:flutter/material.dart';
 import 'package:memo/features/ai_chat/presentation/ai_voice/ai_voice_screen.dart';
 import 'package:memo/features/auth/presentation/models/auth_flow_args.dart';
 import 'package:memo/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:memo/features/auth/presentation/screens/login_screen.dart';
+import 'package:memo/features/auth/presentation/screens/login_face_verification_screen.dart';
 import 'package:memo/features/auth/presentation/screens/new_password_screen.dart';
 import 'package:memo/features/auth/presentation/screens/signup_screen.dart';
 import 'package:memo/features/auth/presentation/screens/verify_token_screen.dart';
 import 'package:memo/core/routes/app_routes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:memo/features/main/auth_main_screen.dart';
+import 'package:memo/features/face_verification/presentation/screens/face_verification_screen.dart';
+import 'package:memo/features/face_verification/presentation/screens/face_verification_steps.dart';
+import 'package:memo/features/main/onboarding_screen.dart';
 import 'package:memo/features/main/main_screen.dart';
 import 'package:memo/features/network/data/models/response/connection_response.dart';
 import 'package:memo/features/network/data/models/response/user_profile_response.dart';
@@ -42,8 +44,17 @@ class AppRouter {
     initialLocation: AppRoutes.splash,
     routes: [
       AppRoutes.splash.route((context, state) => const SplashScreen()),
-      AppRoutes.authMain.route((context, state) => const AuthMainScreen()),
+      AppRoutes.faceVerificationSteps.route(
+        (context, state) => VerificationSteps(
+          screens: [OnboardingScreen(), OnboardingScreen(), OnboardingScreen()],
+        ),
+      ),
+      AppRoutes.onboarding.route((context, state) => const OnboardingScreen()),
       AppRoutes.login.route((context, state) => const LoginScreen()),
+      AppRoutes.loginFaceVerification.route(
+        (context, state) =>
+            LoginFaceVerificationScreen(arguments: state.extra as AuthFlowArgs),
+      ),
       AppRoutes.signUp.route((context, state) => const SignupScreen()),
       AppRoutes.setProfile.route(
         (context, state) => SetProfileScreen(
@@ -101,13 +112,13 @@ class AppRouter {
       AppRoutes.voice.route((context, state) {
         return AiVoiceScreen(connectionId: state.extra as int);
       }),
-      AppRoutes.onboarding.route(
-        (context, state) =>
-            const Scaffold(body: Center(child: Text('Onboarding screen'))),
-      ),
 
       AppRoutes.notifications.route(
         (context, state) => const NotificationScreen(),
+      ),
+
+      AppRoutes.verification.route(
+        (context, state) => FaceVerificationScreen(),
       ),
     ],
   );

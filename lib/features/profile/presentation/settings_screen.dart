@@ -5,7 +5,6 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/profile/presentation/widgets/settings_group.dart';
-import 'package:memo/features/profile/presentation/widgets/settings_header_card.dart';
 import 'package:memo/features/profile/presentation/widgets/settings_switch_tile.dart';
 import 'package:memo/features/profile/presentation/widgets/settings_tile.dart';
 
@@ -20,7 +19,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushNotifications = true;
   bool _messageAlerts = true;
   bool _darkMode = false;
-  bool _autoPlayVideos = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,28 +44,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SettingsHeaderCard(
-                title: 'Memo profile',
-                description:
-                    'Customize your account, privacy, and preferences.',
-                onEditProfile: () => context.push(AppRoutes.userProfile),
-                onSetupProfile: () => context.push(AppRoutes.setProfile),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Account',
-                style: AppTextStyles.libre.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.softPrimary,
-                ),
-              ),
-              const SizedBox(height: 12),
               SettingsGroup(
                 children: [
                   SettingsTile(
                     icon: Icons.person_outline_rounded,
-                    title: 'Profile details',
+                    title: 'Edit Profile',
                     subtitle: 'Edit your public profile and avatar',
                     onTap: () => context.push(AppRoutes.setProfile),
                   ),
@@ -120,14 +101,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: _darkMode,
                     onChanged: (value) => setState(() => _darkMode = value),
                   ),
-                  SettingsSwitchTile(
-                    icon: Icons.play_circle_outline_rounded,
-                    title: 'Auto-play videos',
-                    subtitle: 'Automatically play media previews',
-                    value: _autoPlayVideos,
-                    onChanged: (value) =>
-                        setState(() => _autoPlayVideos = value),
-                  ),
                 ],
               ),
               const SizedBox(height: 18),
@@ -146,7 +119,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     icon: Icons.help_outline_rounded,
                     title: 'Help center',
                     subtitle: 'Get answers and troubleshooting tips',
-                    onTap: () {},
+                    onTap: () {
+                      context.push(AppRoutes.faceVerificationSteps);
+                    },
                   ),
                   SettingsTile(
                     icon: Icons.info_outline_rounded,

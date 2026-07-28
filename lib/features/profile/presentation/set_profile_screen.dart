@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:memo/core/utils/ui_helper.dart';
+import 'package:memo/features/face_verification/cubit/create_face_cubit.dart';
+import 'package:memo/features/face_verification/service/face_check_service.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/constants/cloudinary_constants.dart';
@@ -73,6 +79,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     if (profile == null) {
       return;
     }
+    _avatarUrl = profile.profileUrl;
     _headlineController.text = profile.headline;
     _bioController.text = profile.bio;
     _locationController.text = profile.location;
@@ -121,12 +128,14 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _pickAvatar() async {
+  XFile? pickedFile;
+  Future<void> _pickAvatar(BuildContext context) async {
     if (_isUploadingAvatar) {
       return;
     }
 
-    final pickedFile = await AppUtils.pickImage();
+    Uihelper.showloaderdialog(context);
+    pickedFile = await AppUtils.pickImage();
     if (pickedFile == null) {
       return;
     }
@@ -136,15 +145,30 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     });
 
     try {
-      final uploadedUrl = await AppUtils.uploadImage(
-        file: pickedFile,
-        folder: CloudinaryConstants.profileFolder,
+      final hasClearFace = await checkImageHasClearFace(
+        File(pickedFile?.path ?? ''),
       );
 
       if (!mounted) {
         return;
       }
+      Uihelper.hideloader(context);
 
+      if (hasClearFace.hasClearFace == false) {
+        AppUtils.showErrorSnackbar(
+          context: context,
+          message: hasClearFace.message,
+        );
+        return;
+      }
+
+      final uploadedUrl = await AppUtils.uploadImage(
+        file: pickedFile ?? XFile(''),
+        folder: CloudinaryConstants.profileFolder,
+      );
+      if (!mounted) {
+        return;
+      }
       if (uploadedUrl == null || uploadedUrl.isEmpty) {
         AppUtils.showErrorSnackbar(
           context: context,
@@ -236,6 +260,10 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
       return;
     }
 
+    context.read<CreateFaceCubit>().createEmbedding(
+      File(pickedFile?.path ?? ''),
+    );
+
     if (widget.initialProfile != null) {
       context.read<EditProfileCubit>().editProfile(
         ProfileRequestModel(
@@ -270,6 +298,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
       providers: [
         BlocProvider(create: (_) => getIt<EditProfileCubit>()),
         BlocProvider(create: (_) => getIt<SetProfileCubit>()),
+        BlocProvider(create: (_) => getIt<CreateFaceCubit>()),
       ],
       child: MultiBlocListener(
         listeners: [
@@ -281,8 +310,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                     context: context,
                     message: 'Profile saved successfully',
                   );
-
-                  context.replace(AppRoutes.main);
+                  context.replace(AppRoutes.faceVerificationSteps);
                 },
                 error: (message) {
                   AppUtils.showErrorSnackbar(
@@ -315,8 +343,6 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                     context: context,
                     message: 'Profile saved successfully',
                   );
-
-                  context.replace(AppRoutes.main);
                 },
                 error: (message) {
                   AppUtils.showErrorSnackbar(
@@ -359,7 +385,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                         elevation: 0,
                         foregroundColor: AppColors.softPrimary,
                         title: Text(
-                          'Edit profile',
+                          'Set up your profile',
                           style: AppTextStyles.libre.copyWith(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
@@ -395,7 +421,9 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                 child: Column(
                                   children: [
                                     GestureDetector(
-                                      onTap: _pickAvatar,
+                                      onTap: () {
+                                        _pickAvatar(context);
+                                      },
                                       child: Stack(
                                         alignment: Alignment.center,
                                         children: [
@@ -473,7 +501,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      'Images are uploaded to Cloudinary before the profile is saved.',
+                                      'Please upload a clear photo of yourself where your face is clearly visible as this image will be used to verify your identity later .',
                                       textAlign: TextAlign.center,
                                       style: AppTextStyles.rubik.copyWith(
                                         fontSize: 12.5,
@@ -537,19 +565,33 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                     ? 'Enter your location'
                                     : null,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 20),
                               DropdownButtonFormField<String>(
                                 initialValue: _selectedGender,
+
                                 icon: const Icon(Icons.expand_more_rounded),
+
                                 decoration: InputDecoration(
                                   labelText: 'Gender',
-                                  prefixIcon: const Icon(Icons.wc_rounded),
+                                  labelStyle: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.softPrimary,
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.wc_rounded,
+                                    color: AppColors.primary,
+                                  ),
                                   filled: true,
                                   fillColor: AppColors.white,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    borderSide: BorderSide.none,
+                                  ),
+
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(14),
                                     borderSide: BorderSide(
-                                      color: AppColors.dividerColor,
+                                      color: AppColors.white,
                                     ),
                                   ),
                                 ),
@@ -561,6 +603,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                           gender,
                                           style: AppTextStyles.rubik.copyWith(
                                             fontSize: 14,
+                                            color: AppColors.softPrimary,
                                           ),
                                         ),
                                       ),
@@ -579,7 +622,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                 style: AppTextStyles.rubik.copyWith(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.softTextGrey,
+                                  color: AppColors.softPrimary,
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -603,15 +646,16 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                                   hintText: 'Select your interests',
                                   hintStyle: AppTextStyles.rubik.copyWith(
                                     fontSize: 14,
-                                    color: AppColors.softTextGrey,
+                                    color: AppColors.softPrimary,
                                   ),
                                   prefixIcon: const Icon(
                                     Icons.interests_outlined,
+                                    color: AppColors.primary,
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(14),
                                     borderSide: BorderSide(
-                                      color: AppColors.dividerColor,
+                                      color: AppColors.white,
                                     ),
                                   ),
                                 ),

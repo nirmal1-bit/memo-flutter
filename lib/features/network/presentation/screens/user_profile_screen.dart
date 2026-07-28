@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/state/base_api_state.dart';
-import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/common/custom_app_bar.dart';
 import 'package:memo/features/common/feed_back_state_widget.dart';
 import 'package:memo/features/common/loading_animation.dart';
