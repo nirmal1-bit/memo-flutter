@@ -54,9 +54,12 @@ class ApiEndpoints {
   static const String notificationsCount = "/notifications/count";
 
   //face
-
   static const String verifyFace = "/face/verify";
   static const String createFace = "/face/create";
-  static const String getFaces = "/face/get-similar";
+  static const String getFaces = "/face/get-similar"; //TODO: implement this
   static const String faceVerificationStatus = "/face/verification";
+
+  // recent images
+  static const String recentImages = '/recent-images';
+  static String recentImage(int id) => '/recent-images/$id';
 }
