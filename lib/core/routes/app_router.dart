@@ -3,6 +3,7 @@ import 'package:memo/features/ai_chat/presentation/ai_voice/ai_voice_screen.dart
 import 'package:memo/features/auth/presentation/models/auth_flow_args.dart';
 import 'package:memo/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:memo/features/auth/presentation/screens/login_screen.dart';
+import 'package:memo/features/auth/presentation/screens/login_face_verification_screen.dart';
 import 'package:memo/features/auth/presentation/screens/new_password_screen.dart';
 import 'package:memo/features/auth/presentation/screens/signup_screen.dart';
 import 'package:memo/features/auth/presentation/screens/verify_token_screen.dart';
@@ -50,6 +51,10 @@ class AppRouter {
       ),
       AppRoutes.onboarding.route((context, state) => const OnboardingScreen()),
       AppRoutes.login.route((context, state) => const LoginScreen()),
+      AppRoutes.loginFaceVerification.route(
+        (context, state) =>
+            LoginFaceVerificationScreen(arguments: state.extra as AuthFlowArgs),
+      ),
       AppRoutes.signUp.route((context, state) => const SignupScreen()),
       AppRoutes.setProfile.route(
         (context, state) => SetProfileScreen(

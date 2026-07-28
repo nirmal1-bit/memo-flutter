@@ -201,7 +201,16 @@ class _VerificationStepsState extends State<VerificationSteps> {
                         child: KeyedSubtree(
                           key: ValueKey(_activeStep),
                           child: _activeStep == 3
-                              ? FaceVerificationScreen()
+                              ? FaceVerificationScreen(
+                                  onImageCaptured: (file) {
+                                    setState(() {
+                                      _activeStep++;
+                                    });
+                                    context.read<VerifyFaceCubit>().verifyFace(
+                                      file,
+                                    );
+                                  },
+                                )
                               : StepContent(stepIndex: _activeStep),
                         ),
                       ),

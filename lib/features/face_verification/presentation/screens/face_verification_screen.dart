@@ -3,12 +3,9 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
-import 'package:memo/core/utils/app_utils.dart';
-import 'package:memo/features/face_verification/cubit/image_capture_cubit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -55,7 +52,9 @@ Rect _ovalRect(Size s) {
 }
 
 class FaceVerificationScreen extends StatefulWidget {
-  const FaceVerificationScreen({super.key});
+  const FaceVerificationScreen({super.key, this.onImageCaptured});
+
+  final ValueChanged<File>? onImageCaptured;
   @override
   State<FaceVerificationScreen> createState() => _State();
 }
@@ -243,25 +242,15 @@ class _State extends State<FaceVerificationScreen>
         _captured = file;
         _capturing = false;
       });
+
+      // The login flow supplies this callback and must continue immediately
+      // after a valid frame is captured. Other uses of this screen can omit it.
+      widget.onImageCaptured?.call(file);
     } catch (_) {
       if (mounted) {
         setState(() => _capturing = false);
         ctrl.startImageStream(_onFrame);
       }
-    }
-  }
-
-  Future<void> _retake() async {
-    _ring.value = 0;
-    setState(() {
-      _captured = null;
-      _streak = 0;
-    });
-    final ctrl = _cam;
-    if (ctrl != null && ctrl.value.isInitialized) {
-      ctrl.startImageStream(_onFrame);
-    } else {
-      await _startCamera();
     }
   }
 
@@ -411,51 +400,6 @@ class _State extends State<FaceVerificationScreen>
         Container(color: AppColors.black.withOpacity(0.35)),
         CustomPaint(
           painter: _OvalPainter(oval: oval, color: AppColors.primary),
-        ),
-        Positioned(
-          bottom: 60,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.white),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 14,
-                  ),
-                ),
-                onPressed: _retake,
-                child: Text(
-                  'Retake',
-                  style: AppTextStyles.rubik.copyWith(color: AppColors.white),
-                ),
-              ),
-              const SizedBox(width: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 14,
-                  ),
-                ),
-                onPressed: () {
-                  if (_captured != null) {
-                    context.read<ImageCaptureCubit>().setImage(_captured!);
-                    AppUtils.showSuccessSnackbar(
-                      context: context,
-                      message:
-                          "The photo has been selected you can move to next step",
-                    );
-                  }
-                },
-                child: const Text('Use Photo'),
-              ),
-            ],
-          ),
         ),
       ],
     );

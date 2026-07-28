@@ -12,6 +12,9 @@ import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/auth/data/models/request/login_request_model.dart';
 import 'package:memo/features/auth/data/models/response/authentication_token.dart';
 import 'package:memo/features/auth/presentation/cubits/login_cubit.dart';
+import 'package:memo/features/auth/presentation/cubits/face_verified_cubit.dart';
+import 'package:memo/features/auth/presentation/models/auth_flow_args.dart';
+import 'package:memo/features/auth/domain/repository/auth_repository.dart';
 import 'package:memo/features/auth/presentation/widgets/auth_widgets.dart';
 import 'package:memo/features/common/form_widgets.dart';
 
@@ -39,9 +42,48 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => getIt<LoginCubit>())],
+      providers: [
+        BlocProvider(create: (_) => getIt<LoginCubit>()),
+        BlocProvider(create: (_) => FaceVerifiedCubit(getIt<AuthRepository>())),
+      ],
       child: MultiBlocListener(
         listeners: [
+          BlocListener<FaceVerifiedCubit, BaseApiState<bool>>(
+            listener: (context, state) {
+              state.maybeWhen(
+                success: (faceVerified) {
+                  final request = LoginRequestModel(
+                    email: _emailController.text.trim(),
+                    password: _passwordController.text.trim(),
+                  );
+                  if (faceVerified) {
+                    context.push(
+                      AppRoutes.loginFaceVerification,
+                      extra: AuthFlowArgs(
+                        email: request.email,
+                        password: request.password,
+                      ),
+                    );
+                  } else {
+                    context.read<LoginCubit>().login(request);
+                  }
+                },
+                error: (message) => AppUtils.showErrorSnackbar(
+                  context: context,
+                  message: message,
+                ),
+                validationError: (error) => AppUtils.showErrorSnackbar(
+                  context: context,
+                  message: error.message,
+                ),
+                noInternet: () => AppUtils.showErrorSnackbar(
+                  context: context,
+                  message: 'No internet connection',
+                ),
+                orElse: () {},
+              );
+            },
+          ),
           BlocListener<LoginCubit, BaseApiState<AuthenticationToken>>(
             listener: (context, state) async {
               state.maybeWhen(
@@ -87,10 +129,12 @@ class _LoginScreenState extends State<LoginScreen> {
               emailController: _emailController,
               passwordController: _passwordController,
               obscurePassword: _obscurePassword,
-              isLoading: state.maybeWhen(
-                loading: () => true,
-                orElse: () => false,
-              ),
+              isLoading:
+                  state.maybeWhen(loading: () => true, orElse: () => false) ||
+                  context.watch<FaceVerifiedCubit>().state.maybeWhen(
+                    loading: () => true,
+                    orElse: () => false,
+                  ),
               onTogglePassword: () {
                 setState(() {
                   _obscurePassword = !_obscurePassword;
@@ -101,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   return;
                 }
 
-                context.read<LoginCubit>().login(
+                context.read<FaceVerifiedCubit>().check(
                   LoginRequestModel(
                     email: _emailController.text.trim(),
                     password: _passwordController.text.trim(),
@@ -151,6 +195,7 @@ class LoginView extends StatelessWidget {
         elevation: 0,
         toolbarHeight: 0,
       ),
+      backgroundColor: AppColors.scaffoldBackground,
       body: AuthShell(
         title: 'Welcome back',
         subtitle:
