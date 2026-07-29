@@ -66,4 +66,11 @@ class ApiEndpoints {
 
   //location
   static const String location = '/location';
+
+  //shared-album
+  static String sharedAlbum(int id) => '/connections/$id/shared-album';
+  static String sharedAlbumFavoriteImage(int id, int imageId) =>
+      '/connections/$id/shared-album/images/$imageId/favorite';
+  static String deleteSharedAlbumImage(int id, int imageId) =>
+      '/connections/$id/shared-album/$imageId/delete';
 }
