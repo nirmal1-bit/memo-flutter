@@ -7,12 +7,14 @@ class ChatComposer extends StatelessWidget {
     required this.controller,
     required this.onSend,
     required this.isBusy,
+    this.onVoice,
     this.scrollPadding = const EdgeInsets.all(20),
   });
 
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool isBusy;
+  final VoidCallback? onVoice;
   final EdgeInsets scrollPadding;
 
   @override
@@ -59,6 +61,26 @@ class ChatComposer extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
+          if (onVoice != null) ...[
+            Material(
+              color: AppColors.brandBackground,
+              borderRadius: BorderRadius.circular(16),
+              child: InkWell(
+                onTap: onVoice,
+                borderRadius: BorderRadius.circular(16),
+                child: const SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: Icon(
+                    Icons.record_voice_over,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
           Material(
             color: AppColors.primary,
             borderRadius: BorderRadius.circular(16),

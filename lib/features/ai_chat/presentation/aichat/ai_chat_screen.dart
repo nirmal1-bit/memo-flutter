@@ -39,20 +39,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0, bottom: 80),
-              child: FloatingActionButton(
-                backgroundColor: AppColors.primary,
-                onPressed: () {
-                  context.push(AppRoutes.voice, extra: widget.connectionId);
-                },
-                child: const Icon(
-                  Icons.record_voice_over,
-                  color: AppColors.scaffoldBackground,
-                ),
-              ),
-            ),
-
             backgroundColor: AppColors.scaffoldBackground,
             body: BlocConsumer<AiChatCubit, ChatState>(
               listenWhen: (previous, current) =>
@@ -90,10 +76,15 @@ class _AiChatScreenState extends State<AiChatScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 12),
                     ChatComposer(
                       controller: _messageController,
                       onSend: () => _sendMessage(context),
+                      onVoice: () {
+                        context.push(
+                          AppRoutes.voice,
+                          extra: widget.connectionId,
+                        );
+                      },
                       isBusy: state.status == ChatConnectionStatus.connecting,
                       scrollPadding: EdgeInsets.zero,
                     ),
