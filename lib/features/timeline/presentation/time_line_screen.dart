@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/features/ai_chat/presentation/aichat/ai_chat_screen.dart';
 import 'package:memo/features/home/data/models/response/connection_response.dart';
+import 'package:memo/features/shared_album/presentation/shared_album_screen.dart';
 import 'package:memo/features/timeline/cubits/get_memories_cubit.dart';
 import 'package:memo/features/timeline/cubits/get_timeline_cubit.dart';
 import 'package:memo/features/timeline/presentation/widgets/timeline_activity/timeline_activity_tab.dart';
@@ -30,7 +31,7 @@ class _TimeLineScreenState extends State<TimeLineScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -71,6 +72,7 @@ class _TimeLineScreenState extends State<TimeLineScreen>
                     TimelineMemoriesTab(
                       connectionId: widget.params.connectionId,
                     ),
+                    SharedAlbumScreen(connectionId: widget.params.connectionId),
                     TimelineActivityTab(
                       connectionId: widget.params.connectionId,
                     ),
