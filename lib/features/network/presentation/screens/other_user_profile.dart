@@ -9,7 +9,6 @@ class OtherUserProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: ''),
       body: SafeArea(
         child: ProfileBody(
           isOther: true,

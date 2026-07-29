@@ -88,7 +88,7 @@ class AppUtils {
   }
 
   static Future<XFile?> pickImage({ImageSource source = ImageSource.gallery}) {
-    return _imagePicker.pickImage(source: source, imageQuality: 90);
+    return _imagePicker.pickImage(source: source, imageQuality: 60);
   }
 
   static Future<String?> uploadImage({required XFile file, String? folder}) {

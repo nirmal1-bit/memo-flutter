@@ -12,9 +12,9 @@ class GetRecentImagesCubit
 
   final RecentImagesRepository repository;
 
-  Future<void> getRecentImages() async {
+  Future<void> getRecentImages(int userId) async {
     emit(const BaseApiState.loading());
-    final response = await repository.getRecentImages();
+    final response = await repository.getRecentImages(userId);
     emit(
       response.fold(
         (error) => error.validationErrorOrNull != null

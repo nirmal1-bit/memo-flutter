@@ -6,7 +6,9 @@ import 'package:memo/core/typedef/typedef.dart';
 import 'package:memo/features/network/data/models/response/recent_image_response.dart';
 
 abstract class RecentImagesRepository {
-  EitherResponse<ApiResponse<List<RecentImageResponse>>> getRecentImages();
+  EitherResponse<ApiResponse<List<RecentImageResponse>>> getRecentImages(
+    int userId,
+  );
 
   EitherResponse<ApiResponse<RecentImageResponse>> createRecentImage({
     required String url,
@@ -22,11 +24,14 @@ class RecentImagesRepositoryImpl extends BaseRemoteSource
   RecentImagesRepositoryImpl(super._dio, super._networkInfo);
 
   @override
-  EitherResponse<ApiResponse<List<RecentImageResponse>>>
-  getRecentImages() async {
+  EitherResponse<ApiResponse<List<RecentImageResponse>>> getRecentImages(
+    int userId,
+  ) async {
     return networkRequest(
       request: (dio) async {
-        final response = await dio.get(ApiEndpoints.recentImages);
+        final response = await dio.get(
+          ApiEndpoints.recentImageByPersonId(userId),
+        );
 
         final list = response.data["recent_images"] as List<dynamic>;
 

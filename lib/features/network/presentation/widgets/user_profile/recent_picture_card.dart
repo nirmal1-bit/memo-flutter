@@ -122,25 +122,11 @@ class _PictureViewer extends StatelessWidget {
                         maxScale: 3,
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.white.withValues(alpha: 0.75),
-                              width: 2,
-                            ),
                             borderRadius: BorderRadius.circular(20),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: Image.network(
-                            picture.url,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Padding(
-                                  padding: EdgeInsets.all(48),
-                                  child: Icon(
-                                    Icons.broken_image_outlined,
-                                    color: AppColors.white,
-                                    size: 48,
-                                  ),
-                                ),
+                            image: DecorationImage(
+                              image: NetworkImage(picture.url),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),

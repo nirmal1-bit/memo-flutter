@@ -12,7 +12,14 @@ import 'package:memo/features/network/presentation/cubits/get_recent_images_cubi
 import 'package:memo/features/network/presentation/widgets/user_profile/recent_picture_card.dart';
 
 class RecentPicturesSection extends StatelessWidget {
-  const RecentPicturesSection({super.key});
+  const RecentPicturesSection({
+    super.key,
+    required this.userId,
+    this.showAddAlbumPlaceholder = true,
+  });
+
+  final int userId;
+  final bool showAddAlbumPlaceholder;
 
   static const _colors = [
     AppColors.brandBackgroundLight,
@@ -27,7 +34,7 @@ class RecentPicturesSection extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => getIt<GetRecentImagesCubit>()..getRecentImages(),
+          create: (_) => getIt<GetRecentImagesCubit>()..getRecentImages(userId),
         ),
         BlocProvider(create: (_) => getIt<CreateRecentImageCubit>()),
         BlocProvider(create: (_) => getIt<DeleteRecentImageCubit>()),
@@ -56,34 +63,48 @@ class RecentPicturesSection extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    height: 300,
-                    width: double.infinity,
-                    child: state.maybeWhen(
-                      loading: () => const Center(
+                  state.maybeWhen(
+                    loading: () => const SizedBox(
+                      height: 40,
+                      child: Center(
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
-                      error: (message) => Text(message),
-                      validationError: (error) => Text(error.message),
-                      orElse: () => ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 5,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(width: 10),
-                        itemBuilder: (_, index) => RecentPictureCard(
-                          picture: index < pictures.length
-                              ? pictures[index]
-                              : null,
-                          color: _colors[index],
-                          onDelete: index < pictures.length
-                              ? () => _deletePicture(context, pictures[index])
-                              : null,
-                          onAdd: index >= pictures.length
-                              ? () => _addPicture(context)
-                              : null,
-                        ),
-                      ),
                     ),
+                    error: (message) => Text(message),
+                    validationError: (error) => Text(error.message),
+                    orElse: () {
+                      if (!showAddAlbumPlaceholder && pictures.isEmpty) {
+                        return const _NoRecentPictures();
+                      }
+
+                      final itemCount = showAddAlbumPlaceholder
+                          ? 5
+                          : pictures.length;
+                      return SizedBox(
+                        height: 300,
+                        width: double.infinity,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: itemCount,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(width: 10),
+                          itemBuilder: (_, index) => RecentPictureCard(
+                            picture: index < pictures.length
+                                ? pictures[index]
+                                : null,
+                            color: _colors[index % _colors.length],
+                            onDelete: index < pictures.length
+                                ? () => _deletePicture(context, pictures[index])
+                                : null,
+                            onAdd:
+                                showAddAlbumPlaceholder &&
+                                    index >= pictures.length
+                                ? () => _addPicture(context)
+                                : null,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               );
@@ -107,7 +128,7 @@ class RecentPicturesSection extends StatelessWidget {
       description: description,
     );
     if (context.mounted) {
-      await context.read<GetRecentImagesCubit>().getRecentImages();
+      await context.read<GetRecentImagesCubit>().getRecentImages(userId);
     }
   }
 
@@ -137,7 +158,7 @@ class RecentPicturesSection extends StatelessWidget {
         picture.id,
       );
       if (context.mounted) {
-        await context.read<GetRecentImagesCubit>().getRecentImages();
+        await context.read<GetRecentImagesCubit>().getRecentImages(userId);
       }
     }
   }
@@ -253,6 +274,63 @@ class _DescriptionSheetState extends State<_DescriptionSheet> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _NoRecentPictures extends StatelessWidget {
+  const _NoRecentPictures();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: AppColors.brandBackgroundLight.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.brandBackgroundLight),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(11),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.photo_library_outlined,
+              color: AppColors.primary,
+              size: 25,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'No recent pictures provided by user',
+                  style: AppTextStyles.rubik.copyWith(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textDark,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Added Pictures will be displayed here.',
+                  style: AppTextStyles.rubik.copyWith(
+                    fontSize: 12,
+                    color: AppColors.textLightDark,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

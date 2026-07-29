@@ -28,9 +28,13 @@ class ProfileBody extends StatelessWidget {
           ],
 
           if (!isOther) EditProfileButton(user: user),
+
+          RecentPicturesSection(
+            userId: user.id,
+            showAddAlbumPlaceholder: !isOther,
+          ),
           if (!isOther) ...[
             const SizedBox(height: 20),
-            const RecentPicturesSection(),
             const SizedBox(height: 16),
             AccountInfoSection(user: user),
           ],
