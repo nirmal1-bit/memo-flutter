@@ -7,7 +7,9 @@ import 'package:memo/core/typedef/typedef.dart';
 import 'package:memo/features/matches/data/models/response/matches_response.dart';
 
 abstract class MatchesRepository {
-  EitherResponse<ApiResponseWithPagination<MatchesResponse>> getMatches();
+  EitherResponse<ApiResponseWithPagination<MatchesResponse>> getMatches({
+    required int range,
+  });
 }
 
 @LazySingleton(as: MatchesRepository)
@@ -16,10 +18,15 @@ class MatchesRepositoryImpl extends BaseRemoteSource
   MatchesRepositoryImpl(super._dio, super._networkInfo);
 
   @override
-  EitherResponse<ApiResponseWithPagination<MatchesResponse>> getMatches() {
+  EitherResponse<ApiResponseWithPagination<MatchesResponse>> getMatches({
+    required int range,
+  }) {
     final response = networkRequest(
       request: (Dio dio) async {
-        final response = await dio.get(ApiEndpoints.matches);
+        final response = await dio.get(
+          ApiEndpoints.matches,
+          queryParameters: {'range': range},
+        );
         final list = response.data["matches"] as List<dynamic>;
         return ApiResponseWithPagination(
           success: true,

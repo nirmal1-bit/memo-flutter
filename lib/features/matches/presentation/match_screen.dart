@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/state/base_api_state.dart';
+import 'package:memo/core/constants/storage_keys.dart';
+import 'package:memo/core/session/shared_prefrences_init.dart';
 import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/matches/cubits/get_matches_cubit.dart';
@@ -25,6 +27,7 @@ class MatchScreen extends StatefulWidget {
 class _MatchScreenState extends State<MatchScreen>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+  int _range = 4000;
 
   Offset _dragOffset = Offset.zero;
   bool _isDragging = false;
@@ -40,6 +43,10 @@ class _MatchScreenState extends State<MatchScreen>
   @override
   void initState() {
     super.initState();
+    _range = SharedPreferencesInit().sharedPreferences.getInt(
+          StorageKeys.matchesRange,
+        ) ??
+        4000;
     _swipeController =
         AnimationController(
             vsync: this,
@@ -114,6 +121,21 @@ class _MatchScreenState extends State<MatchScreen>
     });
   }
 
+  void _changeRange(BuildContext providerContext, int range) {
+    if (range == _range) return;
+    setState(() {
+      _range = range;
+      _currentIndex = 0;
+      _dragOffset = Offset.zero;
+      _showMatchOverlay = false;
+    });
+    SharedPreferencesInit().sharedPreferences.setInt(
+      StorageKeys.matchesRange,
+      range,
+    );
+    providerContext.read<GetMatchesCubit>().getMatches(range: range);
+  }
+
   // ---------------------------------------------------------------------
   // Build
   // ---------------------------------------------------------------------
@@ -125,7 +147,7 @@ class _MatchScreenState extends State<MatchScreen>
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (context) => getIt<GetMatchesCubit>()..getMatches(),
+              create: (context) => getIt<GetMatchesCubit>()..getMatches(range: _range),
             ),
             BlocProvider(create: (_) => getIt<ConnectionActionCubit>()),
           ],
@@ -236,7 +258,11 @@ class _MatchScreenState extends State<MatchScreen>
                           children: [
                             Column(
                               children: [
-                                const MatchHeader(),
+                                MatchHeader(
+                                  range: _range,
+                                  onRangeChanged: (range) =>
+                                      _changeRange(context, range),
+                                ),
                                 Expanded(
                                   child: CardDeck(
                                     profiles: data,

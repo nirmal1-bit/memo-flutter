@@ -15,10 +15,10 @@ class GetMatchesCubit extends Cubit<BaseApiState<List<MatchesResponse>>> {
   GetMatchesCubit(this.matchRepository) : super(const BaseApiState.initial());
   final MatchesRepository matchRepository;
 
-  void getMatches() async {
+  void getMatches({required int range}) async {
     emit(BaseApiState.loading());
 
-    final response = await matchRepository.getMatches();
+    final response = await matchRepository.getMatches(range: range);
 
     emit(
       response.fold(

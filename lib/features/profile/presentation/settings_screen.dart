@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/session/session_service.dart';
+import 'package:memo/core/session/shared_prefrences_init.dart';
+import 'package:memo/core/constants/storage_keys.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/profile/presentation/widgets/settings_group.dart';
 import 'package:memo/features/profile/presentation/widgets/settings_switch_tile.dart';
@@ -19,6 +21,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushNotifications = true;
   bool _messageAlerts = true;
   bool _darkMode = false;
+  int _matchesRange = 4000;
+
+  @override
+  void initState() {
+    super.initState();
+    _matchesRange = SharedPreferencesInit().sharedPreferences.getInt(
+          StorageKeys.matchesRange,
+        ) ??
+        4000;
+  }
+
+  String _rangeLabel(int meters) => '${(meters / 1000).round()} km';
+
+  Future<void> _selectMatchesRange() async {
+    final selected = await showModalBottomSheet<int>(
+      context: context,
+      showDragHandle: true,
+      builder: (_) => _SettingsRangePicker(initialRange: _matchesRange),
+    );
+    if (selected == null) return;
+    await SharedPreferencesInit().sharedPreferences.setInt(
+      StorageKeys.matchesRange,
+      selected,
+    );
+    if (mounted) setState(() => _matchesRange = selected);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +129,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: _darkMode,
                     onChanged: (value) => setState(() => _darkMode = value),
                   ),
+                  SettingsTile(
+                    icon: Icons.near_me_outlined,
+                    title: 'Match distance',
+                    subtitle: 'Show matches within ${_rangeLabel(_matchesRange)}',
+                    onTap: _selectMatchesRange,
+                  ),
                 ],
               ),
               const SizedBox(height: 18),
@@ -161,6 +195,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SettingsRangePicker extends StatefulWidget {
+  const _SettingsRangePicker({required this.initialRange});
+  final int initialRange;
+
+  @override
+  State<_SettingsRangePicker> createState() => _SettingsRangePickerState();
+}
+
+class _SettingsRangePickerState extends State<_SettingsRangePicker> {
+  late double _range;
+
+  @override
+  void initState() {
+    super.initState();
+    _range = widget.initialRange.toDouble();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final kilometers = (_range / 1000).round();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Match distance', style: AppTextStyles.libre.copyWith(
+            fontSize: 21, fontWeight: FontWeight.w700, color: AppColors.textDark,
+          )),
+          const SizedBox(height: 6),
+          Text('Show matches within $kilometers km of you.', style: AppTextStyles.rubik.copyWith(
+            fontSize: 13, color: AppColors.textLightDark,
+          )),
+          Slider(
+            value: _range,
+            min: 1000,
+            max: 200000,
+            divisions: 199,
+            activeColor: AppColors.primary,
+            label: '$kilometers km',
+            onChanged: (value) => setState(() => _range = value),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context, _range.round()),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.white,
+              ),
+              child: const Text('Save distance'),
+            ),
+          ),
+        ],
       ),
     );
   }

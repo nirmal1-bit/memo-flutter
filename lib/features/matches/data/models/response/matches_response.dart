@@ -31,6 +31,7 @@ abstract class MatchesResponse with _$MatchesResponse {
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
     required double similarity,
+    required double distance,
   }) = _MatchesResponse;
 
   factory MatchesResponse.fromJson(Map<String, dynamic> json) =>
