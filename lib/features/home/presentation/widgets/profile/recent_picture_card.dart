@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
-import 'package:memo/features/network/data/models/response/recent_image_response.dart';
+import 'package:memo/features/home/data/models/response/recent_image_response.dart';
 
 class RecentPictureCard extends StatelessWidget {
   const RecentPictureCard({

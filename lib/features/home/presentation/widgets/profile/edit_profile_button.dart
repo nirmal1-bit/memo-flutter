@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
 import 'package:memo/features/profile/data/request/profile_request_model.dart';
 
 class EditProfileButton extends StatelessWidget {

@@ -4,10 +4,10 @@ import 'package:memo/core/constants/api_endpoints.dart';
 import 'package:memo/core/constants/connection_request_status.dart';
 import 'package:memo/core/response/base_api_response.dart';
 import 'package:memo/core/typedef/typedef.dart';
-import 'package:memo/features/network/data/models/response/connection_response.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/data/models/response/connection_response.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
 
-abstract class NetworkRepository {
+abstract class ConnectionsRepository {
   EitherResponse<ApiResponseWithPagination<ConnectionResponse>>
   listConnections();
 
@@ -29,10 +29,10 @@ abstract class NetworkRepository {
   EitherResponse<ApiResponse<String>> cancelConnectionRequest(int requestId);
 }
 
-@LazySingleton(as: NetworkRepository)
-class NetworkRepositoryImpl extends BaseRemoteSource
-    implements NetworkRepository {
-  NetworkRepositoryImpl(super._dio, super._networkInfo);
+@LazySingleton(as: ConnectionsRepository)
+class ConnectionsRepositoryImpl extends BaseRemoteSource
+    implements ConnectionsRepository {
+  ConnectionsRepositoryImpl(super._dio, super._networkInfo);
 
   @override
   EitherResponse<ApiResponseWithPagination<ConnectionResponse>>

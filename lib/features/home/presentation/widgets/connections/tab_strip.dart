@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/features/network/presentation/widgets/network/network_widget_types.dart';
+import 'package:memo/features/home/presentation/widgets/connections/widget_types.dart';
 
-class NetworkTabStrip extends StatelessWidget {
-  const NetworkTabStrip({
+class ConnectionTabStrip extends StatelessWidget {
+  const ConnectionTabStrip({
     super.key,
     required this.selected,
     required this.onChanged,
   });
 
-  final NetworkTab selected;
-  final ValueChanged<NetworkTab> onChanged;
+  final ConnectionTab selected;
+  final ValueChanged<ConnectionTab> onChanged;
 
   static const _tabs = [
-    (label: 'Connections', tab: NetworkTab.connections),
-    (label: 'Sent', tab: NetworkTab.sent),
-    (label: 'Received', tab: NetworkTab.received),
+    (label: 'Connections', tab: ConnectionTab.connections),
+    (label: 'Sent', tab: ConnectionTab.sent),
+    (label: 'Received', tab: ConnectionTab.received),
   ];
 
   @override

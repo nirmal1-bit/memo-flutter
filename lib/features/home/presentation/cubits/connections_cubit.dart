@@ -2,15 +2,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:memo/core/errors/app_error.dart';
 import 'package:memo/core/state/base_api_state.dart';
-import 'package:memo/features/network/data/models/response/connection_response.dart';
-import 'package:memo/features/network/domian/repository/network_respotory.dart';
+import 'package:memo/features/home/data/models/response/connection_response.dart';
+import 'package:memo/features/home/domain/repository/connections_repository.dart';
 
 @injectable
 class ConnectionsCubit extends Cubit<BaseApiState<List<ConnectionResponse>>> {
   ConnectionsCubit(this.networkRepository)
     : super(const BaseApiState.initial());
 
-  final NetworkRepository networkRepository;
+  final ConnectionsRepository networkRepository;
 
   Future<void> listConnections() async {
     emit(const BaseApiState.loading());

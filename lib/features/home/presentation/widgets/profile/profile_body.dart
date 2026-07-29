@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/account_info_section.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/edit_profile_button.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/interest_section.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/profile_header_card.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/qr_section.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/recent_pictures_section.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/presentation/widgets/profile/account_info_section.dart';
+import 'package:memo/features/home/presentation/widgets/profile/edit_profile_button.dart';
+import 'package:memo/features/home/presentation/widgets/profile/interest_section.dart';
+import 'package:memo/features/home/presentation/widgets/profile/profile_header_card.dart';
+import 'package:memo/features/home/presentation/widgets/profile/qr_section.dart';
+import 'package:memo/features/home/presentation/widgets/profile/recent_pictures_section.dart';
 
 class ProfileBody extends StatelessWidget {
   const ProfileBody({super.key, required this.user, this.isOther = false});

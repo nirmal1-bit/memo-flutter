@@ -2,8 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:memo/core/errors/app_error.dart';
 import 'package:memo/core/state/base_api_state.dart';
-import 'package:memo/features/network/data/models/response/recent_image_response.dart';
-import 'package:memo/features/network/domian/repository/recent_images_repository.dart';
+import 'package:memo/features/home/data/models/response/recent_image_response.dart';
+import 'package:memo/features/home/domain/repository/recent_images_repository.dart';
 
 @injectable
 class GetRecentImagesCubit

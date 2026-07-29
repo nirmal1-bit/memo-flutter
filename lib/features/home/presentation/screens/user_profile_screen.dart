@@ -7,9 +7,9 @@ import 'package:memo/features/common/custom_app_bar.dart';
 import 'package:memo/features/common/feed_back_state_widget.dart';
 import 'package:memo/features/common/loading_animation.dart';
 import 'package:memo/features/common/shimmer.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/profile_body.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/presentation/cubits/get_user_profile_cubit.dart';
+import 'package:memo/features/home/presentation/widgets/profile/profile_body.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});

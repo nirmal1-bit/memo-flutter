@@ -3,7 +3,7 @@ import 'package:memo/core/api/base_api_response.dart';
 import 'package:memo/core/constants/api_endpoints.dart';
 import 'package:memo/core/response/base_api_response.dart';
 import 'package:memo/core/typedef/typedef.dart';
-import 'package:memo/features/network/data/models/response/recent_image_response.dart';
+import 'package:memo/features/home/data/models/response/recent_image_response.dart';
 
 abstract class RecentImagesRepository {
   EitherResponse<ApiResponse<List<RecentImageResponse>>> getRecentImages(

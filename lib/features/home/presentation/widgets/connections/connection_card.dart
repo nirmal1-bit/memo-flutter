@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
-import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/home/data/models/response/connection_response.dart';
 
-class NetworkConnectionCard extends StatelessWidget {
-  const NetworkConnectionCard({
+class ConnectionCard extends StatelessWidget {
+  const ConnectionCard({
     super.key,
     required this.connection,
     this.onTap,

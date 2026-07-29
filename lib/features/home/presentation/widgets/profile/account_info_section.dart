@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/icon_row.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/section_card.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/presentation/widgets/profile/icon_row.dart';
+import 'package:memo/features/home/presentation/widgets/profile/section_card.dart';
 
 class AccountInfoSection extends StatelessWidget {
   const AccountInfoSection({super.key, required this.user});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/features/common/build_initials.dart';
-import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/home/data/models/response/connection_response.dart';
 
 class TimelineProfileHeader extends StatelessWidget {
   const TimelineProfileHeader({

@@ -5,17 +5,17 @@ import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/common/build_initials.dart';
 import 'package:memo/features/common/shimmer.dart';
-import 'package:memo/features/network/data/models/response/connection_response.dart';
-import 'package:memo/features/network/presentation/cubits/connections_cubit.dart';
-import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
-import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart';
-import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart';
-import 'package:memo/features/network/presentation/widgets/network/avatar_badge.dart';
-import 'package:memo/features/network/presentation/widgets/network/network_connection_card.dart';
-import 'package:memo/features/network/presentation/widgets/network/network_widget_types.dart';
+import 'package:memo/features/home/data/models/response/connection_response.dart';
+import 'package:memo/features/home/presentation/cubits/connections_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/get_user_profile_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/received_connections_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/sent_connections_cubit.dart';
+import 'package:memo/features/home/presentation/widgets/connections/avatar_badge.dart';
+import 'package:memo/features/home/presentation/widgets/connections/connection_card.dart';
+import 'package:memo/features/home/presentation/widgets/connections/widget_types.dart';
 
-class NetworkStateView extends StatelessWidget {
-  const NetworkStateView({
+class ConnectionsStateView extends StatelessWidget {
+  const ConnectionsStateView({
     super.key,
     required this.state,
     required this.emptyMessage,
@@ -27,7 +27,7 @@ class NetworkStateView extends StatelessWidget {
     this.onAcceptTap,
     this.onRejectTap,
     this.onCancelTap,
-    this.cardStyle = NetworkCardStyle.connections,
+    this.cardStyle = ConnectionCardStyle.connections,
   });
 
   final BaseApiState<List<ConnectionResponse>> state;
@@ -40,7 +40,7 @@ class NetworkStateView extends StatelessWidget {
   final ValueChanged<ConnectionResponse>? onAcceptTap;
   final ValueChanged<ConnectionResponse>? onRejectTap;
   final ValueChanged<ConnectionResponse>? onCancelTap;
-  final NetworkCardStyle cardStyle;
+  final ConnectionCardStyle cardStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class NetworkStateView extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 30),
                     child: switch (cardStyle) {
-                      NetworkCardStyle.connections => NetworkConnectionCard(
+                      ConnectionCardStyle.connections => ConnectionCard(
                         connection: connection,
                         onTap: onConnectionTap == null
                             ? null
@@ -79,7 +79,7 @@ class NetworkStateView extends StatelessWidget {
                             ? null
                             : () => onCallTap!(connection),
                       ),
-                      NetworkCardStyle.sent => _SentCard(
+                      ConnectionCardStyle.sent => _SentCard(
                         connection: connection,
                         onTap: onSentTap == null
                             ? null
@@ -88,7 +88,7 @@ class NetworkStateView extends StatelessWidget {
                             ? null
                             : () => onCancelTap!(connection),
                       ),
-                      NetworkCardStyle.received => _ReceivedCard(
+                      ConnectionCardStyle.received => _ReceivedCard(
                         connection: connection,
                         onTap: onReceivedTap == null
                             ? null

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:memo/features/common/custom_app_bar.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/profile_body.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/presentation/widgets/profile/profile_body.dart';
 
 class OtherUserProfile extends StatelessWidget {
   const OtherUserProfile({super.key, required this.user});

@@ -5,11 +5,11 @@ import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/core/utils/app_utils.dart';
-import 'package:memo/features/network/data/models/response/recent_image_response.dart';
-import 'package:memo/features/network/presentation/cubits/create_recent_image_cubit.dart';
-import 'package:memo/features/network/presentation/cubits/delete_recent_image_cubit.dart';
-import 'package:memo/features/network/presentation/cubits/get_recent_images_cubit.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/recent_picture_card.dart';
+import 'package:memo/features/home/data/models/response/recent_image_response.dart';
+import 'package:memo/features/home/presentation/cubits/create_recent_image_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/delete_recent_image_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/get_recent_images_cubit.dart';
+import 'package:memo/features/home/presentation/widgets/profile/recent_picture_card.dart';
 
 class RecentPicturesSection extends StatelessWidget {
   const RecentPicturesSection({

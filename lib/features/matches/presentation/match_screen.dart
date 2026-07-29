@@ -13,7 +13,7 @@ import 'package:memo/features/matches/presentation/widgets/card_deck.dart';
 import 'package:memo/features/matches/presentation/widgets/match_action_bar.dart';
 import 'package:memo/features/matches/presentation/widgets/match_empty_state.dart';
 import 'package:memo/features/matches/presentation/widgets/match_header.dart';
-import 'package:memo/features/network/presentation/cubits/connection_action_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/connection_action_cubit.dart';
 
 enum _SwipeAction { like, nope }
 

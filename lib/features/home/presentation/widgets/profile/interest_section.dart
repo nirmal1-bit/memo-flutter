@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
-import 'package:memo/features/network/presentation/widgets/user_profile/section_card.dart';
+import 'package:memo/features/home/presentation/widgets/profile/section_card.dart';
 
 class InterestsSection extends StatelessWidget {
   const InterestsSection({super.key, required this.interests});

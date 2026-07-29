@@ -1,3 +1,3 @@
-enum NetworkTab { connections, sent, received }
+enum ConnectionTab { connections, sent, received }
 
-enum NetworkCardStyle { connections, sent, received }
+enum ConnectionCardStyle { connections, sent, received }

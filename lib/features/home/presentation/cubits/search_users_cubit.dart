@@ -2,15 +2,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:memo/core/errors/app_error.dart';
 import 'package:memo/core/state/base_api_state.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/domian/repository/network_respotory.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/domain/repository/connections_repository.dart';
 
 @injectable
 class SearchUsersCubit extends Cubit<BaseApiState<List<Profile>>> {
   SearchUsersCubit(this.networkRepository)
     : super(const BaseApiState.initial());
 
-  final NetworkRepository networkRepository;
+  final ConnectionsRepository networkRepository;
 
   Future<void> searchUsers(String query) async {
     final normalizedQuery = query.trim();

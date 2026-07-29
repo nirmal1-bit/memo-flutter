@@ -11,7 +11,7 @@ import 'package:memo/features/matches/presentation/widgets/profile_tag_chip.dart
 import 'package:memo/features/matches/presentation/widgets/distance_badge.dart';
 import 'package:memo/features/matches/presentation/widgets/similarity_badge.dart';
 import 'package:memo/features/matches/presentation/widgets/swipe_stamps.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
 
 class ProfileCard extends StatelessWidget {
   const ProfileCard({

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 
-class NetworkAddButton extends StatelessWidget {
-  const NetworkAddButton({super.key, required this.onPressed});
+class ConnectionAddButton extends StatelessWidget {
+  const ConnectionAddButton({super.key, required this.onPressed});
 
   final VoidCallback onPressed;
 

@@ -8,7 +8,7 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/ai_chat/cubits/ai_chat_cubit.dart';
 import 'package:memo/features/ai_chat/presentation/aichat/widgets/ai_chat_panel.dart';
-import 'package:memo/features/network/presentation/widgets/chat/chat_composer.dart';
+import 'package:memo/features/home/presentation/widgets/chat/chat_composer.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key, required this.connectionId});

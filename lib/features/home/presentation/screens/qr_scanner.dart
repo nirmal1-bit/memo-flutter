@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/utils/app_utils.dart';
-import 'package:memo/features/network/presentation/cubits/connection_action_cubit.dart';
-import 'package:memo/features/network/presentation/widgets/network/screen_overlay.dart';
+import 'package:memo/features/home/presentation/cubits/connection_action_cubit.dart';
+import 'package:memo/features/home/presentation/widgets/connections/connections_overlay.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QrScannerPage extends StatefulWidget {

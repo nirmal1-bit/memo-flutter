@@ -4,11 +4,11 @@ import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/presentation/widgets/network/network_search_bar.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/presentation/widgets/connections/search_bar.dart';
 
-class NetworkAppBar extends StatefulWidget {
-  const NetworkAppBar({
+class ConnectionsAppBar extends StatefulWidget {
+  const ConnectionsAppBar({
     super.key,
     required this.user,
     required this.controller,
@@ -24,10 +24,10 @@ class NetworkAppBar extends StatefulWidget {
   final VoidCallback? onActionTap;
 
   @override
-  State<NetworkAppBar> createState() => _NetworkAppBarState();
+  State<ConnectionsAppBar> createState() => _ConnectionsAppBarState();
 }
 
-class _NetworkAppBarState extends State<NetworkAppBar> {
+class _ConnectionsAppBarState extends State<ConnectionsAppBar> {
   @override
   void initState() {
     super.initState();
@@ -89,7 +89,7 @@ class _NetworkAppBarState extends State<NetworkAppBar> {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: NetworkSearchBar(
+            child: ConnectionsSearchBar(
               controller: widget.controller,
               onSubmitted: (_) => widget.onSearchPressed?.call(),
             ),

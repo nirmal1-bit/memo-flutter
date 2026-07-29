@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 
-class NetworkSearchBar extends StatelessWidget {
-  const NetworkSearchBar({
+class ConnectionsSearchBar extends StatelessWidget {
+  const ConnectionsSearchBar({
     super.key,
     required this.controller,
     this.onSubmitted,
