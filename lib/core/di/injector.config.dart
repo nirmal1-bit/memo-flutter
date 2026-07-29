@@ -95,6 +95,16 @@ import 'package:memo/features/profile/presentation/cubits/set_profile_cubit.dart
     as _i1051;
 import 'package:memo/features/profile/repository/profile_repository.dart'
     as _i533;
+import 'package:memo/features/shared_album/cubits/create_shared_image_cubit.dart'
+    as _i87;
+import 'package:memo/features/shared_album/cubits/delete_shared_image_cubit.dart'
+    as _i861;
+import 'package:memo/features/shared_album/cubits/favorite_shared_image_cubit.dart'
+    as _i503;
+import 'package:memo/features/shared_album/cubits/get_shared_images_cubit.dart'
+    as _i635;
+import 'package:memo/features/shared_album/repository/shared_album_repository.dart'
+    as _i774;
 import 'package:memo/features/timeline/cubits/create_memories_cubit.dart'
     as _i910;
 import 'package:memo/features/timeline/cubits/get_memories_cubit.dart' as _i426;
@@ -182,6 +192,12 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i533.ProfileRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
     );
+    gh.lazySingleton<_i774.SharedAlbumRepository>(
+      () => _i774.SharedAlbumRepositoryImpl(
+        gh<_i361.Dio>(),
+        gh<_i509.NetworkInfo>(),
+      ),
+    );
     gh.lazySingleton<_i531.RecentImagesRepository>(
       () => _i531.RecentImagesRepositoryImpl(
         gh<_i361.Dio>(),
@@ -238,6 +254,18 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1051.SetProfileCubit>(
       () => _i1051.SetProfileCubit(gh<_i533.ProfileRepository>()),
+    );
+    gh.factory<_i87.CreateSharedImageCubit>(
+      () => _i87.CreateSharedImageCubit(gh<_i774.SharedAlbumRepository>()),
+    );
+    gh.factory<_i861.DeleteSharedImageCubit>(
+      () => _i861.DeleteSharedImageCubit(gh<_i774.SharedAlbumRepository>()),
+    );
+    gh.factory<_i503.FavoriteSharedImageCubit>(
+      () => _i503.FavoriteSharedImageCubit(gh<_i774.SharedAlbumRepository>()),
+    );
+    gh.factory<_i635.GetSharedImagesCubit>(
+      () => _i635.GetSharedImagesCubit(gh<_i774.SharedAlbumRepository>()),
     );
     gh.factory<_i470.SendLocationCubit>(
       () => _i470.SendLocationCubit(gh<_i1042.LocationRepository>()),
