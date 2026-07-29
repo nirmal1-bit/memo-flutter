@@ -51,33 +51,36 @@ import 'package:memo/features/face_verification/cubit/verify_face_cubit.dart'
     as _i67;
 import 'package:memo/features/face_verification/repository/face_repository.dart'
     as _i611;
+import 'package:memo/features/home/domain/repository/connections_repository.dart'
+    as _i19;
+import 'package:memo/features/home/domain/repository/location_repository.dart'
+    as _i1042;
+import 'package:memo/features/home/domain/repository/recent_images_repository.dart'
+    as _i531;
+import 'package:memo/features/home/presentation/cubits/chat_cubit.dart' as _i52;
+import 'package:memo/features/home/presentation/cubits/connection_action_cubit.dart'
+    as _i23;
+import 'package:memo/features/home/presentation/cubits/connections_cubit.dart'
+    as _i550;
+import 'package:memo/features/home/presentation/cubits/create_recent_image_cubit.dart'
+    as _i800;
+import 'package:memo/features/home/presentation/cubits/delete_recent_image_cubit.dart'
+    as _i625;
+import 'package:memo/features/home/presentation/cubits/get_recent_images_cubit.dart'
+    as _i367;
+import 'package:memo/features/home/presentation/cubits/get_user_profile_cubit.dart'
+    as _i622;
+import 'package:memo/features/home/presentation/cubits/received_connections_cubit.dart'
+    as _i524;
+import 'package:memo/features/home/presentation/cubits/search_users_cubit.dart'
+    as _i79;
+import 'package:memo/features/home/presentation/cubits/send_location_cubit.dart'
+    as _i470;
+import 'package:memo/features/home/presentation/cubits/sent_connections_cubit.dart'
+    as _i493;
 import 'package:memo/features/matches/cubits/get_matches_cubit.dart' as _i927;
 import 'package:memo/features/matches/repository/matches_repository.dart'
     as _i953;
-import 'package:memo/features/network/domian/repository/network_respotory.dart'
-    as _i420;
-import 'package:memo/features/network/domian/repository/recent_images_repository.dart'
-    as _i255;
-import 'package:memo/features/network/presentation/cubits/chat_cubit.dart'
-    as _i228;
-import 'package:memo/features/network/presentation/cubits/connection_action_cubit.dart'
-    as _i575;
-import 'package:memo/features/network/presentation/cubits/connections_cubit.dart'
-    as _i762;
-import 'package:memo/features/network/presentation/cubits/create_recent_image_cubit.dart'
-    as _i617;
-import 'package:memo/features/network/presentation/cubits/delete_recent_image_cubit.dart'
-    as _i126;
-import 'package:memo/features/network/presentation/cubits/get_recent_images_cubit.dart'
-    as _i958;
-import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart'
-    as _i680;
-import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart'
-    as _i382;
-import 'package:memo/features/network/presentation/cubits/search_users_cubit.dart'
-    as _i294;
-import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart'
-    as _i636;
 import 'package:memo/features/notification/cubit/get_notification_cubit.dart'
     as _i84;
 import 'package:memo/features/notification/cubit/get_unread_count_cubit.dart'
@@ -141,18 +144,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i20.AiChatCubit>(
       () => _i20.AiChatCubit(sessionService: gh<_i73.SessionService>()),
     );
-    gh.factory<_i228.ChatCubit>(
-      () => _i228.ChatCubit(sessionService: gh<_i73.SessionService>()),
+    gh.factory<_i52.ChatCubit>(
+      () => _i52.ChatCubit(sessionService: gh<_i73.SessionService>()),
     );
     gh.lazySingleton<_i361.Dio>(
       () => registerModules.dio(gh<_i174.AuthInterceptor>()),
     );
     gh.factory<_i565.ImageCaptureState>(
       () => _i565.ImageCaptureState(image: gh<_i497.File>()),
-    );
-    gh.lazySingleton<_i420.NetworkRepository>(
-      () =>
-          _i420.NetworkRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
     );
     gh.lazySingleton<_i1052.AuthRepository>(
       () => _i1052.AuthRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
@@ -183,8 +182,20 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i533.ProfileRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
     );
-    gh.lazySingleton<_i255.RecentImagesRepository>(
-      () => _i255.RecentImagesRepositoryImpl(
+    gh.lazySingleton<_i531.RecentImagesRepository>(
+      () => _i531.RecentImagesRepositoryImpl(
+        gh<_i361.Dio>(),
+        gh<_i509.NetworkInfo>(),
+      ),
+    );
+    gh.lazySingleton<_i1042.LocationRepository>(
+      () => _i1042.LocationRepositoryImpl(
+        gh<_i361.Dio>(),
+        gh<_i509.NetworkInfo>(),
+      ),
+    );
+    gh.lazySingleton<_i19.ConnectionsRepository>(
+      () => _i19.ConnectionsRepositoryImpl(
         gh<_i361.Dio>(),
         gh<_i509.NetworkInfo>(),
       ),
@@ -204,29 +215,32 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i509.NetworkInfo>(),
       ),
     );
+    gh.factory<_i23.ConnectionActionCubit>(
+      () => _i23.ConnectionActionCubit(gh<_i19.ConnectionsRepository>()),
+    );
+    gh.factory<_i550.ConnectionsCubit>(
+      () => _i550.ConnectionsCubit(gh<_i19.ConnectionsRepository>()),
+    );
+    gh.factory<_i622.GetUserProfileCubit>(
+      () => _i622.GetUserProfileCubit(gh<_i19.ConnectionsRepository>()),
+    );
+    gh.factory<_i524.ReceivedConnectionsCubit>(
+      () => _i524.ReceivedConnectionsCubit(gh<_i19.ConnectionsRepository>()),
+    );
+    gh.factory<_i79.SearchUsersCubit>(
+      () => _i79.SearchUsersCubit(gh<_i19.ConnectionsRepository>()),
+    );
+    gh.factory<_i493.SentConnectionsCubit>(
+      () => _i493.SentConnectionsCubit(gh<_i19.ConnectionsRepository>()),
+    );
     gh.factory<_i1023.EditProfileCubit>(
       () => _i1023.EditProfileCubit(gh<_i533.ProfileRepository>()),
     );
     gh.factory<_i1051.SetProfileCubit>(
       () => _i1051.SetProfileCubit(gh<_i533.ProfileRepository>()),
     );
-    gh.factory<_i575.ConnectionActionCubit>(
-      () => _i575.ConnectionActionCubit(gh<_i420.NetworkRepository>()),
-    );
-    gh.factory<_i762.ConnectionsCubit>(
-      () => _i762.ConnectionsCubit(gh<_i420.NetworkRepository>()),
-    );
-    gh.factory<_i680.GetUserProfileCubit>(
-      () => _i680.GetUserProfileCubit(gh<_i420.NetworkRepository>()),
-    );
-    gh.factory<_i382.ReceivedConnectionsCubit>(
-      () => _i382.ReceivedConnectionsCubit(gh<_i420.NetworkRepository>()),
-    );
-    gh.factory<_i294.SearchUsersCubit>(
-      () => _i294.SearchUsersCubit(gh<_i420.NetworkRepository>()),
-    );
-    gh.factory<_i636.SentConnectionsCubit>(
-      () => _i636.SentConnectionsCubit(gh<_i420.NetworkRepository>()),
+    gh.factory<_i470.SendLocationCubit>(
+      () => _i470.SendLocationCubit(gh<_i1042.LocationRepository>()),
     );
     gh.factory<_i185.CreateFaceCubit>(
       () => _i185.CreateFaceCubit(gh<_i611.FaceRepository>()),
@@ -255,14 +269,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i783.VerifyTokenCubit>(
       () => _i783.VerifyTokenCubit(gh<_i1052.AuthRepository>()),
     );
-    gh.factory<_i617.CreateRecentImageCubit>(
-      () => _i617.CreateRecentImageCubit(gh<_i255.RecentImagesRepository>()),
+    gh.factory<_i800.CreateRecentImageCubit>(
+      () => _i800.CreateRecentImageCubit(gh<_i531.RecentImagesRepository>()),
     );
-    gh.factory<_i126.DeleteRecentImageCubit>(
-      () => _i126.DeleteRecentImageCubit(gh<_i255.RecentImagesRepository>()),
+    gh.factory<_i625.DeleteRecentImageCubit>(
+      () => _i625.DeleteRecentImageCubit(gh<_i531.RecentImagesRepository>()),
     );
-    gh.factory<_i958.GetRecentImagesCubit>(
-      () => _i958.GetRecentImagesCubit(gh<_i255.RecentImagesRepository>()),
+    gh.factory<_i367.GetRecentImagesCubit>(
+      () => _i367.GetRecentImagesCubit(gh<_i531.RecentImagesRepository>()),
     );
     gh.factory<_i1019.EndVideoCall>(
       () => _i1019.EndVideoCall(

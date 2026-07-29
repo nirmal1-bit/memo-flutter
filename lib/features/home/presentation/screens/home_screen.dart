@@ -7,32 +7,34 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/common/shimmer.dart';
-import 'package:memo/features/network/data/models/response/connection_response.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/presentation/cubits/connections_cubit.dart';
-import 'package:memo/features/network/presentation/cubits/connection_action_cubit.dart';
-import 'package:memo/features/network/presentation/cubits/get_user_profile_cubit.dart';
-import 'package:memo/features/network/presentation/cubits/received_connections_cubit.dart';
-import 'package:memo/features/network/presentation/cubits/sent_connections_cubit.dart';
-import 'package:memo/features/network/presentation/widgets/network/app_bar.dart';
-import 'package:memo/features/network/presentation/widgets/network/network_screen_widgets.dart';
+import 'package:memo/features/home/data/models/response/connection_response.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/presentation/cubits/connections_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/connection_action_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/get_user_profile_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/received_connections_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/sent_connections_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/send_location_cubit.dart';
+import 'package:memo/features/home/presentation/widgets/connections/connections_app_bar.dart';
+import 'package:memo/features/home/presentation/widgets/connections/connections_widgets.dart';
 import 'package:memo/features/timeline/presentation/time_line_screen.dart';
 
-class NetworkScreen extends StatefulWidget {
-  const NetworkScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<NetworkScreen> createState() => _NetworkScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _NetworkScreenState extends State<NetworkScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   late final ConnectionsCubit _connectionsCubit;
   late final SentConnectionsCubit _sentConnectionsCubit;
   late final ReceivedConnectionsCubit _receivedConnectionsCubit;
   late final GetUserProfileCubit _userProfileCubit;
   late final ConnectionActionCubit _connectionActionCubit;
+  late final SendLocationCubit _sendLocationCubit;
 
-  NetworkTab _selectedTab = NetworkTab.connections;
+  ConnectionTab _selectedTab = ConnectionTab.connections;
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -45,6 +47,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
       ..listReceivedConnections();
     _userProfileCubit = getIt<GetUserProfileCubit>()..getUserProfile();
     _connectionActionCubit = getIt<ConnectionActionCubit>();
+    _sendLocationCubit = getIt<SendLocationCubit>()..sendLocation();
   }
 
   @override
@@ -54,6 +57,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
     _receivedConnectionsCubit.close();
     _userProfileCubit.close();
     _connectionActionCubit.close();
+    _sendLocationCubit.close();
     _searchController.dispose();
     super.dispose();
   }
@@ -67,6 +71,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
         BlocProvider.value(value: _receivedConnectionsCubit),
         BlocProvider.value(value: _userProfileCubit),
         BlocProvider.value(value: _connectionActionCubit),
+        BlocProvider.value(value: _sendLocationCubit),
       ],
       child: Builder(
         builder: (context) {
@@ -174,7 +179,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                               return state.when(
                                 initial: () => const SizedBox.shrink(),
                                 loading: () => ProductBannerShimmer(),
-                                success: (user) => NetworkAppBar(
+                                success: (user) => ConnectionsAppBar(
                                   user: user,
                                   controller: _searchController,
                                   onSearchPressed: () =>
@@ -194,7 +199,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          NetworkTabStrip(
+                          ConnectionTabStrip(
                             selected: _selectedTab,
                             onChanged: (tab) =>
                                 setState(() => _selectedTab = tab),
@@ -216,12 +221,12 @@ class _NetworkScreenState extends State<NetworkScreen> {
 
   Widget _buildTabContent() {
     switch (_selectedTab) {
-      case NetworkTab.connections:
+      case ConnectionTab.connections:
         return BlocBuilder<
           ConnectionsCubit,
           BaseApiState<List<ConnectionResponse>>
         >(
-          builder: (context, state) => NetworkStateView(
+          builder: (context, state) => ConnectionsStateView(
             state: state,
             emptyMessage: 'No connections yet.\nStart building your network.',
             onConnectionTap: (connection) => context.push(
@@ -242,15 +247,15 @@ class _NetworkScreenState extends State<NetworkScreen> {
             ),
           ),
         );
-      case NetworkTab.sent:
+      case ConnectionTab.sent:
         return BlocBuilder<
           SentConnectionsCubit,
           BaseApiState<List<ConnectionResponse>>
         >(
-          builder: (context, state) => NetworkStateView(
+          builder: (context, state) => ConnectionsStateView(
             state: state,
             emptyMessage: 'No sent requests yet.',
-            cardStyle: NetworkCardStyle.sent,
+            cardStyle: ConnectionCardStyle.sent,
             onSentTap: (connection) => context.push(
               AppRoutes.otherUserProfile,
               extra: Profile(
@@ -272,15 +277,15 @@ class _NetworkScreenState extends State<NetworkScreen> {
                 .cancelConnectionRequest(connection.id),
           ),
         );
-      case NetworkTab.received:
+      case ConnectionTab.received:
         return BlocBuilder<
           ReceivedConnectionsCubit,
           BaseApiState<List<ConnectionResponse>>
         >(
-          builder: (context, state) => NetworkStateView(
+          builder: (context, state) => ConnectionsStateView(
             state: state,
             emptyMessage: 'No received requests yet.',
-            cardStyle: NetworkCardStyle.received,
+            cardStyle: ConnectionCardStyle.received,
             onReceivedTap: (connection) => context.push(
               AppRoutes.otherUserProfile,
               extra: Profile(

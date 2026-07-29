@@ -43,7 +43,9 @@ class _MyAppState extends State<MyApp> {
         minTextAdapt: true,
         splitScreenMode: true,
         child: MultiBlocProvider(
-          providers: [BlocProvider(create: (_) => getIt<AiChatCubit>())],
+          providers: [
+            BlocProvider(create: (_) => getIt<AiChatCubit>()),
+          ],
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
             theme: AppTheme.appTheme(context),

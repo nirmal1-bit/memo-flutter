@@ -63,4 +63,7 @@ class ApiEndpoints {
   static const String recentImages = '/recent-images';
   static String recentImage(int id) => '/recent-images/$id';
   static String recentImageByPersonId(int id) => '/recent-images/user/$id';
+
+  //location
+  static const String location = '/location';
 }
