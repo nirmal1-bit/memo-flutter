@@ -27,6 +27,8 @@ abstract class ConnectionsRepository {
   EitherResponse<ApiResponse<String>> rejectConnectionRequest(int requestId);
 
   EitherResponse<ApiResponse<String>> cancelConnectionRequest(int requestId);
+
+  EitherResponse<ApiResponse<String>> deleteConnection(int connectionId);
 }
 
 @LazySingleton(as: ConnectionsRepository)
@@ -187,22 +189,35 @@ class ConnectionsRepositoryImpl extends BaseRemoteSource
     );
   }
 
+  @override
+  EitherResponse<ApiResponse<String>> deleteConnection(int connectionId) async {
+    final response = await networkRequest(
+      request: (dio) async {
+        await dio.delete(ApiEndpoints.deleteConnection(connectionId));
+
+        return ApiResponse(
+          success: true,
+          data: 'Connection deleted',
+          message: 'Connection deleted',
+        );
+      },
+    );
+
+    return response;
+  }
+
   EitherResponse<ApiResponse<String>> updateConnectionStatus({
     required int requestId,
     required String status,
   }) async {
     final response = await networkRequest(
       request: (dio) async {
-        final response = await dio.patch(
+        await dio.patch(
           ApiEndpoints.connectionRequest(requestId),
           data: {'status': status},
         );
 
-        return ApiResponse(
-          success: response.data['status'] ?? true,
-          data: (response.data['message'] ?? 'success').toString(),
-          message: (response.data['message'] ?? 'success').toString(),
-        );
+        return ApiResponse(success: true, data: "Success", message: "success");
       },
     );
 

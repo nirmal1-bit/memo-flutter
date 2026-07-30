@@ -27,6 +27,7 @@ class ConnectionsStateView extends StatelessWidget {
     this.onAcceptTap,
     this.onRejectTap,
     this.onCancelTap,
+    this.onDeleteTap,
     this.cardStyle = ConnectionCardStyle.connections,
   });
 
@@ -40,6 +41,7 @@ class ConnectionsStateView extends StatelessWidget {
   final ValueChanged<ConnectionResponse>? onAcceptTap;
   final ValueChanged<ConnectionResponse>? onRejectTap;
   final ValueChanged<ConnectionResponse>? onCancelTap;
+  final ValueChanged<ConnectionResponse>? onDeleteTap;
   final ConnectionCardStyle cardStyle;
 
   @override
@@ -78,6 +80,9 @@ class ConnectionsStateView extends StatelessWidget {
                         onCallTap: onCallTap == null
                             ? null
                             : () => onCallTap!(connection),
+                        onLongPress: onDeleteTap == null
+                            ? null
+                            : () => onDeleteTap!(connection),
                       ),
                       ConnectionCardStyle.sent => _SentCard(
                         connection: connection,
@@ -136,7 +141,7 @@ class _SentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final details = connection.userProfile;
     return Material(
-      color: AppColors.white,
+      color: AppColors.card,
       borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -145,7 +150,7 @@ class _SentCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.dividerColor, width: 0.5),
+            border: Border.all(color: AppColors.memoryAmberBorder),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
@@ -202,11 +207,8 @@ class _SentCard extends StatelessWidget {
                   icon: const Icon(Icons.close, size: 15),
                   label: const Text('Cancel request'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.textLightDark,
-                    side: const BorderSide(
-                      color: AppColors.dividerColor,
-                      width: 0.5,
-                    ),
+                    foregroundColor: AppColors.memoryAmberText,
+                    side: const BorderSide(color: AppColors.memoryAmberBorder),
 
                     padding: const EdgeInsets.symmetric(vertical: 9),
                     textStyle: AppTextStyles.rubik.copyWith(fontSize: 13),
@@ -240,7 +242,7 @@ class _ReceivedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final details = connection.userProfile;
     return Material(
-      color: AppColors.white,
+      color: AppColors.card,
       borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -249,7 +251,7 @@ class _ReceivedCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.dividerColor, width: 0.5),
+            border: Border.all(color: AppColors.statusLightRed),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
@@ -286,8 +288,8 @@ class _ReceivedCard extends StatelessWidget {
                       icon: const Icon(Icons.check_rounded, size: 15),
                       label: const Text('Accept'),
                       style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.white,
+                        backgroundColor: AppColors.statusGreen,
+                        foregroundColor: AppColors.textOnPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 9),
                         textStyle: AppTextStyles.rubik.copyWith(fontSize: 13),
                         shape: RoundedRectangleBorder(
@@ -303,11 +305,8 @@ class _ReceivedCard extends StatelessWidget {
                       icon: const Icon(Icons.close_rounded, size: 15),
                       label: const Text('Decline'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textLightDark,
-                        side: const BorderSide(
-                          color: AppColors.dividerColor,
-                          width: 0.5,
-                        ),
+                        foregroundColor: AppColors.statusRed,
+                        side: const BorderSide(color: AppColors.statusLightRed),
                         padding: const EdgeInsets.symmetric(vertical: 9),
                         textStyle: AppTextStyles.rubik.copyWith(fontSize: 13),
                         shape: RoundedRectangleBorder(

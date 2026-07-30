@@ -19,7 +19,7 @@ class ConnectionActionCubit extends Cubit<BaseApiState<String>> {
         (l) => l.validationErrorOrNull != null
             ? BaseApiState.validationError(l.validationErrorOrNull!)
             : BaseApiState.error(l.errorMessage),
-        (r) => BaseApiState.success(r.data),
+        (r) => BaseApiState.success("Success"),
       ),
     );
   }
@@ -32,7 +32,7 @@ class ConnectionActionCubit extends Cubit<BaseApiState<String>> {
         (l) => l.validationErrorOrNull != null
             ? BaseApiState.validationError(l.validationErrorOrNull!)
             : BaseApiState.error(l.errorMessage),
-        (r) => BaseApiState.success(r.data),
+        (r) => BaseApiState.success("success"),
       ),
     );
   }
@@ -45,7 +45,7 @@ class ConnectionActionCubit extends Cubit<BaseApiState<String>> {
         (l) => l.validationErrorOrNull != null
             ? BaseApiState.validationError(l.validationErrorOrNull!)
             : BaseApiState.error(l.errorMessage),
-        (r) => BaseApiState.success(r.data),
+        (r) => BaseApiState.success("Request rejected"),
       ),
     );
   }
@@ -53,6 +53,19 @@ class ConnectionActionCubit extends Cubit<BaseApiState<String>> {
   Future<void> cancelConnectionRequest(int requestId) async {
     emit(const BaseApiState.loading());
     final response = await networkRepository.cancelConnectionRequest(requestId);
+    emit(
+      response.fold(
+        (l) => l.validationErrorOrNull != null
+            ? BaseApiState.validationError(l.validationErrorOrNull!)
+            : BaseApiState.error(l.errorMessage),
+        (r) => BaseApiState.success("Request cancelled"),
+      ),
+    );
+  }
+
+  Future<void> deleteConnection(int connectionId) async {
+    emit(const BaseApiState.loading());
+    final response = await networkRepository.deleteConnection(connectionId);
     emit(
       response.fold(
         (l) => l.validationErrorOrNull != null

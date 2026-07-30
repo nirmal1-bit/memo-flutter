@@ -74,13 +74,13 @@ class _AddConnectionScreenState extends State<AddConnectionScreen> {
                 automaticallyImplyLeading: false,
                 backgroundColor: AppColors.scaffoldBackground,
                 elevation: 0,
-                foregroundColor: AppColors.softPrimary,
+                foregroundColor: AppColors.textHeading,
                 title: Text(
                   'Add connection',
                   style: AppTextStyles.libre.copyWith(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.softPrimary,
+                    color: AppColors.textHeading,
                   ),
                 ),
               ),
@@ -97,7 +97,7 @@ class _AddConnectionScreenState extends State<AddConnectionScreen> {
                         style: AppTextStyles.libre.copyWith(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.softPrimary,
+                          color: AppColors.textHeading,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -162,7 +162,7 @@ class _AddConnectionScreenState extends State<AddConnectionScreen> {
                                         style: AppTextStyles.libre.copyWith(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w800,
-                                          color: AppColors.softPrimary,
+                                          color: AppColors.textHeading,
                                         ),
                                       ),
                                       const SizedBox(height: 12),
@@ -288,7 +288,7 @@ class _QrActionCard extends StatelessWidget {
                         style: AppTextStyles.libre.copyWith(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.softPrimary,
+                          color: AppColors.textHeading,
                         ),
                       ),
                       const SizedBox(height: 4),
