@@ -17,8 +17,16 @@ class ProfileHeaderCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.brandBackgroundLight),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.softBlack.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -30,7 +38,7 @@ class ProfileHeaderCard extends StatelessWidget {
             style: AppTextStyles.libre.copyWith(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: AppColors.softPrimary,
+              color: AppColors.textHeading,
             ),
           ),
           const SizedBox(height: 4),
@@ -40,7 +48,7 @@ class ProfileHeaderCard extends StatelessWidget {
             style: AppTextStyles.rubik.copyWith(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: AppColors.softPrimary.withOpacity(0.6),
+              color: AppColors.textCaption,
             ),
           ),
           if (profile != null && profile.headline.isNotEmpty) ...[
@@ -66,21 +74,19 @@ class ProfileHeaderCard extends StatelessWidget {
                 icon: user.isPremium
                     ? Icons.workspace_premium_rounded
                     : Icons.person_outline_rounded,
-                color: user.isPremium
-                    ? AppColors.primary
-                    : AppColors.softPrimary,
+                color: user.isPremium ? AppColors.primary : AppColors.textBody,
               ),
               if (user.activated)
                 const RoleBadge(
                   label: 'Verified',
                   icon: Icons.verified_rounded,
-                  color: Colors.green,
+                  color: AppColors.statusGreen,
                 ),
               if (!user.isPremium)
                 RoleBadge(
                   label: '${user.trialLeft} trial left',
                   icon: Icons.timer_outlined,
-                  color: AppColors.softPrimary,
+                  color: AppColors.textBody,
                 ),
             ],
           ),

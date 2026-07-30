@@ -16,7 +16,8 @@ class QrSection extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.brandBackground,
+            color: AppColors.card,
+            border: Border.all(color: AppColors.brandBackgroundLight),
             borderRadius: BorderRadius.circular(20),
           ),
           child: QrImageView(

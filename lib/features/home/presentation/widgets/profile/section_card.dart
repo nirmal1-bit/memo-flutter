@@ -14,12 +14,12 @@ class SectionCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.dividerColor),
+        border: Border.all(color: AppColors.brandBackgroundLight),
         boxShadow: [
           BoxShadow(
-            color: AppColors.softBlack.withOpacity(0.03),
+            color: AppColors.softBlack.withValues(alpha: 0.03),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),

@@ -238,6 +238,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             onChatTap: (connection) =>
                 context.push(AppRoutes.chat, extra: connection),
+            onDeleteTap: (connection) => AppUtils.confirmationDialog(
+              context: context,
+              title: 'Delete connection?',
+              message:
+                  'This will permanently delete the connection, memories, timeline, and shared album. Do you want to continue?',
+              onConfirm: () => context
+                  .read<ConnectionActionCubit>()
+                  .deleteConnection(connection.id),
+            ),
             onCallTap: (connection) => ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/features/ai_chat/presentation/aichat/ai_chat_screen.dart';
 import 'package:memo/features/home/data/models/response/connection_response.dart';
-import 'package:memo/features/shared_album/presentation/shared_album_screen.dart';
+import 'package:memo/features/shared/presentation/shared_album_screen.dart';
 import 'package:memo/features/timeline/cubits/get_memories_cubit.dart';
 import 'package:memo/features/timeline/cubits/get_timeline_cubit.dart';
 import 'package:memo/features/timeline/presentation/widgets/timeline_activity/timeline_activity_tab.dart';
@@ -56,32 +57,29 @@ class _TimeLineScreenState extends State<TimeLineScreen>
         ),
       ],
       child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Non-sliver header. No innerBoxIsScrolled needed since
-              // it's not reacting to a coordinated scroll offset anymore.
-              TimelineProfileHeader(
-                tabController: _tabController,
-                profile: widget.params.profile,
+        appBar: AppBar(
+          toolbarHeight: 0,
+          elevation: 0,
+          backgroundColor: AppColors.scaffoldBackground,
+        ),
+        body: Column(
+          children: [
+            TimelineProfileHeader(
+              tabController: _tabController,
+              profile: widget.params.profile,
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  TimelineMemoriesTab(connectionId: widget.params.connectionId),
+                  SharedAlbumScreen(connectionId: widget.params.connectionId),
+                  TimelineActivityTab(connectionId: widget.params.connectionId),
+                  AiChatScreen(connectionId: widget.params.connectionId),
+                ],
               ),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    TimelineMemoriesTab(
-                      connectionId: widget.params.connectionId,
-                    ),
-                    SharedAlbumScreen(connectionId: widget.params.connectionId),
-                    TimelineActivityTab(
-                      connectionId: widget.params.connectionId,
-                    ),
-                    AiChatScreen(connectionId: widget.params.connectionId),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
