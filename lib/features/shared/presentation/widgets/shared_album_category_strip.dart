@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
-import 'package:memo/features/shared_album/data/album_category.dart';
+import 'package:memo/features/shared/data/album_category.dart';
 
 class SharedAlbumCategoryStrip extends StatelessWidget {
   const SharedAlbumCategoryStrip({

@@ -3,8 +3,8 @@ import 'package:memo/core/api/base_api_response.dart';
 import 'package:memo/core/constants/api_endpoints.dart';
 import 'package:memo/core/response/base_api_response.dart';
 import 'package:memo/core/typedef/typedef.dart';
-import 'package:memo/features/shared_album/data/request/shared_image_request.dart';
-import 'package:memo/features/shared_album/data/response/shared_image_response.dart';
+import 'package:memo/features/shared/data/request/shared_image_request.dart';
+import 'package:memo/features/shared/data/response/shared_image_response.dart';
 
 abstract class SharedAlbumRepository {
   EitherResponse<ApiResponse<List<SharedImageResponse>>> getSharedImages(

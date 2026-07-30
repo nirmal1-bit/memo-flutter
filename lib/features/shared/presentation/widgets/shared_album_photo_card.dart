@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
-import 'package:memo/features/shared_album/data/album_category.dart';
-import 'package:memo/features/shared_album/data/response/shared_image_response.dart';
+import 'package:memo/features/shared/data/album_category.dart';
+import 'package:memo/features/shared/data/response/shared_image_response.dart';
 
 class SharedAlbumPhotoCard extends StatelessWidget {
   const SharedAlbumPhotoCard({
@@ -32,14 +32,12 @@ class SharedAlbumPhotoCard extends StatelessWidget {
       elevation: 0,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onDelete,
         borderRadius: BorderRadius.circular(16),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.softGrey,
-              width: 0.5,
-            ),
+            border: Border.all(color: AppColors.softGrey, width: 0.5),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,16 +57,16 @@ class SharedAlbumPhotoCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         loadingBuilder: (context, child, progress) =>
                             progress == null
-                                ? child
-                                : Container(
-                                    color: AppColors.lightGrey,
-                                    child: const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: AppColors.primary,
-                                      ),
-                                    ),
+                            ? child
+                            : Container(
+                                color: AppColors.lightGrey,
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.primary,
                                   ),
+                                ),
+                              ),
                         errorBuilder: (context, error, stackTrace) => Container(
                           color: AppColors.lightGrey,
                           child: const Center(
@@ -148,9 +146,17 @@ class SharedAlbumPhotoCard extends StatelessWidget {
                         right: 8,
                         child: IconButton(
                           onPressed: onFavorite,
-                          icon: Icon(image.isFavorite ? Icons.favorite : Icons.favorite_border),
+                          icon: Icon(
+                            image.isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                          ),
                           color: AppColors.buttonPrimary,
-                          style: IconButton.styleFrom(backgroundColor: AppColors.white.withValues(alpha: .9)),
+                          style: IconButton.styleFrom(
+                            backgroundColor: AppColors.white.withValues(
+                              alpha: .9,
+                            ),
+                          ),
                         ),
                       ),
 
@@ -195,10 +201,6 @@ class SharedAlbumPhotoCard extends StatelessWidget {
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────
-//  Full-screen photo viewer (shown on card tap)
-// ──────────────────────────────────────────────────────────────────────
-
 class SharedAlbumPhotoViewer extends StatelessWidget {
   const SharedAlbumPhotoViewer({super.key, required this.image});
 
@@ -217,9 +219,7 @@ class SharedAlbumPhotoViewer extends StatelessWidget {
           // Blurred backdrop
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-            child: ColoredBox(
-              color: AppColors.black.withValues(alpha: 0.24),
-            ),
+            child: ColoredBox(color: AppColors.black.withValues(alpha: 0.24)),
           ),
 
           SafeArea(
@@ -270,8 +270,9 @@ class SharedAlbumPhotoViewer extends StatelessWidget {
                       IconButton(
                         onPressed: () => Navigator.pop(context),
                         style: IconButton.styleFrom(
-                          backgroundColor:
-                              AppColors.black.withValues(alpha: 0.42),
+                          backgroundColor: AppColors.black.withValues(
+                            alpha: 0.42,
+                          ),
                           foregroundColor: AppColors.white,
                         ),
                         icon: const Icon(Icons.close),
@@ -294,21 +295,21 @@ class SharedAlbumPhotoViewer extends StatelessWidget {
                             fit: BoxFit.contain,
                             loadingBuilder: (context, child, progress) =>
                                 progress == null
-                                    ? child
-                                    : const Center(
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: AppColors.white,
-                                        ),
-                                      ),
+                                ? child
+                                : const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppColors.white,
+                                    ),
+                                  ),
                             errorBuilder: (context, error, stackTrace) =>
                                 const Center(
-                              child: Icon(
-                                Icons.broken_image_outlined,
-                                size: 48,
-                                color: AppColors.white,
-                              ),
-                            ),
+                                  child: Icon(
+                                    Icons.broken_image_outlined,
+                                    size: 48,
+                                    color: AppColors.white,
+                                  ),
+                                ),
                           ),
                         ),
                       ),
@@ -345,8 +346,9 @@ class SharedAlbumPhotoViewer extends StatelessWidget {
                           const SizedBox(height: 8),
                         ],
                         Text(
-                          DateFormat('MMMM d, yyyy • h:mm a')
-                              .format(image.createdAt.toLocal()),
+                          DateFormat(
+                            'MMMM d, yyyy • h:mm a',
+                          ).format(image.createdAt.toLocal()),
                           style: AppTextStyles.rubik.copyWith(
                             fontSize: 11,
                             color: AppColors.white.withValues(alpha: 0.7),

@@ -4,16 +4,16 @@ import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/utils/app_utils.dart';
-import 'package:memo/features/shared_album/data/album_category.dart';
-import 'package:memo/features/shared_album/data/request/shared_image_request.dart';
-import 'package:memo/features/shared_album/data/response/shared_image_response.dart';
-import 'package:memo/features/shared_album/cubits/create_shared_image_cubit.dart';
-import 'package:memo/features/shared_album/cubits/delete_shared_image_cubit.dart';
-import 'package:memo/features/shared_album/cubits/favorite_shared_image_cubit.dart';
-import 'package:memo/features/shared_album/cubits/get_shared_images_cubit.dart';
-import 'package:memo/features/shared_album/presentation/widgets/shared_album_category_strip.dart';
-import 'package:memo/features/shared_album/presentation/widgets/shared_album_empty_state.dart';
-import 'package:memo/features/shared_album/presentation/widgets/shared_album_photo_card.dart';
+import 'package:memo/features/shared/data/album_category.dart';
+import 'package:memo/features/shared/data/request/shared_image_request.dart';
+import 'package:memo/features/shared/data/response/shared_image_response.dart';
+import 'package:memo/features/shared/cubits/create_shared_image_cubit.dart';
+import 'package:memo/features/shared/cubits/delete_shared_image_cubit.dart';
+import 'package:memo/features/shared/cubits/favorite_shared_image_cubit.dart';
+import 'package:memo/features/shared/cubits/get_shared_images_cubit.dart';
+import 'package:memo/features/shared/presentation/widgets/shared_album_category_strip.dart';
+import 'package:memo/features/shared/presentation/widgets/shared_album_empty_state.dart';
+import 'package:memo/features/shared/presentation/widgets/shared_album_photo_card.dart';
 
 class SharedAlbumScreen extends StatefulWidget {
   const SharedAlbumScreen({super.key, required this.connectionId});
@@ -233,21 +233,18 @@ class _SharedAlbumScreenState extends State<SharedAlbumScreen> {
   }
 
   Future<void> _showCreateImageSheet(BuildContext context) async {
-    final imageUrl = await AppUtils.pickAndUploadImage(
+    final picture = await AppUtils.pickImageAndDescription(
       context: context,
       folder: 'shared-album',
     );
-    if (imageUrl == null || !context.mounted) return;
-
-    final request = await showModalBottomSheet<SharedImageRequest>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => _CreateSharedImageSheet(imageUrl: imageUrl),
-    );
-    if (request != null && context.mounted) {
+    if (picture != null && context.mounted) {
       context.read<CreateSharedImageCubit>().createSharedImage(
         widget.connectionId,
-        request,
+        SharedImageRequest(
+          imageUrl: picture.imageUrl,
+          description: picture.description,
+          category: AlbumCategory.other.apiValue,
+        ),
       );
     }
   }
@@ -262,87 +259,6 @@ class _SharedAlbumScreenState extends State<SharedAlbumScreen> {
       pageBuilder: (_, _, _) => SharedAlbumPhotoViewer(image: image),
       transitionBuilder: (_, animation, _, child) =>
           FadeTransition(opacity: animation, child: child),
-    );
-  }
-}
-
-class _CreateSharedImageSheet extends StatefulWidget {
-  const _CreateSharedImageSheet({required this.imageUrl});
-  final String imageUrl;
-
-  @override
-  State<_CreateSharedImageSheet> createState() =>
-      _CreateSharedImageSheetState();
-}
-
-class _CreateSharedImageSheetState extends State<_CreateSharedImageSheet> {
-  final _descriptionController = TextEditingController();
-  AlbumCategory _category = AlbumCategory.other;
-
-  @override
-  void dispose() {
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        16,
-        20,
-        16,
-        MediaQuery.viewInsetsOf(context).bottom + 20,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'Add shared photo',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _descriptionController,
-            decoration: const InputDecoration(
-              labelText: 'Description',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 2,
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<AlbumCategory>(
-            initialValue: _category,
-            decoration: const InputDecoration(
-              labelText: 'Category',
-              border: OutlineInputBorder(),
-            ),
-            items: AlbumCategory.values
-                .where((item) => item != AlbumCategory.all)
-                .map(
-                  (item) =>
-                      DropdownMenuItem(value: item, child: Text(item.label)),
-                )
-                .toList(),
-            onChanged: (value) {
-              if (value != null) setState(() => _category = value);
-            },
-          ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: () => Navigator.of(context).pop(
-              SharedImageRequest(
-                imageUrl: widget.imageUrl,
-                description: _descriptionController.text.trim(),
-                category: _category.apiValue,
-              ),
-            ),
-            icon: const Icon(Icons.cloud_upload_rounded),
-            label: const Text('Add to album'),
-          ),
-        ],
-      ),
     );
   }
 }
