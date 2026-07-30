@@ -26,7 +26,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _matchesRange = SharedPreferencesInit().sharedPreferences.getInt(
+    _matchesRange =
+        SharedPreferencesInit().sharedPreferences.getInt(
           StorageKeys.matchesRange,
         ) ??
         4000;
@@ -86,11 +87,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     subtitle: 'See what other people see',
                     onTap: () => context.push(AppRoutes.userProfile),
                   ),
+
                   SettingsTile(
                     icon: Icons.lock_outline_rounded,
                     title: 'Privacy',
                     subtitle: 'Control what people can discover',
-                    onTap: () {},
+                    onTap: () {
+                      context.push(AppRoutes.sharedAlbum);
+                    },
                   ),
                 ],
               ),
@@ -132,7 +136,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SettingsTile(
                     icon: Icons.near_me_outlined,
                     title: 'Match distance',
-                    subtitle: 'Show matches within ${_rangeLabel(_matchesRange)}',
+                    subtitle:
+                        'Show matches within ${_rangeLabel(_matchesRange)}',
                     onTap: _selectMatchesRange,
                   ),
                 ],
@@ -226,13 +231,22 @@ class _SettingsRangePickerState extends State<_SettingsRangePicker> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Match distance', style: AppTextStyles.libre.copyWith(
-            fontSize: 21, fontWeight: FontWeight.w700, color: AppColors.textDark,
-          )),
+          Text(
+            'Match distance',
+            style: AppTextStyles.libre.copyWith(
+              fontSize: 21,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textDark,
+            ),
+          ),
           const SizedBox(height: 6),
-          Text('Show matches within $kilometers km of you.', style: AppTextStyles.rubik.copyWith(
-            fontSize: 13, color: AppColors.textLightDark,
-          )),
+          Text(
+            'Show matches within $kilometers km of you.',
+            style: AppTextStyles.rubik.copyWith(
+              fontSize: 13,
+              color: AppColors.textLightDark,
+            ),
+          ),
           Slider(
             value: _range,
             min: 1000,

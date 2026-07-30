@@ -155,7 +155,7 @@ class ForgetPasswordView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: AppTextStyles.rubik.copyWith(
                   fontSize: 12,
-                  color: AppColors.softPrimary.withOpacity(0.68),
+                  color: AppColors.textCaption,
                 ),
               ),
             ],

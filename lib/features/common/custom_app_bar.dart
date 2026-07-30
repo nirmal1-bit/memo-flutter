@@ -18,13 +18,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         backgroundColor: AppColors.scaffoldBackground,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
-        foregroundColor: AppColors.softPrimary,
+        foregroundColor: AppColors.textHeading,
         title: Text(
           title,
           style: AppTextStyles.libre.copyWith(
             fontSize: 22,
             fontWeight: FontWeight.w800,
-            color: AppColors.softPrimary,
+            color: AppColors.textHeading,
           ),
         ),
       ),

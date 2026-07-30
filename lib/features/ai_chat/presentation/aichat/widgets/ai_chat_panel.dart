@@ -28,7 +28,7 @@ class AiChatPanel extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(color: AppColors.white),
+      decoration: BoxDecoration(color: AppColors.scaffoldBackground),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(

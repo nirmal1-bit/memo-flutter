@@ -23,12 +23,11 @@ class _MainScreenState extends State<MainScreen> {
     SettingsScreen(),
   ];
 
-  // Each tab gets its own accent color from your palette
   final List<Color> _tabColors = [
-    AppColors.primary, // Teal  — Home
-    AppColors.statusRed, // Purple — Chat
-    AppColors.buttonPrimary, // Coral  — Search
-    AppColors.statusOrange, // Orange — Settings
+    AppColors.primary,
+    AppColors.statusRed,
+    AppColors.buttonPrimary,
+    AppColors.statusOrange,
   ];
 
   @override

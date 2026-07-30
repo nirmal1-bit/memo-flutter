@@ -38,7 +38,7 @@ class InputField extends StatelessWidget {
           style: AppTextStyles.rubik.copyWith(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: AppColors.softPrimary,
+            color: AppColors.textHeading,
             letterSpacing: 0.2,
           ),
         ),
@@ -52,16 +52,16 @@ class InputField extends StatelessWidget {
           onFieldSubmitted: onFieldSubmitted,
           style: AppTextStyles.rubik.copyWith(
             fontSize: 15,
-            color: AppColors.softPrimary,
+            color: AppColors.textHeading,
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: AppTextStyles.rubik.copyWith(
               fontSize: 15,
-              color: AppColors.softPrimary.withOpacity(0.6),
+              color: AppColors.textCaption,
             ),
-            prefixIcon: Icon(icon, size: 20, color: AppColors.softPrimary),
+            prefixIcon: Icon(icon, size: 20, color: AppColors.textBody),
             suffixIcon: suffix != null
                 ? Padding(
                     padding: const EdgeInsets.only(right: 14),
@@ -133,7 +133,7 @@ class GoogleButton extends StatelessWidget {
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
           backgroundColor: AppColors.white,
-          foregroundColor: AppColors.softPrimary,
+          foregroundColor: AppColors.textHeading,
           side: BorderSide(
             color: AppColors.dividerColor.withOpacity(0.6),
             width: 1.2,
@@ -153,7 +153,7 @@ class GoogleButton extends StatelessWidget {
               style: AppTextStyles.rubik.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: AppColors.softPrimary,
+                color: AppColors.textHeading,
               ),
             ),
           ],

@@ -233,7 +233,7 @@ class VerifyTokenView extends StatelessWidget {
                   fontSize: 20,
                   letterSpacing: 10,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.softPrimary,
+                  color: AppColors.textHeading,
                 ),
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
@@ -241,7 +241,7 @@ class VerifyTokenView extends StatelessWidget {
                   hintText: '000000',
                   hintStyle: AppTextStyles.rubik.copyWith(
                     fontSize: 18,
-                    color: AppColors.softPrimary.withOpacity(0.35),
+                    color: AppColors.textCaption,
                     letterSpacing: 8,
                   ),
                   filled: true,
