@@ -25,6 +25,7 @@ class ApiEndpoints {
 
   // connections
   static const String listConnections = "/connections";
+  static String deleteConnection(int id) => "/connections/$id";
   static const String sendRequest = "/connection-requests";
   static String connectionRequest(int id) => "/connection-requests/$id";
   static const String listReceivedConnections = "/connection-requests/received";
@@ -72,5 +73,13 @@ class ApiEndpoints {
   static String sharedAlbumFavoriteImage(int id, int imageId) =>
       '/connections/$id/shared-album/images/$imageId/favorite';
   static String deleteSharedAlbumImage(int id, int imageId) =>
-      '/connections/$id/shared-album/$imageId/delete';
+      '/connections/$id/shared-album/images/$imageId';
+
+  //shared-bucket-list
+  static String sharedBucketList(int id) =>
+      '/connections/$id/shared-bucket-list';
+  static String toggleBucketItem(int id, int itemId) =>
+      '/connections/$id/shared-bucket-list/items/$itemId/toggle';
+  static String deleteBucketItem(int id, int itemId) =>
+      '/connections/$id/shared-bucket-list/items/$itemId';
 }
