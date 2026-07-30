@@ -95,16 +95,26 @@ import 'package:memo/features/profile/presentation/cubits/set_profile_cubit.dart
     as _i1051;
 import 'package:memo/features/profile/repository/profile_repository.dart'
     as _i533;
-import 'package:memo/features/shared_album/cubits/create_shared_image_cubit.dart'
-    as _i87;
-import 'package:memo/features/shared_album/cubits/delete_shared_image_cubit.dart'
-    as _i861;
-import 'package:memo/features/shared_album/cubits/favorite_shared_image_cubit.dart'
-    as _i503;
-import 'package:memo/features/shared_album/cubits/get_shared_images_cubit.dart'
-    as _i635;
-import 'package:memo/features/shared_album/repository/shared_album_repository.dart'
-    as _i774;
+import 'package:memo/features/shared/cubits/create_bucket_item_cubit.dart'
+    as _i991;
+import 'package:memo/features/shared/cubits/create_shared_image_cubit.dart'
+    as _i439;
+import 'package:memo/features/shared/cubits/delete_bucket_item_cubit.dart'
+    as _i310;
+import 'package:memo/features/shared/cubits/delete_shared_image_cubit.dart'
+    as _i338;
+import 'package:memo/features/shared/cubits/favorite_shared_image_cubit.dart'
+    as _i668;
+import 'package:memo/features/shared/cubits/get_bucket_items_cubit.dart'
+    as _i655;
+import 'package:memo/features/shared/cubits/get_shared_images_cubit.dart'
+    as _i101;
+import 'package:memo/features/shared/cubits/toggle_bucket_item_cubit.dart'
+    as _i153;
+import 'package:memo/features/shared/repository/shared_album_repository.dart'
+    as _i335;
+import 'package:memo/features/shared/repository/shared_bucket_list_repository.dart'
+    as _i641;
 import 'package:memo/features/timeline/cubits/create_memories_cubit.dart'
     as _i910;
 import 'package:memo/features/timeline/cubits/get_memories_cubit.dart' as _i426;
@@ -192,8 +202,8 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i533.ProfileRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
     );
-    gh.lazySingleton<_i774.SharedAlbumRepository>(
-      () => _i774.SharedAlbumRepositoryImpl(
+    gh.lazySingleton<_i641.SharedBucketListRepository>(
+      () => _i641.SharedBucketListRepositoryImpl(
         gh<_i361.Dio>(),
         gh<_i509.NetworkInfo>(),
       ),
@@ -216,6 +226,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i509.NetworkInfo>(),
       ),
     );
+    gh.lazySingleton<_i335.SharedAlbumRepository>(
+      () => _i335.SharedAlbumRepositoryImpl(
+        gh<_i361.Dio>(),
+        gh<_i509.NetworkInfo>(),
+      ),
+    );
     gh.factory<_i910.CreateMemoriesCubit>(
       () => _i910.CreateMemoriesCubit(gh<_i1029.TimelineRepository>()),
     );
@@ -230,6 +246,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i361.Dio>(),
         gh<_i509.NetworkInfo>(),
       ),
+    );
+    gh.factory<_i991.CreateBucketItemCubit>(
+      () => _i991.CreateBucketItemCubit(gh<_i641.SharedBucketListRepository>()),
+    );
+    gh.factory<_i310.DeleteBucketItemCubit>(
+      () => _i310.DeleteBucketItemCubit(gh<_i641.SharedBucketListRepository>()),
+    );
+    gh.factory<_i655.GetBucketItemsCubit>(
+      () => _i655.GetBucketItemsCubit(gh<_i641.SharedBucketListRepository>()),
+    );
+    gh.factory<_i153.ToggleBucketItemCubit>(
+      () => _i153.ToggleBucketItemCubit(gh<_i641.SharedBucketListRepository>()),
     );
     gh.factory<_i23.ConnectionActionCubit>(
       () => _i23.ConnectionActionCubit(gh<_i19.ConnectionsRepository>()),
@@ -255,18 +283,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1051.SetProfileCubit>(
       () => _i1051.SetProfileCubit(gh<_i533.ProfileRepository>()),
     );
-    gh.factory<_i87.CreateSharedImageCubit>(
-      () => _i87.CreateSharedImageCubit(gh<_i774.SharedAlbumRepository>()),
-    );
-    gh.factory<_i861.DeleteSharedImageCubit>(
-      () => _i861.DeleteSharedImageCubit(gh<_i774.SharedAlbumRepository>()),
-    );
-    gh.factory<_i503.FavoriteSharedImageCubit>(
-      () => _i503.FavoriteSharedImageCubit(gh<_i774.SharedAlbumRepository>()),
-    );
-    gh.factory<_i635.GetSharedImagesCubit>(
-      () => _i635.GetSharedImagesCubit(gh<_i774.SharedAlbumRepository>()),
-    );
     gh.factory<_i470.SendLocationCubit>(
       () => _i470.SendLocationCubit(gh<_i1042.LocationRepository>()),
     );
@@ -275,6 +291,18 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i67.VerifyFaceCubit>(
       () => _i67.VerifyFaceCubit(gh<_i611.FaceRepository>()),
+    );
+    gh.factory<_i439.CreateSharedImageCubit>(
+      () => _i439.CreateSharedImageCubit(gh<_i335.SharedAlbumRepository>()),
+    );
+    gh.factory<_i338.DeleteSharedImageCubit>(
+      () => _i338.DeleteSharedImageCubit(gh<_i335.SharedAlbumRepository>()),
+    );
+    gh.factory<_i668.FavoriteSharedImageCubit>(
+      () => _i668.FavoriteSharedImageCubit(gh<_i335.SharedAlbumRepository>()),
+    );
+    gh.factory<_i101.GetSharedImagesCubit>(
+      () => _i101.GetSharedImagesCubit(gh<_i335.SharedAlbumRepository>()),
     );
     gh.factory<_i426.FaceVerifiedCubit>(
       () => _i426.FaceVerifiedCubit(gh<_i1052.AuthRepository>()),

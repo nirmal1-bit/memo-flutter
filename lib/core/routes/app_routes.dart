@@ -13,17 +13,15 @@ class AppRoutes {
   static const String userProfile = '/user-profile';
   static const String otherUserProfile = '/other-user-profile';
   static const String chat = '/chat';
-
   static const String videoScreen = '/video-screen';
   static const String timeLine = '/time-line';
   static const String aiChat = '/aiChat';
-
   static const String qrScanner = '/qr-scanner';
-
   static const String voice = '/voice';
-
   static const String notifications = '/notifications';
-
   static const String verification = '/verification';
   static const String loginFaceVerification = '/login-face-verification';
+  static const String sharedAlbum = '/sharedAlbum';
+  static const String sharedBucketList = '/sharedBucketList';
+  static const String quest = '/quest';
 }
