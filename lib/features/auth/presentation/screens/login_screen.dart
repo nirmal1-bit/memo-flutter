@@ -44,7 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => getIt<LoginCubit>()),
-        BlocProvider(create: (_) => FaceVerifiedCubit(getIt<AuthRepository>())),
+        //TODO: fix this
+        BlocProvider(create: (_) => getIt<FaceVerifiedCubit>()),
       ],
       child: MultiBlocListener(
         listeners: [
@@ -190,11 +191,6 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.scaffoldBackground,
-        elevation: 0,
-        toolbarHeight: 0,
-      ),
       backgroundColor: AppColors.scaffoldBackground,
       body: AuthShell(
         title: 'Welcome back',
@@ -232,7 +228,7 @@ class LoginView extends StatelessWidget {
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined,
                     size: 20,
-                    color: AppColors.softPrimary,
+                    color: AppColors.textBody,
                   ),
                 ),
               ),
@@ -263,7 +259,7 @@ class LoginView extends StatelessWidget {
                       style: AppTextStyles.rubik.copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.softPrimary.withOpacity(0.72),
+                        color: AppColors.textCaption,
                       ),
                     ),
                   ),

@@ -8,7 +8,7 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/ai_chat/cubits/ai_chat_cubit.dart';
 import 'package:memo/features/ai_chat/presentation/aichat/widgets/ai_chat_panel.dart';
-import 'package:memo/features/network/presentation/widgets/chat/chat_composer.dart';
+import 'package:memo/features/home/presentation/widgets/chat/chat_composer.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key, required this.connectionId});
@@ -39,20 +39,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0, bottom: 80),
-              child: FloatingActionButton(
-                backgroundColor: AppColors.primary,
-                onPressed: () {
-                  context.push(AppRoutes.voice, extra: widget.connectionId);
-                },
-                child: const Icon(
-                  Icons.record_voice_over,
-                  color: AppColors.scaffoldBackground,
-                ),
-              ),
-            ),
-
             backgroundColor: AppColors.scaffoldBackground,
             body: BlocConsumer<AiChatCubit, ChatState>(
               listenWhen: (previous, current) =>
@@ -90,10 +76,15 @@ class _AiChatScreenState extends State<AiChatScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 12),
                     ChatComposer(
                       controller: _messageController,
                       onSend: () => _sendMessage(context),
+                      onVoice: () {
+                        context.push(
+                          AppRoutes.voice,
+                          extra: widget.connectionId,
+                        );
+                      },
                       isBusy: state.status == ChatConnectionStatus.connecting,
                       scrollPadding: EdgeInsets.zero,
                     ),

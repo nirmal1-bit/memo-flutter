@@ -15,9 +15,7 @@ import 'package:memo/features/face_verification/presentation/screens/face_verifi
 import 'package:memo/features/face_verification/presentation/screens/widgets/step_content.dart';
 
 class VerificationSteps extends StatefulWidget {
-  final List<Widget> screens;
-
-  const VerificationSteps({super.key, required this.screens});
+  const VerificationSteps({super.key});
 
   @override
   State<VerificationSteps> createState() => _VerificationStepsState();

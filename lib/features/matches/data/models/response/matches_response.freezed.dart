@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MatchesResponse {
 
- int get id; String get name;@JsonKey(name: 'user_id') int get userId; String get headline; String get bio;@JsonKey(name: 'profile_url') String get profileUrl; String get location; int get age; String get gender; List<String> get interests;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt; double get similarity;
+ int get id; String get name;@JsonKey(name: 'user_id') int get userId; String get headline; String get bio;@JsonKey(name: 'profile_url') String get profileUrl; String get location; int get age; String get gender; List<String> get interests;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'updated_at') DateTime get updatedAt; double get similarity; double get distance;
 /// Create a copy of MatchesResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $MatchesResponseCopyWith<MatchesResponse> get copyWith => _$MatchesResponseCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MatchesResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.headline, headline) || other.headline == headline)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.profileUrl, profileUrl) || other.profileUrl == profileUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other.interests, interests)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.similarity, similarity) || other.similarity == similarity));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MatchesResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.headline, headline) || other.headline == headline)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.profileUrl, profileUrl) || other.profileUrl == profileUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other.interests, interests)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.similarity, similarity) || other.similarity == similarity)&&(identical(other.distance, distance) || other.distance == distance));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,userId,headline,bio,profileUrl,location,age,gender,const DeepCollectionEquality().hash(interests),createdAt,updatedAt,similarity);
+int get hashCode => Object.hash(runtimeType,id,name,userId,headline,bio,profileUrl,location,age,gender,const DeepCollectionEquality().hash(interests),createdAt,updatedAt,similarity,distance);
 
 @override
 String toString() {
-  return 'MatchesResponse(id: $id, name: $name, userId: $userId, headline: $headline, bio: $bio, profileUrl: $profileUrl, location: $location, age: $age, gender: $gender, interests: $interests, createdAt: $createdAt, updatedAt: $updatedAt, similarity: $similarity)';
+  return 'MatchesResponse(id: $id, name: $name, userId: $userId, headline: $headline, bio: $bio, profileUrl: $profileUrl, location: $location, age: $age, gender: $gender, interests: $interests, createdAt: $createdAt, updatedAt: $updatedAt, similarity: $similarity, distance: $distance)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $MatchesResponseCopyWith<$Res>  {
   factory $MatchesResponseCopyWith(MatchesResponse value, $Res Function(MatchesResponse) _then) = _$MatchesResponseCopyWithImpl;
 @useResult
 $Res call({
- int id, String name,@JsonKey(name: 'user_id') int userId, String headline, String bio,@JsonKey(name: 'profile_url') String profileUrl, String location, int age, String gender, List<String> interests,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, double similarity
+ int id, String name,@JsonKey(name: 'user_id') int userId, String headline, String bio,@JsonKey(name: 'profile_url') String profileUrl, String location, int age, String gender, List<String> interests,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, double similarity, double distance
 });
 
 
@@ -65,7 +65,7 @@ class _$MatchesResponseCopyWithImpl<$Res>
 
 /// Create a copy of MatchesResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? userId = null,Object? headline = null,Object? bio = null,Object? profileUrl = null,Object? location = null,Object? age = null,Object? gender = null,Object? interests = null,Object? createdAt = null,Object? updatedAt = null,Object? similarity = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? userId = null,Object? headline = null,Object? bio = null,Object? profileUrl = null,Object? location = null,Object? age = null,Object? gender = null,Object? interests = null,Object? createdAt = null,Object? updatedAt = null,Object? similarity = null,Object? distance = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -80,6 +80,7 @@ as String,interests: null == interests ? _self.interests : interests // ignore: 
 as List<String>,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,similarity: null == similarity ? _self.similarity : similarity // ignore: cast_nullable_to_non_nullable
+as double,distance: null == distance ? _self.distance : distance // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -165,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio, @JsonKey(name: 'profile_url')  String profileUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  double similarity)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio, @JsonKey(name: 'profile_url')  String profileUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  double similarity,  double distance)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MatchesResponse() when $default != null:
-return $default(_that.id,_that.name,_that.userId,_that.headline,_that.bio,_that.profileUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt,_that.similarity);case _:
+return $default(_that.id,_that.name,_that.userId,_that.headline,_that.bio,_that.profileUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt,_that.similarity,_that.distance);case _:
   return orElse();
 
 }
@@ -186,10 +187,10 @@ return $default(_that.id,_that.name,_that.userId,_that.headline,_that.bio,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio, @JsonKey(name: 'profile_url')  String profileUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  double similarity)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio, @JsonKey(name: 'profile_url')  String profileUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  double similarity,  double distance)  $default,) {final _that = this;
 switch (_that) {
 case _MatchesResponse():
-return $default(_that.id,_that.name,_that.userId,_that.headline,_that.bio,_that.profileUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt,_that.similarity);case _:
+return $default(_that.id,_that.name,_that.userId,_that.headline,_that.bio,_that.profileUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt,_that.similarity,_that.distance);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +207,10 @@ return $default(_that.id,_that.name,_that.userId,_that.headline,_that.bio,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio, @JsonKey(name: 'profile_url')  String profileUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  double similarity)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name, @JsonKey(name: 'user_id')  int userId,  String headline,  String bio, @JsonKey(name: 'profile_url')  String profileUrl,  String location,  int age,  String gender,  List<String> interests, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'updated_at')  DateTime updatedAt,  double similarity,  double distance)?  $default,) {final _that = this;
 switch (_that) {
 case _MatchesResponse() when $default != null:
-return $default(_that.id,_that.name,_that.userId,_that.headline,_that.bio,_that.profileUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt,_that.similarity);case _:
+return $default(_that.id,_that.name,_that.userId,_that.headline,_that.bio,_that.profileUrl,_that.location,_that.age,_that.gender,_that.interests,_that.createdAt,_that.updatedAt,_that.similarity,_that.distance);case _:
   return null;
 
 }
@@ -221,7 +222,7 @@ return $default(_that.id,_that.name,_that.userId,_that.headline,_that.bio,_that.
 @JsonSerializable()
 
 class _MatchesResponse implements MatchesResponse {
-  const _MatchesResponse({required this.id, required this.name, @JsonKey(name: 'user_id') required this.userId, required this.headline, required this.bio, @JsonKey(name: 'profile_url') required this.profileUrl, required this.location, required this.age, required this.gender, required final  List<String> interests, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt, required this.similarity}): _interests = interests;
+  const _MatchesResponse({required this.id, required this.name, @JsonKey(name: 'user_id') required this.userId, required this.headline, required this.bio, @JsonKey(name: 'profile_url') required this.profileUrl, required this.location, required this.age, required this.gender, required final  List<String> interests, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'updated_at') required this.updatedAt, required this.similarity, required this.distance}): _interests = interests;
   factory _MatchesResponse.fromJson(Map<String, dynamic> json) => _$MatchesResponseFromJson(json);
 
 @override final  int id;
@@ -243,6 +244,7 @@ class _MatchesResponse implements MatchesResponse {
 @override@JsonKey(name: 'created_at') final  DateTime createdAt;
 @override@JsonKey(name: 'updated_at') final  DateTime updatedAt;
 @override final  double similarity;
+@override final  double distance;
 
 /// Create a copy of MatchesResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -257,16 +259,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MatchesResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.headline, headline) || other.headline == headline)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.profileUrl, profileUrl) || other.profileUrl == profileUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other._interests, _interests)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.similarity, similarity) || other.similarity == similarity));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MatchesResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.headline, headline) || other.headline == headline)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.profileUrl, profileUrl) || other.profileUrl == profileUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other._interests, _interests)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.similarity, similarity) || other.similarity == similarity)&&(identical(other.distance, distance) || other.distance == distance));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,userId,headline,bio,profileUrl,location,age,gender,const DeepCollectionEquality().hash(_interests),createdAt,updatedAt,similarity);
+int get hashCode => Object.hash(runtimeType,id,name,userId,headline,bio,profileUrl,location,age,gender,const DeepCollectionEquality().hash(_interests),createdAt,updatedAt,similarity,distance);
 
 @override
 String toString() {
-  return 'MatchesResponse(id: $id, name: $name, userId: $userId, headline: $headline, bio: $bio, profileUrl: $profileUrl, location: $location, age: $age, gender: $gender, interests: $interests, createdAt: $createdAt, updatedAt: $updatedAt, similarity: $similarity)';
+  return 'MatchesResponse(id: $id, name: $name, userId: $userId, headline: $headline, bio: $bio, profileUrl: $profileUrl, location: $location, age: $age, gender: $gender, interests: $interests, createdAt: $createdAt, updatedAt: $updatedAt, similarity: $similarity, distance: $distance)';
 }
 
 
@@ -277,7 +279,7 @@ abstract mixin class _$MatchesResponseCopyWith<$Res> implements $MatchesResponse
   factory _$MatchesResponseCopyWith(_MatchesResponse value, $Res Function(_MatchesResponse) _then) = __$MatchesResponseCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String name,@JsonKey(name: 'user_id') int userId, String headline, String bio,@JsonKey(name: 'profile_url') String profileUrl, String location, int age, String gender, List<String> interests,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, double similarity
+ int id, String name,@JsonKey(name: 'user_id') int userId, String headline, String bio,@JsonKey(name: 'profile_url') String profileUrl, String location, int age, String gender, List<String> interests,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'updated_at') DateTime updatedAt, double similarity, double distance
 });
 
 
@@ -294,7 +296,7 @@ class __$MatchesResponseCopyWithImpl<$Res>
 
 /// Create a copy of MatchesResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? userId = null,Object? headline = null,Object? bio = null,Object? profileUrl = null,Object? location = null,Object? age = null,Object? gender = null,Object? interests = null,Object? createdAt = null,Object? updatedAt = null,Object? similarity = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? userId = null,Object? headline = null,Object? bio = null,Object? profileUrl = null,Object? location = null,Object? age = null,Object? gender = null,Object? interests = null,Object? createdAt = null,Object? updatedAt = null,Object? similarity = null,Object? distance = null,}) {
   return _then(_MatchesResponse(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -309,6 +311,7 @@ as String,interests: null == interests ? _self._interests : interests // ignore:
 as List<String>,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,similarity: null == similarity ? _self.similarity : similarity // ignore: cast_nullable_to_non_nullable
+as double,distance: null == distance ? _self.distance : distance // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }

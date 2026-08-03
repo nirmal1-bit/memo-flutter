@@ -8,9 +8,10 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/matches/data/models/response/matches_response.dart';
 import 'package:memo/features/matches/presentation/widgets/profile_tag_chip.dart';
+import 'package:memo/features/matches/presentation/widgets/distance_badge.dart';
 import 'package:memo/features/matches/presentation/widgets/similarity_badge.dart';
 import 'package:memo/features/matches/presentation/widgets/swipe_stamps.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
 
 class ProfileCard extends StatelessWidget {
   const ProfileCard({
@@ -115,6 +116,11 @@ class ProfileCard extends StatelessWidget {
                 height: 40,
                 child: SimilarityBadge(score: profile.similarity),
               ),
+            ),
+            Positioned(
+              top: 10,
+              left: 0,
+              child: DistanceBadge(distance: profile.distance),
             ),
             if (isTop)
               SwipeStamps(
@@ -253,4 +259,5 @@ class _ProfileCardInfo extends StatelessWidget {
       ),
     );
   }
+
 }

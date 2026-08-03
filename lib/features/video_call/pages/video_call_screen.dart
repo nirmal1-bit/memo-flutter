@@ -6,7 +6,7 @@ import 'package:memo/core/services/call_recording_service.dart';
 import 'package:memo/core/session/session_service.dart';
 import 'package:memo/core/utils/app_utils.dart';
 import 'package:memo/features/common/primary_button.dart';
-import 'package:memo/features/network/presentation/cubits/chat_cubit.dart';
+import 'package:memo/features/home/presentation/cubits/chat_cubit.dart';
 import 'package:memo/features/video_call/cubit/end_video_call.dart';
 import 'package:memo/features/video_call/cubit/make_transcript_cubit.dart';
 import 'package:permission_handler/permission_handler.dart';

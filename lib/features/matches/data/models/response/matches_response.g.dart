@@ -23,6 +23,7 @@ _MatchesResponse _$MatchesResponseFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       similarity: (json['similarity'] as num).toDouble(),
+      distance: (json['distance'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$MatchesResponseToJson(_MatchesResponse instance) =>
@@ -40,4 +41,5 @@ Map<String, dynamic> _$MatchesResponseToJson(_MatchesResponse instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'similarity': instance.similarity,
+      'distance': instance.distance,
     };

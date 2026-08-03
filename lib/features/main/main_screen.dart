@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:memo/features/matches/presentation/match_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
-import 'package:memo/features/network/presentation/screens/network_screen.dart';
+import 'package:memo/features/home/presentation/screens/connections_screen.dart';
+import 'package:memo/features/home/presentation/screens/home_screen.dart';
 import 'package:memo/features/profile/presentation/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,18 +17,17 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    NetworkScreen(),
+    HomeScreen(),
     MatchScreen(),
     AddConnectionScreen(),
     SettingsScreen(),
   ];
 
-  // Each tab gets its own accent color from your palette
   final List<Color> _tabColors = [
-    AppColors.primary, // Teal  — Home
-    AppColors.statusRed, // Purple — Chat
-    AppColors.buttonPrimary, // Coral  — Search
-    AppColors.statusOrange, // Orange — Settings
+    AppColors.primary,
+    AppColors.statusRed,
+    AppColors.buttonPrimary,
+    AppColors.statusOrange,
   ];
 
   @override

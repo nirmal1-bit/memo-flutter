@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/features/common/build_initials.dart';
-import 'package:memo/features/network/data/models/response/connection_response.dart';
+import 'package:memo/features/home/data/models/response/connection_response.dart';
 
 class TimelineProfileHeader extends StatelessWidget {
   const TimelineProfileHeader({
@@ -15,39 +15,36 @@ class TimelineProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.white,
-      elevation: 0,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _TimelineProfileHeroCard(user: profile),
-          Container(
-            color: AppColors.white,
-            child: TabBar(
-              controller: tabController,
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.textGrey,
-              indicatorColor: AppColors.primary,
-              indicatorWeight: 2.5,
-              labelStyle: const TextStyle(
-                fontFamily: 'Rubik',
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
-              unselectedLabelStyle: const TextStyle(
-                fontFamily: 'Rubik',
-                fontSize: 12,
-              ),
-              tabs: const [
-                Tab(text: 'Memories'),
-                Tab(text: 'Timeline'),
-                Tab(text: 'AI'),
-              ],
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _TimelineProfileHeroCard(user: profile),
+        Container(
+          color: AppColors.scaffoldBackground,
+          child: TabBar(
+            controller: tabController,
+            labelColor: AppColors.primary,
+            unselectedLabelColor: AppColors.textGrey,
+            indicatorColor: AppColors.primary,
+            indicatorWeight: 2.5,
+            labelStyle: const TextStyle(
+              fontFamily: 'Rubik',
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
             ),
+            unselectedLabelStyle: const TextStyle(
+              fontFamily: 'Rubik',
+              fontSize: 12,
+            ),
+            tabs: const [
+              Tab(text: 'Memories'),
+              Tab(text: 'Album'),
+              Tab(text: 'Timeline'),
+              Tab(text: 'Menmo AI'),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -60,7 +57,7 @@ class _TimelineProfileHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.white,
+      color: AppColors.scaffoldBackground,
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Column(
         children: [

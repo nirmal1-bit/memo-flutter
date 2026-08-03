@@ -25,6 +25,7 @@ class ApiEndpoints {
 
   // connections
   static const String listConnections = "/connections";
+  static String deleteConnection(int id) => "/connections/$id";
   static const String sendRequest = "/connection-requests";
   static String connectionRequest(int id) => "/connection-requests/$id";
   static const String listReceivedConnections = "/connection-requests/received";
@@ -54,9 +55,47 @@ class ApiEndpoints {
   static const String notificationsCount = "/notifications/count";
 
   //face
-
   static const String verifyFace = "/face/verify";
   static const String createFace = "/face/create";
-  static const String getFaces = "/face/get-similar";
+  static const String getFaces = "/face/get-similar"; //TODO: implement this
   static const String faceVerificationStatus = "/face/verification";
+
+  // recent images
+  static const String recentImages = '/recent-images';
+  static String recentImage(int id) => '/recent-images/$id';
+  static String recentImageByPersonId(int id) => '/recent-images/user/$id';
+
+  //location
+  static const String location = '/location';
+
+  //shared-album
+  static String sharedAlbum(int id) => '/connections/$id/shared-album';
+  static String sharedAlbumFavoriteImage(int id, int imageId) =>
+      '/connections/$id/shared-album/images/$imageId/favorite';
+  static String deleteSharedAlbumImage(int id, int imageId) =>
+      '/connections/$id/shared-album/images/$imageId';
+
+  //shared-bucket-list
+  static String sharedBucketList(int id) =>
+      '/connections/$id/shared-bucket-list';
+  static String toggleBucketItem(int id, int itemId) =>
+      '/connections/$id/shared-bucket-list/items/$itemId/toggle';
+  static String deleteBucketItem(int id, int itemId) =>
+      '/connections/$id/shared-bucket-list/items/$itemId';
+
+  static const String thinkAlikeQuestions = '/think-alike/questions';
+
+  static const String randomQuestion = 'think-alike/random';
+  static const String thinkAlikeSessions = '/think-alike/sessions';
+  static String thinkAlikeSession(int id) => '/think-alike/sessions/$id';
+  static String acceptThinkAlikeSession(int id) =>
+      '${thinkAlikeSession(id)}/accept';
+  static String answerThinkAlikeSession(int id) =>
+      '${thinkAlikeSession(id)}/answer';
+  static String revealThinkAlikeSession(int id) =>
+      '${thinkAlikeSession(id)}/reveal';
+  static String cancelThinkAlikeSession(int id) =>
+      '${thinkAlikeSession(id)}/cancel';
+  static String thinkAlikeWebsocket(int id) =>
+      '/think-alike/make-connection/$id';
 }

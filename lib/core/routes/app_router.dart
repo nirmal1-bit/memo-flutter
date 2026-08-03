@@ -11,18 +11,22 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:memo/features/face_verification/presentation/screens/face_verification_screen.dart';
 import 'package:memo/features/face_verification/presentation/screens/face_verification_steps.dart';
+import 'package:memo/features/game/presentation/think_alike_screen_patner.dart';
 import 'package:memo/features/main/onboarding_screen.dart';
 import 'package:memo/features/main/main_screen.dart';
-import 'package:memo/features/network/data/models/response/connection_response.dart';
-import 'package:memo/features/network/data/models/response/user_profile_response.dart';
-import 'package:memo/features/network/presentation/screens/chat_screen.dart';
-import 'package:memo/features/network/presentation/screens/add_connection_screen.dart';
-import 'package:memo/features/network/presentation/screens/other_user_profile.dart';
-import 'package:memo/features/network/presentation/screens/qr_scanner.dart';
-import 'package:memo/features/network/presentation/screens/user_profile_screen.dart';
+import 'package:memo/features/home/data/models/response/connection_response.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
+import 'package:memo/features/home/presentation/screens/chat_screen.dart';
+import 'package:memo/features/home/presentation/screens/connections_screen.dart';
+import 'package:memo/features/home/presentation/screens/other_user_profile.dart';
+import 'package:memo/features/home/presentation/screens/qr_scanner.dart';
+import 'package:memo/features/home/presentation/screens/user_profile_screen.dart';
 import 'package:memo/features/notification/presentation/notification_screen.dart';
 import 'package:memo/features/profile/data/request/profile_request_model.dart';
 import 'package:memo/features/profile/presentation/set_profile_screen.dart';
+import 'package:memo/features/quest/presentation/quest_screen.dart';
+import 'package:memo/features/shared/presentation/shared_album_screen.dart';
+import 'package:memo/features/shared/presentation/shared_bucket_list_screen.dart';
 import 'package:memo/features/splash/splash_screen.dart';
 import 'package:memo/features/timeline/presentation/time_line_screen.dart';
 import 'package:memo/features/video_call/pages/video_call_screen.dart';
@@ -45,9 +49,7 @@ class AppRouter {
     routes: [
       AppRoutes.splash.route((context, state) => const SplashScreen()),
       AppRoutes.faceVerificationSteps.route(
-        (context, state) => VerificationSteps(
-          screens: [OnboardingScreen(), OnboardingScreen(), OnboardingScreen()],
-        ),
+        (context, state) => VerificationSteps(),
       ),
       AppRoutes.onboarding.route((context, state) => const OnboardingScreen()),
       AppRoutes.login.route((context, state) => const LoginScreen()),
@@ -120,6 +122,38 @@ class AppRouter {
       AppRoutes.verification.route(
         (context, state) => FaceVerificationScreen(),
       ),
+      AppRoutes.sharedAlbum.route(
+        (context, state) => SharedAlbumScreen(
+          connectionId: state.extra is int ? state.extra as int : 0,
+        ),
+      ),
+      AppRoutes.sharedBucketList.route(
+        (context, state) => SharedBucketListScreen(
+          connectionId: state.extra is int ? state.extra as int : 0,
+        ),
+      ),
+
+      AppRoutes.quest.route((context, state) {
+        final extra = state.extra;
+        return QuestScreen(params: extra as QuestScreenParams);
+      }),
+
+      AppRoutes.thinkAlikePartner.route((context, state) {
+        final args = state.extra;
+        if (args is! ThinkAlikePartnerArgs) {
+          throw ArgumentError(
+            'Think Alike partner screen requires a session and current user.',
+          );
+        }
+        return ThinkAlikeScreenPatner(params: args);
+      }),
     ],
   );
+}
+
+class QuestArgs {
+  const QuestArgs({required this.connectionId, this.user, this.person});
+  final int connectionId;
+  final Profile? user;
+  final UserProfile? person;
 }

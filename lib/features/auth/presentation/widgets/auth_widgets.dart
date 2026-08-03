@@ -55,7 +55,7 @@ class AuthShell extends StatelessWidget {
                           onPressed:
                               onBack ?? () => Navigator.of(context).maybePop(),
                           icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                          color: AppColors.softPrimary,
+                          color: AppColors.textHeading,
                         )
                       else
                         const SizedBox(width: 48, height: 48),
@@ -78,7 +78,7 @@ class AuthShell extends StatelessWidget {
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.8,
-                            color: AppColors.softPrimary,
+                            color: AppColors.primary,
                           ),
                         ),
                       ),
@@ -91,16 +91,17 @@ class AuthShell extends StatelessWidget {
                       fontSize: 40,
                       height: 1.0,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.softPrimary,
+                      color: AppColors.textHeading,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     subtitle,
+                    textAlign: TextAlign.center,
                     style: AppTextStyles.rubik.copyWith(
                       fontSize: 15,
                       height: 1.45,
-                      color: AppColors.softPrimary.withOpacity(0.72),
+                      color: AppColors.textBody,
                     ),
                   ),
                   const SizedBox(height: 28),

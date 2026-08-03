@@ -193,7 +193,7 @@ class NewPasswordView extends StatelessWidget {
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined,
                     size: 20,
-                    color: AppColors.softPrimary,
+                    color: AppColors.textBody,
                   ),
                 ),
               ),
@@ -228,7 +228,7 @@ class NewPasswordView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: AppTextStyles.rubik.copyWith(
                   fontSize: 12,
-                  color: AppColors.softPrimary.withOpacity(0.68),
+                  color: AppColors.textCaption,
                 ),
               ),
             ],
