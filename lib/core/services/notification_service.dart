@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/core/routes/handle_deep_linking.dart';
 import 'package:memo/core/services/call_keep_service.dart';
 
 final FlutterLocalNotificationsPlugin localNotificationsPlugin =
@@ -36,6 +37,7 @@ const AndroidNotificationChannel _callNotificationChannel =
 abstract class NotificationType {
   static const String call = 'call';
   static const String chat = 'message';
+  static const String game = 'game';
 }
 
 class FirebaseNotificationService {
@@ -109,12 +111,30 @@ class FirebaseNotificationService {
   void _onNotificationTapped(NotificationResponse response) {
     final String? payload = response.payload;
     if (payload == null || payload.isEmpty) return;
-
     try {
       final Map<String, dynamic> data =
           jsonDecode(payload) as Map<String, dynamic>;
-      developer.log('Notification tapped with payload: $data', name: 'FCM');
-      // TODO: handle notification tap navigation
+
+      switch (data['type']) {
+        case NotificationType.game:
+          print("Trying to do deeplinking to game with data: $data");
+          HandleDeepLinking.pushToGame(data);
+          break;
+
+        case NotificationType.chat:
+          // HandleDeepLinking.pushToChat(data);
+          break;
+
+        case NotificationType.call:
+          _callKeepService.showCallKit(data);
+          break;
+
+        default:
+          developer.log(
+            'Unhandled notification type: ${data['type']}',
+            name: 'FCM',
+          );
+      }
     } catch (e) {
       developer.log('Error parsing notification payload: $e', name: 'FCM');
     }
@@ -150,8 +170,16 @@ class FirebaseNotificationService {
 
       case NotificationType.chat:
         if (notification != null) {
-          _showChatNotification(notification);
+          _showChatNotification(notification, data);
         }
+        break;
+
+      case NotificationType.game:
+        if (notification != null) {
+          _showChatNotification(notification, data);
+          print('Navigating to game screen with data: $data');
+        }
+
         break;
 
       default:
@@ -163,16 +191,36 @@ class FirebaseNotificationService {
   }
 
   void _onMessageOpenedApp(RemoteMessage message) {
-    developer.log(
-      'App opened from notification | type: ${message.data['type']}',
-      name: 'FCM',
-    );
-    // TODO: handle deep-link / navigation based on message.data
+    final Map<String, dynamic> data = message.data;
+    final RemoteNotification? notification = message.notification;
+
+    switch (data['type']) {
+      case NotificationType.call:
+        _callKeepService.showCallKit(data);
+        break;
+
+      case NotificationType.game:
+        if (notification != null) {
+          HandleDeepLinking.pushToGame(data);
+          print('Navigating to game screen with data: $data');
+        }
+
+        break;
+
+      default:
+        developer.log(
+          'Unhandled notification type: ${data['type']}',
+          name: 'FCM',
+        );
+    }
   }
 
   //display helpers
 
-  void _showChatNotification(RemoteNotification notification) {
+  void _showChatNotification(
+    RemoteNotification notification,
+    Map<String, dynamic>? data,
+  ) {
     localNotificationsPlugin
         .show(
           title: notification.title,
@@ -191,6 +239,7 @@ class FirebaseNotificationService {
             ),
           ),
           id: notification.hashCode,
+          payload: jsonEncode(data),
         )
         .then((_) => developer.log('Chat notification shown', name: 'FCM'))
         .catchError(
