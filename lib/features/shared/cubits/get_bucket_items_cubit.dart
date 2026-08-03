@@ -12,8 +12,10 @@ class GetBucketItemsCubit
   final SharedBucketListRepository repository;
 
   Future<void> getBucketItems(int connectionId) async {
+    if (isClosed) return;
     emit(const BaseApiState.loading());
     final response = await repository.getBucketItems(connectionId);
+    if (isClosed) return;
     emit(
       response.fold(
         (l) => l.when(

@@ -12,8 +12,10 @@ class GetSharedImagesCubit
     : super(const BaseApiState.initial());
   final SharedAlbumRepository sharedAlbumRepository;
   Future<void> getSharedImages(int connectionId) async {
+    if (isClosed) return;
     emit(const BaseApiState.loading());
     final response = await sharedAlbumRepository.getSharedImages(connectionId);
+    if (isClosed) return;
     emit(
       response.fold(
         (l) => l.when(

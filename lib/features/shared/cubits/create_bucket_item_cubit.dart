@@ -15,8 +15,10 @@ class CreateBucketItemCubit extends Cubit<BaseApiState<BucketItemResponse>> {
     int connectionId,
     BucketItemRequest request,
   ) async {
+    if (isClosed) return;
     emit(const BaseApiState.loading());
     final response = await repository.createBucketItem(connectionId, request);
+    if (isClosed) return;
     emit(
       response.fold(
         (l) => l.when(

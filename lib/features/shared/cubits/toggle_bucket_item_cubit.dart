@@ -10,8 +10,10 @@ class ToggleBucketItemCubit extends Cubit<BaseApiState<String>> {
   final SharedBucketListRepository repository;
 
   Future<void> toggleBucketItem(int connectionId, int itemId) async {
+    if (isClosed) return;
     emit(const BaseApiState.loading());
     final response = await repository.toggleBucketItem(connectionId, itemId);
+    if (isClosed) return;
     emit(
       response.fold(
         (l) => l.when(

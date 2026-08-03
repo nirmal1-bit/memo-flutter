@@ -10,11 +10,13 @@ class FavoriteSharedImageCubit extends Cubit<BaseApiState<String>> {
     : super(const BaseApiState.initial());
   final SharedAlbumRepository sharedAlbumRepository;
   Future<void> favoriteSharedImage(int connectionId, int imageId) async {
+    if (isClosed) return;
     emit(const BaseApiState.loading());
     final response = await sharedAlbumRepository.favoriteSharedImage(
       connectionId,
       imageId,
     );
+    if (isClosed) return;
     emit(
       response.fold(
         (l) => l.when(

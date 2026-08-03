@@ -15,11 +15,13 @@ class CreateSharedImageCubit extends Cubit<BaseApiState<SharedImageResponse>> {
     int connectionId,
     SharedImageRequest request,
   ) async {
+    if (isClosed) return;
     emit(const BaseApiState.loading());
     final response = await sharedAlbumRepository.createSharedImage(
       connectionId,
       request,
     );
+    if (isClosed) return;
     emit(
       response.fold(
         (l) => l.when(

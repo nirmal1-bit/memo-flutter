@@ -10,8 +10,10 @@ class DeleteBucketItemCubit extends Cubit<BaseApiState<String>> {
   final SharedBucketListRepository repository;
 
   Future<void> deleteBucketItem(int connectionId, int itemId) async {
+    if (isClosed) return;
     emit(const BaseApiState.loading());
     final response = await repository.deleteBucketItem(connectionId, itemId);
+    if (isClosed) return;
     emit(
       response.fold(
         (l) => l.when(
