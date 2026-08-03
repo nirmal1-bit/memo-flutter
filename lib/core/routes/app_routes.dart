@@ -24,4 +24,6 @@ class AppRoutes {
   static const String sharedAlbum = '/sharedAlbum';
   static const String sharedBucketList = '/sharedBucketList';
   static const String quest = '/quest';
+  static const String thinkAlike = '/think-alike';
+  static const String thinkAlikePartner = '/think-alike-partner';
 }

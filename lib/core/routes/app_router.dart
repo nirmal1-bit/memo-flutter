@@ -11,6 +11,7 @@ import 'package:memo/core/routes/app_routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:memo/features/face_verification/presentation/screens/face_verification_screen.dart';
 import 'package:memo/features/face_verification/presentation/screens/face_verification_steps.dart';
+import 'package:memo/features/game/presentation/think_alike_screen_patner.dart';
 import 'package:memo/features/main/onboarding_screen.dart';
 import 'package:memo/features/main/main_screen.dart';
 import 'package:memo/features/home/data/models/response/connection_response.dart';
@@ -132,11 +133,27 @@ class AppRouter {
         ),
       ),
 
-      AppRoutes.quest.route(
-        (context, state) => QuestScreen(
-          connectionId: state.extra is int ? state.extra as int : 0,
-        ),
-      ),
+      AppRoutes.quest.route((context, state) {
+        final extra = state.extra;
+        return QuestScreen(params: extra as QuestScreenParams);
+      }),
+
+      AppRoutes.thinkAlikePartner.route((context, state) {
+        final args = state.extra;
+        if (args is! ThinkAlikePartnerArgs) {
+          throw ArgumentError(
+            'Think Alike partner screen requires a session and current user.',
+          );
+        }
+        return ThinkAlikeScreenPatner(params: args);
+      }),
     ],
   );
+}
+
+class QuestArgs {
+  const QuestArgs({required this.connectionId, this.user, this.person});
+  final int connectionId;
+  final Profile? user;
+  final UserProfile? person;
 }
