@@ -51,6 +51,22 @@ import 'package:memo/features/face_verification/cubit/verify_face_cubit.dart'
     as _i67;
 import 'package:memo/features/face_verification/repository/face_repository.dart'
     as _i611;
+import 'package:memo/features/game/cubits/accept_game_session_cubit.dart'
+    as _i944;
+import 'package:memo/features/game/cubits/cancel_game_session_cubit.dart'
+    as _i968;
+import 'package:memo/features/game/cubits/create_game_session_cubit.dart'
+    as _i963;
+import 'package:memo/features/game/cubits/get_game_questions_cubit.dart'
+    as _i199;
+import 'package:memo/features/game/cubits/get_game_session_cubit.dart' as _i793;
+import 'package:memo/features/game/cubits/reveal_game_session_cubit.dart'
+    as _i463;
+import 'package:memo/features/game/cubits/submit_game_answer_cubit.dart'
+    as _i976;
+import 'package:memo/features/game/presentation/game_cubit.dart' as _i1027;
+import 'package:memo/features/game/repository/think_alike_repository.dart'
+    as _i783;
 import 'package:memo/features/home/domain/repository/connections_repository.dart'
     as _i19;
 import 'package:memo/features/home/domain/repository/location_repository.dart'
@@ -164,6 +180,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i20.AiChatCubit>(
       () => _i20.AiChatCubit(sessionService: gh<_i73.SessionService>()),
     );
+    gh.factory<_i1027.GameCubit>(
+      () => _i1027.GameCubit(sessionService: gh<_i73.SessionService>()),
+    );
     gh.factory<_i52.ChatCubit>(
       () => _i52.ChatCubit(sessionService: gh<_i73.SessionService>()),
     );
@@ -195,12 +214,39 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i953.MatchesRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
     );
+    gh.lazySingleton<_i783.ThinkAlikeRepository>(
+      () => _i783.ThinkAlikeRepositoryImpl(
+        gh<_i361.Dio>(),
+        gh<_i509.NetworkInfo>(),
+      ),
+    );
     gh.factory<_i927.GetMatchesCubit>(
       () => _i927.GetMatchesCubit(gh<_i953.MatchesRepository>()),
     );
     gh.lazySingleton<_i533.ProfileRepository>(
       () =>
           _i533.ProfileRepositoryImpl(gh<_i361.Dio>(), gh<_i509.NetworkInfo>()),
+    );
+    gh.factory<_i944.AcceptGameSessionCubit>(
+      () => _i944.AcceptGameSessionCubit(gh<_i783.ThinkAlikeRepository>()),
+    );
+    gh.factory<_i968.CancelGameSessionCubit>(
+      () => _i968.CancelGameSessionCubit(gh<_i783.ThinkAlikeRepository>()),
+    );
+    gh.factory<_i963.CreateGameSessionCubit>(
+      () => _i963.CreateGameSessionCubit(gh<_i783.ThinkAlikeRepository>()),
+    );
+    gh.factory<_i199.GetGameQuestionsCubit>(
+      () => _i199.GetGameQuestionsCubit(gh<_i783.ThinkAlikeRepository>()),
+    );
+    gh.factory<_i793.GetGameSessionCubit>(
+      () => _i793.GetGameSessionCubit(gh<_i783.ThinkAlikeRepository>()),
+    );
+    gh.factory<_i463.RevealGameSessionCubit>(
+      () => _i463.RevealGameSessionCubit(gh<_i783.ThinkAlikeRepository>()),
+    );
+    gh.factory<_i976.SubmitGameAnswerCubit>(
+      () => _i976.SubmitGameAnswerCubit(gh<_i783.ThinkAlikeRepository>()),
     );
     gh.lazySingleton<_i641.SharedBucketListRepository>(
       () => _i641.SharedBucketListRepositoryImpl(

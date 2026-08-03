@@ -82,4 +82,20 @@ class ApiEndpoints {
       '/connections/$id/shared-bucket-list/items/$itemId/toggle';
   static String deleteBucketItem(int id, int itemId) =>
       '/connections/$id/shared-bucket-list/items/$itemId';
+
+  static const String thinkAlikeQuestions = '/think-alike/questions';
+
+  static const String randomQuestion = 'think-alike/random';
+  static const String thinkAlikeSessions = '/think-alike/sessions';
+  static String thinkAlikeSession(int id) => '/think-alike/sessions/$id';
+  static String acceptThinkAlikeSession(int id) =>
+      '${thinkAlikeSession(id)}/accept';
+  static String answerThinkAlikeSession(int id) =>
+      '${thinkAlikeSession(id)}/answer';
+  static String revealThinkAlikeSession(int id) =>
+      '${thinkAlikeSession(id)}/reveal';
+  static String cancelThinkAlikeSession(int id) =>
+      '${thinkAlikeSession(id)}/cancel';
+  static String thinkAlikeWebsocket(int id) =>
+      '/think-alike/make-connection/$id';
 }
