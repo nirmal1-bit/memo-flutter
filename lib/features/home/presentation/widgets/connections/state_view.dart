@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/state/base_api_state.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/common/build_initials.dart';
@@ -13,6 +15,7 @@ import 'package:memo/features/home/presentation/cubits/sent_connections_cubit.da
 import 'package:memo/features/home/presentation/widgets/connections/avatar_badge.dart';
 import 'package:memo/features/home/presentation/widgets/connections/connection_card.dart';
 import 'package:memo/features/home/presentation/widgets/connections/widget_types.dart';
+import 'package:memo/features/quest/presentation/quest_screen.dart';
 
 class ConnectionsStateView extends StatelessWidget {
   const ConnectionsStateView({
@@ -21,7 +24,6 @@ class ConnectionsStateView extends StatelessWidget {
     required this.emptyMessage,
     this.onConnectionTap,
     this.onChatTap,
-    this.onCallTap,
     this.onSentTap,
     this.onReceivedTap,
     this.onAcceptTap,
@@ -29,19 +31,20 @@ class ConnectionsStateView extends StatelessWidget {
     this.onCancelTap,
     this.onDeleteTap,
     this.cardStyle = ConnectionCardStyle.connections,
+    this.onQuestTap,
   });
 
   final BaseApiState<List<ConnectionResponse>> state;
   final String emptyMessage;
-  final ValueChanged<ConnectionResponse>? onConnectionTap;
-  final ValueChanged<ConnectionResponse>? onChatTap;
-  final ValueChanged<ConnectionResponse>? onCallTap;
-  final ValueChanged<ConnectionResponse>? onSentTap;
-  final ValueChanged<ConnectionResponse>? onReceivedTap;
-  final ValueChanged<ConnectionResponse>? onAcceptTap;
-  final ValueChanged<ConnectionResponse>? onRejectTap;
-  final ValueChanged<ConnectionResponse>? onCancelTap;
-  final ValueChanged<ConnectionResponse>? onDeleteTap;
+  final void Function(ConnectionResponse)? onConnectionTap;
+  final void Function(ConnectionResponse)? onChatTap;
+  final void Function(ConnectionResponse)? onSentTap;
+  final void Function(ConnectionResponse)? onReceivedTap;
+  final void Function(ConnectionResponse)? onAcceptTap;
+  final void Function(ConnectionResponse)? onRejectTap;
+  final void Function(ConnectionResponse)? onCancelTap;
+  final void Function(ConnectionResponse)? onDeleteTap;
+  final void Function(ConnectionResponse)? onQuestTap;
   final ConnectionCardStyle cardStyle;
 
   @override
@@ -77,9 +80,9 @@ class ConnectionsStateView extends StatelessWidget {
                         onChatTap: onChatTap == null
                             ? null
                             : () => onChatTap!(connection),
-                        onCallTap: onCallTap == null
+                        onQuestTap: onQuestTap == null
                             ? null
-                            : () => onCallTap!(connection),
+                            : () => onQuestTap!(connection),
                         onLongPress: onDeleteTap == null
                             ? null
                             : () => onDeleteTap!(connection),

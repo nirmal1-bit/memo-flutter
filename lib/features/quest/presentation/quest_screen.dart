@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
+import 'package:memo/features/game/presentation/think_alike_screen.dart';
+import 'package:memo/features/home/data/models/response/connection_response.dart';
+import 'package:memo/features/home/data/models/response/user_profile_response.dart';
 import 'package:memo/features/shared/presentation/shared_bucket_list_screen.dart';
 
-class QuestScreen extends StatefulWidget {
-  const QuestScreen({super.key, required this.connectionId});
+class QuestScreenParams {
   final int connectionId;
+  final Profile user;
+  final UserProfile person;
+
+  QuestScreenParams({
+    required this.connectionId,
+    required this.user,
+    required this.person,
+  });
+}
+
+class QuestScreen extends StatefulWidget {
+  const QuestScreen({super.key, required this.params});
+
+  final QuestScreenParams params;
 
   @override
   State<QuestScreen> createState() => _QuestScreenState();
@@ -41,9 +57,15 @@ class _QuestScreenState extends State<QuestScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                SharedBucketListScreen(connectionId: widget.connectionId),
                 Container(),
-                Container(),
+                SharedBucketListScreen(
+                  connectionId: widget.params.connectionId,
+                ),
+                ThinkAlikeScreen(
+                  user: widget.params.user,
+                  partner: widget.params.person,
+                  isFromNotification: false,
+                ),
               ],
             ),
           ),
@@ -78,9 +100,9 @@ class _QuestTabBar extends StatelessWidget {
           fontSize: 12,
         ),
         tabs: const [
-          Tab(text: 'Bucket List'),
-          Tab(text: 'Couple Trivia'),
           Tab(text: 'Weekly Goal'),
+          Tab(text: 'Bucket List'),
+          Tab(text: 'Think Alike'),
         ],
       ),
     );

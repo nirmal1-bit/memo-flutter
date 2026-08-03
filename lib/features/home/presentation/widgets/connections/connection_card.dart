@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:memo/core/constants/app_colors.dart';
-import 'package:memo/core/routes/app_routes.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/home/data/models/response/connection_response.dart';
 
@@ -11,14 +9,14 @@ class ConnectionCard extends StatelessWidget {
     required this.connection,
     this.onTap,
     this.onChatTap,
-    this.onCallTap,
+    this.onQuestTap,
     this.onLongPress,
   });
 
   final ConnectionResponse connection;
   final VoidCallback? onTap;
   final VoidCallback? onChatTap;
-  final VoidCallback? onCallTap;
+  final VoidCallback? onQuestTap;
   final VoidCallback? onLongPress;
 
   @override
@@ -117,9 +115,7 @@ class ConnectionCard extends StatelessWidget {
                       label: 'Quest',
                       icon: Icons.question_answer,
                       filled: false,
-                      onPressed: () {
-                        context.push(AppRoutes.quest, extra: connection.id);
-                      },
+                      onPressed: onQuestTap ?? () {},
                     ),
                   ),
                 ],

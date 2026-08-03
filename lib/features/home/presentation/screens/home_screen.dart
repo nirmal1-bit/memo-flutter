@@ -17,6 +17,7 @@ import 'package:memo/features/home/presentation/cubits/sent_connections_cubit.da
 import 'package:memo/features/home/presentation/cubits/send_location_cubit.dart';
 import 'package:memo/features/home/presentation/widgets/connections/connections_app_bar.dart';
 import 'package:memo/features/home/presentation/widgets/connections/connections_widgets.dart';
+import 'package:memo/features/quest/presentation/quest_screen.dart';
 import 'package:memo/features/timeline/presentation/time_line_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -205,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 setState(() => _selectedTab = tab),
                           ),
                           const SizedBox(height: 30),
-                          _buildTabContent(),
+                          _buildTabContent(context),
                         ],
                       ),
                     ),
@@ -219,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildTabContent() {
+  Widget _buildTabContent(BuildContext context) {
     switch (_selectedTab) {
       case ConnectionTab.connections:
         return BlocBuilder<
@@ -236,6 +237,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 connectionId: connection.id,
               ),
             ),
+            onQuestTap: (connection) {
+              final user = context.read<GetUserProfileCubit>().state.maybeWhen(
+                success: (user) => user.profile,
+                orElse: () => null,
+              );
+
+              context.push(
+                AppRoutes.quest,
+                extra: QuestScreenParams(
+                  connectionId: connection.id,
+                  user:
+                      user ??
+                      Profile(
+                        id: 0,
+                        userId: 0,
+                        headline: "",
+                        bio: "",
+                        profileUrl: ":",
+                        location: "",
+                        age: 0,
+                        gender: "",
+                        interests: [],
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      ),
+                  person: connection.userProfile,
+                ),
+              );
+            },
             onChatTap: (connection) =>
                 context.push(AppRoutes.chat, extra: connection),
             onDeleteTap: (connection) => AppUtils.confirmationDialog(
@@ -246,13 +276,6 @@ class _HomeScreenState extends State<HomeScreen> {
               onConfirm: () => context
                   .read<ConnectionActionCubit>()
                   .deleteConnection(connection.id),
-            ),
-            onCallTap: (connection) => ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Starting a video call with ${connection.userProfile.name}...',
-                ),
-              ),
             ),
           ),
         );
@@ -311,9 +334,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 updatedAt: connection.userProfile.updatedAt,
               ),
             ),
-            onAcceptTap: (connection) => context
-                .read<ConnectionActionCubit>()
-                .acceptConnectionRequest(connection.id),
+            onAcceptTap: (connection) {
+              context.read<ConnectionActionCubit>().acceptConnectionRequest(
+                connection.id,
+              );
+            },
+
+            // here we are defning a signature for the onAcceptTap the caller of
+            // this function will pass a connection object
+            //and we will use the connection id to call the
+            //acceptConnectionRequest method of the ConnectionActionCubit.
             onRejectTap: (connection) => context
                 .read<ConnectionActionCubit>()
                 .rejectConnectionRequest(connection.id),
