@@ -166,7 +166,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     icon: Icons.info_outline_rounded,
                     title: 'About Memo',
                     subtitle: 'App version, terms, and privacy policy',
-                    onTap: () {},
+                    onTap: () {
+                      context.push(AppRoutes.thinkAlike);
+                    },
                   ),
                 ],
               ),

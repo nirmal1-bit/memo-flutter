@@ -44,7 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => getIt<LoginCubit>()),
-        BlocProvider(create: (_) => FaceVerifiedCubit(getIt<AuthRepository>())),
+        //TODO: fix this
+        BlocProvider(create: (_) => getIt<FaceVerifiedCubit>()),
       ],
       child: MultiBlocListener(
         listeners: [
