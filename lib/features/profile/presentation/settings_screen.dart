@@ -76,12 +76,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SettingsGroup(
                 children: [
                   SettingsTile(
-                    icon: Icons.person_outline_rounded,
-                    title: 'Edit Profile',
-                    subtitle: 'Edit your public profile and avatar',
-                    onTap: () => context.push(AppRoutes.setProfile),
-                  ),
-                  SettingsTile(
                     icon: Icons.badge_outlined,
                     title: 'View profile',
                     subtitle: 'See what other people see',
@@ -90,10 +84,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   SettingsTile(
                     icon: Icons.lock_outline_rounded,
-                    title: 'Privacy',
-                    subtitle: 'Control what people can discover',
+                    title: 'Privacy Policy',
+                    subtitle: 'Learn about our privacy policy',
                     onTap: () {
-                      context.push(AppRoutes.sharedAlbum);
+                      context.push(AppRoutes.privacyPolicy);
+                    },
+                  ),
+
+                  SettingsTile(
+                    icon: Icons.info_outline_rounded,
+                    title: 'Terms and Conditions',
+                    subtitle: 'Learn about our terms and conditions',
+                    onTap: () {
+                      context.push(AppRoutes.termsAndConditions);
                     },
                   ),
                 ],
@@ -143,35 +146,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
               const SizedBox(height: 18),
-              Text(
-                'Support',
-                style: AppTextStyles.libre.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.softPrimary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              SettingsGroup(
-                children: [
-                  SettingsTile(
-                    icon: Icons.help_outline_rounded,
-                    title: 'Help center',
-                    subtitle: 'Get answers and troubleshooting tips',
-                    onTap: () {
-                      context.push(AppRoutes.faceVerificationSteps);
-                    },
-                  ),
-                  SettingsTile(
-                    icon: Icons.info_outline_rounded,
-                    title: 'About Memo',
-                    subtitle: 'App version, terms, and privacy policy',
-                    onTap: () {
-                      context.push(AppRoutes.thinkAlike);
-                    },
-                  ),
-                ],
-              ),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,

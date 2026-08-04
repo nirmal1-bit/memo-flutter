@@ -22,6 +22,8 @@ import 'package:memo/features/home/presentation/screens/other_user_profile.dart'
 import 'package:memo/features/home/presentation/screens/qr_scanner.dart';
 import 'package:memo/features/home/presentation/screens/user_profile_screen.dart';
 import 'package:memo/features/notification/presentation/notification_screen.dart';
+import 'package:memo/features/privacy_policy/presentation/privacy_policy.dart';
+import 'package:memo/features/privacy_policy/presentation/terms_conditions.dart';
 import 'package:memo/features/profile/data/request/profile_request_model.dart';
 import 'package:memo/features/profile/presentation/set_profile_screen.dart';
 import 'package:memo/features/quest/presentation/quest_screen.dart';
@@ -146,6 +148,13 @@ class AppRouter {
           );
         }
         return ThinkAlikeScreenPatner(params: args);
+      }),
+
+      AppRoutes.termsAndConditions.route((context, state) {
+        return const TermsAndConditionsScreen();
+      }),
+      AppRoutes.privacyPolicy.route((context, state) {
+        return const PrivacyPolicyScreen();
       }),
     ],
   );
