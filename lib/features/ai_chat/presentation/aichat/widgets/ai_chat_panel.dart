@@ -114,7 +114,6 @@ class AiChatPanel extends StatelessWidget {
                               final message = messages[index];
                               return ChatBubble(
                                 alignEnd: message.isMe,
-                                senderName: message.name,
                                 text: message.message,
                                 timeLabel: message.timeLabel,
                                 status: context

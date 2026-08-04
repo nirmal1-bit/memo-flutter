@@ -83,8 +83,8 @@ class ApiEndpoints {
   static String deleteBucketItem(int id, int itemId) =>
       '/connections/$id/shared-bucket-list/items/$itemId';
 
+  // think-alike questions and game session
   static const String thinkAlikeQuestions = '/think-alike/questions';
-
   static const String randomQuestion = 'think-alike/random';
   static const String thinkAlikeSessions = '/think-alike/sessions';
   static String thinkAlikeSession(int id) => '/think-alike/sessions/$id';
@@ -98,4 +98,7 @@ class ApiEndpoints {
       '${thinkAlikeSession(id)}/cancel';
   static String thinkAlikeWebsocket(int id) =>
       '/think-alike/make-connection/$id';
+
+  // chat history
+  static String chatHistory(int id) => '/connections/$id/chat-history';
 }
