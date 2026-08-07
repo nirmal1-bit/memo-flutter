@@ -14,7 +14,6 @@ import 'package:memo/features/auth/data/models/response/authentication_token.dar
 import 'package:memo/features/auth/presentation/cubits/login_cubit.dart';
 import 'package:memo/features/auth/presentation/cubits/face_verified_cubit.dart';
 import 'package:memo/features/auth/presentation/models/auth_flow_args.dart';
-import 'package:memo/features/auth/domain/repository/auth_repository.dart';
 import 'package:memo/features/auth/presentation/widgets/auth_widgets.dart';
 import 'package:memo/features/common/form_widgets.dart';
 
@@ -195,7 +194,7 @@ class LoginView extends StatelessWidget {
       body: AuthShell(
         title: 'Welcome back',
         subtitle:
-            'Sign in to continue your memo flow and pick up where you left off.',
+            'Sign in to continue your Menmo flow and pick up where you left off.',
         child: Form(
           key: formKey,
           child: Column(

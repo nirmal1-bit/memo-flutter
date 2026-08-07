@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/features/game/data/think_alike_models.dart';
@@ -18,12 +17,9 @@ class ThinkAlikeStateContent extends StatelessWidget {
     required this.question,
     required this.initiatorAnswer,
     required this.partnerAnswer,
-    required this.matchingWords,
-    required this.waitDots,
     required this.answerController,
     required this.myAnswerSubmitted,
     required this.partnerAnswerSubmitted,
-    required this.pulseAnimation,
     required this.onRetry,
     required this.onAccept,
     required this.onCancel,
@@ -46,12 +42,9 @@ class ThinkAlikeStateContent extends StatelessWidget {
   final String question;
   final String initiatorAnswer;
   final String partnerAnswer;
-  final List<String> matchingWords;
-  final int waitDots;
   final TextEditingController answerController;
   final bool myAnswerSubmitted;
   final bool partnerAnswerSubmitted;
-  final Animation<double> pulseAnimation;
   final VoidCallback onRetry;
   final VoidCallback onAccept;
   final VoidCallback onCancel;
@@ -72,11 +65,7 @@ class ThinkAlikeStateContent extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Lottie.asset(
-              'assets/animations/loading.json',
-              width: 140,
-              height: 140,
-            ),
+            const CircularProgressIndicator(),
             const SizedBox(height: 12),
             Text(
               requestFailed
@@ -104,7 +93,7 @@ class ThinkAlikeStateContent extends StatelessWidget {
           key: const ValueKey('waiting'),
           initiatorName: initiatorName,
           partnerName: partnerName,
-          waitDots: waitDots,
+          waitDots: 0,
           onAccept: onAccept,
           onCancel: onCancel,
           acceptLabel: acceptLabel,
@@ -130,7 +119,6 @@ class ThinkAlikeStateContent extends StatelessWidget {
         initiatorName: initiatorName,
         partnerName: partnerName,
         question: question,
-        pulseAnimation: pulseAnimation,
         onReveal: onReveal,
         userProfileUrl: userProfileUrl,
         partnerProfileUrl: partnerProfileUrl,
@@ -142,7 +130,6 @@ class ThinkAlikeStateContent extends StatelessWidget {
         partnerName: partnerName,
         initiatorAnswer: initiatorAnswer,
         partnerAnswer: partnerAnswer,
-        matchingWords: matchingWords,
         onPlayAgain: onPlayAgain,
       ),
       ThinkAlikeGameState.cancelled => ThinkAlikeCancelled(

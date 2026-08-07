@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ..listReceivedConnections();
     _userProfileCubit = getIt<GetUserProfileCubit>()..getUserProfile();
     _connectionActionCubit = getIt<ConnectionActionCubit>();
-    _sendLocationCubit = getIt<SendLocationCubit>()..sendLocation();
+    _sendLocationCubit = getIt<SendLocationCubit>();
   }
 
   @override
@@ -87,6 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     success: (data) {
                       if (data.profile == null) {
                         context.replace(AppRoutes.setProfile);
+                      } else {
+                        _sendLocationCubit.sendLocation();
                       }
                     },
                     error: (message) {},
@@ -183,11 +185,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 success: (user) => ConnectionsAppBar(
                                   user: user,
                                   controller: _searchController,
+                                  onSearchChanged: (query) => _connectionsCubit
+                                      .filterConnectionsByName(query),
                                   onSearchPressed: () =>
-                                      _receivedConnectionsCubit
-                                          .filterReceivedConnectionsByName(
-                                            _searchController.text,
-                                          ),
+                                      _connectionsCubit.filterConnectionsByName(
+                                        _searchController.text,
+                                      ),
                                   onTap: () =>
                                       context.push(AppRoutes.userProfile),
                                   onActionTap: () =>

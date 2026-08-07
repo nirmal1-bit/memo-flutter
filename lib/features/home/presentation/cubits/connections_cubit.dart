@@ -12,6 +12,9 @@ class ConnectionsCubit extends Cubit<BaseApiState<List<ConnectionResponse>>> {
 
   final ConnectionsRepository networkRepository;
 
+  List<ConnectionResponse> _allConnections = [];
+  String _searchQuery = '';
+
   Future<void> listConnections() async {
     emit(const BaseApiState.loading());
     final response = await networkRepository.listConnections();
@@ -21,8 +24,24 @@ class ConnectionsCubit extends Cubit<BaseApiState<List<ConnectionResponse>>> {
         (l) => l.validationErrorOrNull != null
             ? BaseApiState.validationError(l.validationErrorOrNull!)
             : BaseApiState.error(l.errorMessage),
-        (r) => BaseApiState.success(r.data),
+        (r) {
+          _allConnections = r.data;
+          return BaseApiState.success(_applyFilter());
+        },
       ),
     );
+  }
+
+  void filterConnectionsByName(String query) {
+    _searchQuery = query.trim().toLowerCase();
+    emit(BaseApiState.success(_applyFilter()));
+  }
+
+  List<ConnectionResponse> _applyFilter() {
+    if (_searchQuery.isEmpty) return _allConnections;
+
+    return _allConnections.where((connection) {
+      return connection.userProfile.name.toLowerCase().contains(_searchQuery);
+    }).toList();
   }
 }

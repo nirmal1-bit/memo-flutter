@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/game/presentation/widgets/game_answer_input.dart';
-import 'package:memo/features/game/presentation/widgets/game_match_badge.dart';
 import 'package:memo/features/game/presentation/widgets/game_player_avatar.dart';
 import 'package:memo/features/game/presentation/widgets/game_question_card.dart';
 import 'package:memo/features/game/presentation/widgets/game_reveal_card.dart';
@@ -288,7 +287,6 @@ class ThinkAlikeReadyToReveal extends StatelessWidget {
     required this.initiatorName,
     required this.partnerName,
     required this.question,
-    required this.pulseAnimation,
     required this.onReveal,
     this.userProfileUrl,
     this.partnerProfileUrl,
@@ -296,7 +294,6 @@ class ThinkAlikeReadyToReveal extends StatelessWidget {
   final String initiatorName;
   final String partnerName;
   final String question;
-  final Animation<double> pulseAnimation;
   final VoidCallback onReveal;
   final String? userProfileUrl;
   final String? partnerProfileUrl;
@@ -323,14 +320,7 @@ class ThinkAlikeReadyToReveal extends StatelessWidget {
           totalQuestions: 5,
         ),
         const SizedBox(height: 32),
-        TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0.0, end: 1.0),
-          duration: const Duration(milliseconds: 800),
-          curve: Curves.elasticOut,
-          builder: (_, value, child) =>
-              Transform.scale(scale: 0.5 + 0.5 * value, child: child),
-          child: _RevealButton(animation: pulseAnimation, onTap: onReveal),
-        ),
+        _RevealButton(onTap: onReveal),
         const SizedBox(height: 20),
         Text(
           'Both answers are in! 🎯',
@@ -354,8 +344,7 @@ class ThinkAlikeReadyToReveal extends StatelessWidget {
 }
 
 class _RevealButton extends StatelessWidget {
-  const _RevealButton({required this.animation, required this.onTap});
-  final Animation<double> animation;
+  const _RevealButton({required this.onTap});
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
@@ -364,55 +353,46 @@ class _RevealButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(28),
-        child: AnimatedBuilder(
-          animation: animation,
-          builder: (_, _) => Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 22),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primary,
-                  AppColors.buttonPrimary,
-                  Color.lerp(
-                    AppColors.buttonPrimary,
-                    AppColors.secondary,
-                    animation.value * 0.3,
-                  )!,
-                ],
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 22),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.buttonPrimary,
+                AppColors.secondary,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+                spreadRadius: 0,
               ),
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(
-                    0.3 + animation.value * 0.15,
-                  ),
-                  blurRadius: 20 + animation.value * 10,
-                  offset: const Offset(0, 8),
-                  spreadRadius: animation.value * 2,
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.visibility_rounded,
+                color: AppColors.white.withOpacity(0.9),
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Reveal Answers',
+                style: AppTextStyles.rubik.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.white,
+                  letterSpacing: 0.5,
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.visibility_rounded,
-                  color: AppColors.white.withOpacity(0.9),
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Reveal Answers',
-                  style: AppTextStyles.rubik.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.white,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -428,7 +408,6 @@ class ThinkAlikeCompleted extends StatelessWidget {
     required this.partnerName,
     required this.initiatorAnswer,
     required this.partnerAnswer,
-    required this.matchingWords,
     required this.onPlayAgain,
   });
   final String question;
@@ -436,7 +415,6 @@ class ThinkAlikeCompleted extends StatelessWidget {
   final String partnerName;
   final String initiatorAnswer;
   final String partnerAnswer;
-  final List<String> matchingWords;
   final VoidCallback onPlayAgain;
 
   @override
@@ -451,13 +429,20 @@ class ThinkAlikeCompleted extends StatelessWidget {
           totalQuestions: 5,
         ),
         const SizedBox(height: 28),
-        GameMatchBadge(
-          matchCount: matchingWords.length,
-          totalWords: initiatorAnswer
-              .split(RegExp(r'\s+'))
-              .where((word) => word.isNotEmpty)
-              .length,
-          delay: const Duration(milliseconds: 400),
+        Text(
+          initiatorAnswer.trim().toLowerCase() ==
+                  partnerAnswer.trim().toLowerCase()
+              ? 'You think alike!'
+              : 'Different answers',
+          style: AppTextStyles.rubik.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color:
+                initiatorAnswer.trim().toLowerCase() ==
+                    partnerAnswer.trim().toLowerCase()
+                ? AppColors.statusGreen
+                : AppColors.textBody,
+          ),
         ),
         const SizedBox(height: 24),
         Row(
@@ -467,9 +452,6 @@ class ThinkAlikeCompleted extends StatelessWidget {
               child: GameRevealCard(
                 playerName: initiatorName,
                 answer: initiatorAnswer,
-                matchingWords: matchingWords,
-                isLeft: true,
-                delay: const Duration(milliseconds: 200),
               ),
             ),
             const SizedBox(width: 12),
@@ -477,15 +459,10 @@ class ThinkAlikeCompleted extends StatelessWidget {
               child: GameRevealCard(
                 playerName: partnerName,
                 answer: partnerAnswer,
-                matchingWords: matchingWords,
-                isLeft: false,
-                delay: const Duration(milliseconds: 600),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 32),
-        _MatchingWords(words: matchingWords),
         const SizedBox(height: 32),
         ThinkAlikeActionButton(
           label: 'Play Again',

@@ -4,41 +4,33 @@ import 'package:memo/core/theme/app_text_styles.dart';
 import 'package:memo/features/game/presentation/models/think_alike_game_state.dart';
 
 class ThinkAlikeHeader extends StatelessWidget {
-  const ThinkAlikeHeader({
-    super.key,
-    required this.slideAnimation,
-    required this.gameState,
-  });
+  const ThinkAlikeHeader({super.key, required this.gameState});
 
-  final Animation<Offset> slideAnimation;
   final ThinkAlikeGameState gameState;
 
   @override
   Widget build(BuildContext context) {
-    return SlideTransition(
-      position: slideAnimation,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                Text(
-                  'Think Alike',
-                  style: AppTextStyles.rubik.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textHeading,
-                    letterSpacing: 0.5,
-                  ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            children: [
+              Text(
+                'Think Alike',
+                style: AppTextStyles.rubik.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textHeading,
+                  letterSpacing: 0.5,
                 ),
-                const SizedBox(height: 2),
-                _StatusChip(gameState: gameState),
-              ],
-            ),
-          ],
-        ),
+              ),
+              const SizedBox(height: 2),
+              _StatusChip(gameState: gameState),
+            ],
+          ),
+        ],
       ),
     );
   }

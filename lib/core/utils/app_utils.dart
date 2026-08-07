@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:downloadsfolder/downloadsfolder.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memo/core/di/injector.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/services/cloudinary_service.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/core/utils/ui_helper.dart';
+import 'package:memo/features/common/loading_animation.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
@@ -112,8 +115,13 @@ class AppUtils {
     ImageSource source = ImageSource.gallery,
     String? folder,
   }) async {
+    if (context != null && context.mounted) {
+      Uihelper.showloaderdialog(context);
+    }
+
     final pickedFile = await pickImage(source: source);
     if (pickedFile == null) {
+      if (context != null && context.mounted) {}
       return null;
     }
 
@@ -124,6 +132,8 @@ class AppUtils {
         showErrorSnackbar(context: context, message: error.toString());
       }
       return null;
+    } finally {
+      context?.pop();
     }
   }
 

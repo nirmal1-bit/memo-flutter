@@ -16,10 +16,12 @@ class RecentPicturesSection extends StatelessWidget {
     super.key,
     required this.userId,
     this.showAddAlbumPlaceholder = true,
+    this.showDelete = true,
   });
 
   final int userId;
   final bool showAddAlbumPlaceholder;
+  final bool showDelete;
 
   static const _colors = [
     AppColors.brandBackgroundLight,
@@ -93,7 +95,7 @@ class RecentPicturesSection extends StatelessWidget {
                                 ? pictures[index]
                                 : null,
                             color: _colors[index % _colors.length],
-                            onDelete: index < pictures.length
+                            onDelete: showDelete && index < pictures.length
                                 ? () => _deletePicture(context, pictures[index])
                                 : null,
                             onAdd:

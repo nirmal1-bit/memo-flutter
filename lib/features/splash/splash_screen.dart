@@ -24,14 +24,13 @@ class _SplashScreenState extends State<SplashScreen> {
     final sessionService = SessionService();
 
     //TODO: Remove this line . This is just for testing purposes.
-
     // sessionService.saveToken(
     //   "4CGJHJIZQOAEMR6BNLXSIURYCDRO2A6XO2MK2VLUCMEN745XENDQ",
     // );
 
-    sessionService.saveToken(
-      "TEKRYPY5N7B3N5D4UHYHIHL4KMTDNJNDER7QDVUJFY2GVYBYXJQQ",
-    );
+    // sessionService.saveToken(
+    //   "TEKRYPY5N7B3N5D4UHYHIHL4KMTDNJNDER7QDVUJFY2GVYBYXJQQ",
+    // );
 
     final hasSession = await sessionService.hasSession;
     if (hasSession) {
