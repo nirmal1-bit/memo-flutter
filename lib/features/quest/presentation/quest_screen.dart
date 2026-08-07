@@ -33,7 +33,7 @@ class _QuestScreenState extends State<QuestScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -57,7 +57,6 @@ class _QuestScreenState extends State<QuestScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                Container(),
                 SharedBucketListScreen(
                   connectionId: widget.params.connectionId,
                 ),
@@ -100,7 +99,6 @@ class _QuestTabBar extends StatelessWidget {
           fontSize: 12,
         ),
         tabs: const [
-          Tab(text: 'Weekly Goal'),
           Tab(text: 'Bucket List'),
           Tab(text: 'Think Alike'),
         ],

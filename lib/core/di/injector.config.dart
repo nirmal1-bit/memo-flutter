@@ -82,6 +82,8 @@ import 'package:memo/features/home/presentation/cubits/create_recent_image_cubit
     as _i800;
 import 'package:memo/features/home/presentation/cubits/delete_recent_image_cubit.dart'
     as _i625;
+import 'package:memo/features/home/presentation/cubits/get_chat_history_cubit.dart'
+    as _i739;
 import 'package:memo/features/home/presentation/cubits/get_recent_images_cubit.dart'
     as _i367;
 import 'package:memo/features/home/presentation/cubits/get_user_profile_cubit.dart'
@@ -399,6 +401,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i256.StartVideoCallCubit(
         videoCallRemoteSource: gh<_i818.VideoCallRepository>(),
       ),
+    );
+    gh.factory<_i739.GetChatHistoryCubit>(
+      () => _i739.GetChatHistoryCubit(gh<_i19.ConnectionsRepository>()),
     );
     gh.factory<_i84.GetNotificationCubit>(
       () => _i84.GetNotificationCubit(gh<_i915.NotificationRepository>()),

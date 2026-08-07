@@ -98,15 +98,11 @@ final class VideoCallRepositoryImpl extends BaseRemoteSource
 
     final response = await networkRequest(
       request: (dio) async {
-        final response = await dio.post(
+        await dio.post(
           ApiEndpoints.makeTranscript(connectionId),
           data: formData,
         );
-        return ApiResponse(
-          success: true,
-          data: "Success",
-          message: response.data['message'] as String? ?? 'Success',
-        );
+        return ApiResponse(success: true, data: "Success", message: "Success");
       },
     );
     return response;

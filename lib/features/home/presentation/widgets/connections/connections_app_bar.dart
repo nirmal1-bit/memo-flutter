@@ -12,6 +12,7 @@ class ConnectionsAppBar extends StatefulWidget {
     super.key,
     required this.user,
     required this.controller,
+    this.onSearchChanged,
     this.onSearchPressed,
     this.onTap,
     this.onActionTap,
@@ -19,6 +20,7 @@ class ConnectionsAppBar extends StatefulWidget {
 
   final UserProfileResponse user;
   final TextEditingController controller;
+  final ValueChanged<String>? onSearchChanged;
   final VoidCallback? onSearchPressed;
   final VoidCallback? onTap;
   final VoidCallback? onActionTap;
@@ -91,6 +93,7 @@ class _ConnectionsAppBarState extends State<ConnectionsAppBar> {
           Expanded(
             child: ConnectionsSearchBar(
               controller: widget.controller,
+              onChanged: widget.onSearchChanged,
               onSubmitted: (_) => widget.onSearchPressed?.call(),
             ),
           ),

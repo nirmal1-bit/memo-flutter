@@ -15,24 +15,28 @@ class ChatMessage {
     required this.message,
     required this.isMe,
     required this.timeLabel,
+    this.isCall = false,
   });
 
   final String name;
   final String message;
   final bool isMe;
   final String timeLabel;
+  final bool isCall;
 
   ChatMessage copyWith({
     String? name,
     String? message,
     bool? isMe,
     String? timeLabel,
+    bool? isCall,
   }) {
     return ChatMessage(
       name: name ?? this.name,
       message: message ?? this.message,
       isMe: isMe ?? this.isMe,
       timeLabel: timeLabel ?? this.timeLabel,
+      isCall: isCall ?? this.isCall,
     );
   }
 }

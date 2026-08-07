@@ -100,7 +100,8 @@ class ChatCubit extends Cubit<ChatState> {
 
     // i think this is the one which is causing error adding the message
 
-    emit(state.copyWith(messages: [...state.messages, outgoingMessage]));
+    // ChatPanel uses a reversed ListView, so index 0 is the newest message.
+    emit(state.copyWith(messages: [outgoingMessage, ...state.messages]));
 
     try {
       _channel!.sink.add(message);
@@ -138,7 +139,7 @@ class ChatCubit extends Cubit<ChatState> {
         return;
       }
 
-      emit(state.copyWith(messages: [...state.messages, incomingMessage]));
+      emit(state.copyWith(messages: [incomingMessage, ...state.messages]));
     } catch (error) {
       emit(
         state.copyWith(
@@ -183,7 +184,9 @@ class ChatCubit extends Cubit<ChatState> {
   //. optimistic update is to add the message to the chat before it is actually sent to the server and
   //if there is an error in sending the message we need to remove that message from the chat and show the error message
   void _removeLastOptimisticMessage(String text) {
-    for (var index = state.messages.length - 1; index >= 0; index--) {
+    // The newest optimistic message is at index 0. Search from there so a
+    // duplicate older message with the same text is not removed by mistake.
+    for (var index = 0; index < state.messages.length; index++) {
       final message = state.messages[index];
       if (message.isMe && message.message == text) {
         final updatedMessages = [...state.messages]..removeAt(index);

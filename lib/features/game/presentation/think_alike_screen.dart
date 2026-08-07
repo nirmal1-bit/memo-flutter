@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,8 +43,7 @@ class ThinkAlikeScreen extends StatefulWidget {
   State<ThinkAlikeScreen> createState() => _ThinkAlikeScreenState();
 }
 
-class _ThinkAlikeScreenState extends State<ThinkAlikeScreen>
-    with TickerProviderStateMixin {
+class _ThinkAlikeScreenState extends State<ThinkAlikeScreen> {
   ThinkAlikeSession? _session;
   bool _requestFailed = false;
   ThinkAlikeGameState _gameState = ThinkAlikeGameState.waitingForAcceptance;
@@ -54,13 +51,6 @@ class _ThinkAlikeScreenState extends State<ThinkAlikeScreen>
   bool _myAnswerSubmitted = false;
   bool _partnerAnswerSubmitted = false;
   bool _showConfetti = false;
-  int _waitDots = 0;
-  Timer? _waitTimer;
-
-  late final AnimationController _headerSlideController;
-  late final Animation<Offset> _headerSlideAnimation;
-  late final AnimationController _bgPulseController;
-  late final Animation<double> _bgPulseAnimation;
 
   String get _question => _session?.question?.question ?? '';
   String get _initiatorName => widget.user.name ?? 'You';
@@ -70,49 +60,14 @@ class _ThinkAlikeScreenState extends State<ThinkAlikeScreen>
   String? get _partnerProfileUrl => widget.partner.profileUrl;
   String get _initiatorAnswer => _session?.initiatorAnswer ?? '';
   String get _partnerAnswer => _session?.partnerAnswer ?? '';
-  List<String> get _matchingWords {
-    Set<String> words(String answer) => answer
-        .toLowerCase()
-        .split(RegExp(r'\s+'))
-        .map((word) => word.replaceAll(RegExp(r'[^a-z0-9]'), ''))
-        .where((word) => word.length > 2)
-        .toSet();
-    return words(_initiatorAnswer).intersection(words(_partnerAnswer)).toList();
-  }
-
   @override
   void initState() {
     super.initState();
-    _headerSlideController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-    _headerSlideAnimation =
-        Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero).animate(
-          CurvedAnimation(
-            parent: _headerSlideController,
-            curve: Curves.easeOutCubic,
-          ),
-        );
-    _bgPulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3000),
-    )..repeat(reverse: true);
-    _bgPulseAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _bgPulseController, curve: Curves.easeInOut),
-    );
-    _headerSlideController.forward();
-    _waitTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
-      if (mounted) setState(() => _waitDots = (_waitDots + 1) % 4);
-    });
   }
 
   @override
   void dispose() {
     _answerController.dispose();
-    _headerSlideController.dispose();
-    _bgPulseController.dispose();
-    _waitTimer?.cancel();
     super.dispose();
   }
 
@@ -312,63 +267,42 @@ class _ThinkAlikeScreenState extends State<ThinkAlikeScreen>
           backgroundColor: AppColors.scaffoldBackground,
           body: Stack(
             children: [
-              ThinkAlikeBackground(animation: _bgPulseAnimation),
+              const ThinkAlikeBackground(),
               SafeArea(
                 child: Column(
                   children: [
-                    ThinkAlikeHeader(
-                      slideAnimation: _headerSlideAnimation,
-                      gameState: _gameState,
-                    ),
+                    ThinkAlikeHeader(gameState: _gameState),
                     Expanded(
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 500),
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeInCubic,
-                        transitionBuilder: (child, animation) => FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(0, 0.05),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          ),
-                        ),
-                        child: ThinkAlikeStateContent(
-                          session: _session,
-                          gameState: _gameState,
-                          requestFailed: _requestFailed,
-                          sessionId: widget.sessionId,
-                          initiatorName: _initiatorName,
-                          partnerName: _partnerName,
-                          question: _question,
-                          initiatorAnswer: _initiatorAnswer,
-                          partnerAnswer: _partnerAnswer,
-                          matchingWords: _matchingWords,
-                          waitDots: _waitDots,
-                          answerController: _answerController,
-                          myAnswerSubmitted: _myAnswerSubmitted,
-                          partnerAnswerSubmitted: _partnerAnswerSubmitted,
-                          userProfileUrl: _userProfileUrl,
-                          partnerProfileUrl: _partnerProfileUrl,
-                          pulseAnimation: _bgPulseAnimation,
-                          onRetry: () {
-                            setState(() => _requestFailed = false);
-                            if (widget.sessionId != null) {
-                              context.read<GetGameSessionCubit>().getSession(
-                                widget.sessionId!,
-                              );
-                            }
-                          },
-                          onAccept: () => _onPartnerAccepted(context),
-                          onCancel: () => _onCancel(context),
-                          onSubmitAnswer: () => _onSubmitAnswer(context),
-                          onReveal: () => _onReveal(context),
-                          onPlayAgain: () {
-                            _onPlayAgain(context);
-                          },
-                        ),
+                      child: ThinkAlikeStateContent(
+                        session: _session,
+                        gameState: _gameState,
+                        requestFailed: _requestFailed,
+                        sessionId: widget.sessionId,
+                        initiatorName: _initiatorName,
+                        partnerName: _partnerName,
+                        question: _question,
+                        initiatorAnswer: _initiatorAnswer,
+                        partnerAnswer: _partnerAnswer,
+                        answerController: _answerController,
+                        myAnswerSubmitted: _myAnswerSubmitted,
+                        partnerAnswerSubmitted: _partnerAnswerSubmitted,
+                        userProfileUrl: _userProfileUrl,
+                        partnerProfileUrl: _partnerProfileUrl,
+                        onRetry: () {
+                          setState(() => _requestFailed = false);
+                          if (widget.sessionId != null) {
+                            context.read<GetGameSessionCubit>().getSession(
+                              widget.sessionId!,
+                            );
+                          }
+                        },
+                        onAccept: () => _onPartnerAccepted(context),
+                        onCancel: () => _onCancel(context),
+                        onSubmitAnswer: () => _onSubmitAnswer(context),
+                        onReveal: () => _onReveal(context),
+                        onPlayAgain: () {
+                          _onPlayAgain(context);
+                        },
                       ),
                     ),
                   ],

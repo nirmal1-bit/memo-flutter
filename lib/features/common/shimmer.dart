@@ -213,6 +213,55 @@ class ListShimmer extends StatelessWidget {
   }
 }
 
+class ChatLoading extends StatelessWidget {
+  const ChatLoading({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    Widget bubble({required double width, required double height}) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(18),
+        ),
+      );
+    }
+
+    return Shimmer.fromColors(
+      baseColor: _shimmerBaseColor(context),
+      highlightColor: _shimmerHighlightColor(context),
+      enabled: true,
+      child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(top: 8, bottom: 8),
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: bubble(width: 180, height: 48),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: bubble(width: 220, height: 58),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: bubble(width: 240, height: 72),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: bubble(width: 155, height: 48),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class DatingProfileShimmer extends StatelessWidget {
   const DatingProfileShimmer({super.key});
 

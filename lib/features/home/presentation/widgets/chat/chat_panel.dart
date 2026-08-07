@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memo/core/chat/chat_state.dart';
 import 'package:memo/core/constants/app_colors.dart';
 import 'package:memo/core/theme/app_text_styles.dart';
+import 'package:memo/features/common/shimmer.dart';
 import 'package:memo/features/home/presentation/widgets/chat/chat_bubble.dart';
 
 class ChatPanel extends StatelessWidget {
@@ -12,6 +13,8 @@ class ChatPanel extends StatelessWidget {
     required this.status,
     required this.errorMessage,
     this.isFromAi = false,
+    this.isLoadingMore = false,
+    this.isLoading = false,
   });
 
   final bool isFromAi;
@@ -19,6 +22,8 @@ class ChatPanel extends StatelessWidget {
   final List<ChatMessage> messages;
   final ChatConnectionStatus status;
   final String? errorMessage;
+  final bool isLoadingMore;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +90,9 @@ class ChatPanel extends StatelessWidget {
           ],
           const SizedBox(height: 10),
           Expanded(
-            child: messages.isEmpty
+            child: isLoading
+                ? const ChatLoading()
+                : messages.isEmpty
                 ? Center(
                     child: Text(
                       isConnecting
@@ -98,19 +105,32 @@ class ChatPanel extends StatelessWidget {
                       ),
                     ),
                   )
-                : ListView.separated(
+                : ListView.builder(
+                    reverse: true,
                     controller: messagesController,
                     padding: const EdgeInsets.only(top: 2, bottom: 4),
-                    itemCount: messages.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 8),
+                    // With reverse=true, the last list item is rendered at
+                    // the top (the older-message edge).
+                    itemCount: messages.length + (isLoadingMore ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (isLoadingMore && index == messages.length) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: Center(
+                            child: SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        );
+                      }
                       final message = messages[index];
                       return ChatBubble(
                         alignEnd: message.isMe,
-                        senderName: message.name,
                         text: message.message,
                         timeLabel: message.timeLabel,
+                        isCall: message.isCall,
                       );
                     },
                   ),

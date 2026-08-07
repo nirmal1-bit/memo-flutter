@@ -5,6 +5,7 @@ import 'package:memo/core/constants/connection_request_status.dart';
 import 'package:memo/core/response/base_api_response.dart';
 import 'package:memo/core/typedef/typedef.dart';
 import 'package:memo/features/home/data/models/response/connection_response.dart';
+import 'package:memo/features/home/data/models/response/chat_history_response.dart';
 import 'package:memo/features/home/data/models/response/user_profile_response.dart';
 
 abstract class ConnectionsRepository {
@@ -29,6 +30,12 @@ abstract class ConnectionsRepository {
   EitherResponse<ApiResponse<String>> cancelConnectionRequest(int requestId);
 
   EitherResponse<ApiResponse<String>> deleteConnection(int connectionId);
+
+  EitherResponse<ApiResponse<ChatHistoryPage>> getChatHistory(
+    int connectionId, {
+    int page = 1,
+    int pageSize = 10,
+  });
 }
 
 @LazySingleton(as: ConnectionsRepository)
@@ -204,6 +211,42 @@ class ConnectionsRepositoryImpl extends BaseRemoteSource
     );
 
     return response;
+  }
+
+  @override
+  EitherResponse<ApiResponse<ChatHistoryPage>> getChatHistory(
+    int connectionId, {
+    int page = 1,
+    int pageSize = 10,
+  }) async {
+    return networkRequest(
+      request: (dio) async {
+        final response = await dio.get(
+          ApiEndpoints.chatHistory(connectionId),
+          queryParameters: {'page': page, 'pageSize': pageSize},
+        );
+        final data = response.data as Map<String, dynamic>;
+        final rawItems = data['chat_history'] as List<dynamic>? ?? const [];
+        final pagination = ChatHistoryPagination.fromJson(
+          (data['metadata'] as Map<String, dynamic>?) ?? const {},
+        );
+
+        return ApiResponse(
+          success: true,
+          data: ChatHistoryPage(
+            items: rawItems
+                .map(
+                  (item) => ChatHistoryResponse.fromJson(
+                    item as Map<String, dynamic>,
+                  ),
+                )
+                .toList(),
+            pagination: pagination,
+          ),
+          message: 'success',
+        );
+      },
+    );
   }
 
   EitherResponse<ApiResponse<String>> updateConnectionStatus({

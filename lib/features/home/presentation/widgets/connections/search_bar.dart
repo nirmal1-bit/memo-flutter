@@ -6,10 +6,12 @@ class ConnectionsSearchBar extends StatelessWidget {
   const ConnectionsSearchBar({
     super.key,
     required this.controller,
+    this.onChanged,
     this.onSubmitted,
   });
 
   final TextEditingController controller;
+  final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
 
   @override
@@ -33,6 +35,7 @@ class ConnectionsSearchBar extends StatelessWidget {
         child: TextField(
           controller: controller,
           textInputAction: TextInputAction.search,
+          onChanged: onChanged,
           onSubmitted: onSubmitted,
           style: AppTextStyles.rubik.copyWith(
             fontSize: 13.5,

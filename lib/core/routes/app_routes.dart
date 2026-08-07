@@ -26,4 +26,6 @@ class AppRoutes {
   static const String quest = '/quest';
   static const String thinkAlike = '/think-alike';
   static const String thinkAlikePartner = '/think-alike-partner';
+  static const String termsAndConditions = '/terms-and-conditions';
+  static const String privacyPolicy = '/privacy-policy';
 }

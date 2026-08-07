@@ -32,6 +32,7 @@ class ProfileBody extends StatelessWidget {
           RecentPicturesSection(
             userId: user.id,
             showAddAlbumPlaceholder: !isOther,
+            showDelete: !isOther,
           ),
           if (!isOther) ...[
             const SizedBox(height: 20),

@@ -14,8 +14,8 @@ class StatusLabel extends StatelessWidget {
   final bool isProcessing;
 
   Color get _color {
-    if (isProcessing) return AppColors.secondary;
-    if (isListening) return AppColors.primary;
+    if (isProcessing) return AppColors.white;
+    if (isListening) return AppColors.white;
     return AppColors.textGrey;
   }
 
