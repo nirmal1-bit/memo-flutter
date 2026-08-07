@@ -121,20 +121,20 @@ Remote operations return a `dartz` `Either`: the left side is an `AppError`, and
 
 ```mermaid
 flowchart LR
-    UI[Screen / widget] -->|user action| C[Cubit]
-    C --> R[Repository interface]
-    R --> B[BaseRemoteSource.networkRequest]
-    B --> Check{Internet available?}
-    Check -->|no| NoNet[AppError.noInternet]
-    Check -->|yes| D[Dio request]
-    D --> I[AuthInterceptor adds Bearer token]
-    I --> Server[Memo backend]
-    Server --> Parse[Parse JSON into Freezed models]
-    Parse --> Right[Either.right(ApiResponse)]
-    NoNet --> Left[Either.left(AppError)]
+    UI["Screen / widget"] -->|user action| C["Cubit"]
+    C --> R["Repository interface"]
+    R --> B["BaseRemoteSource.networkRequest"]
+    B --> Check{"Internet available?"}
+    Check -->|no| NoNet["AppError.noInternet"]
+    Check -->|yes| D["Dio request"]
+    D --> I["AuthInterceptor adds Bearer token"]
+    I --> Server["Memo backend"]
+    Server --> Parse["Parse JSON into Freezed models"]
+    Parse --> Right["Either.right(ApiResponse)"]
+    NoNet --> Left["Either.left(AppError)"]
     Right --> C
     Left --> C
-    C --> State[initial / loading / success / error / validation / noInternet]
+    C --> State["initial / loading / success / error / validation / noInternet"]
     State --> UI
 ```
 
@@ -146,26 +146,26 @@ The initial route is `/splash`. Authenticated users are sent to the main shell, 
 
 ```mermaid
 flowchart TD
-    Splash[/splash] --> AuthCheck{Saved token?}
-    AuthCheck -->|No| Onboarding[/onboarding]
-    AuthCheck -->|Yes| Main[/main]
-    Onboarding --> Login[/login]
-    Onboarding --> Signup[/sign-up]
-    Login --> FaceLogin[/login-face-verification]
+    Splash["/splash"] --> AuthCheck{"Saved token?"}
+    AuthCheck -->|No| Onboarding["/onboarding"]
+    AuthCheck -->|Yes| Main["/main"]
+    Onboarding --> Login["/login"]
+    Onboarding --> Signup["/sign-up"]
+    Login --> FaceLogin["/login-face-verification"]
     Login --> Main
-    Signup --> Verify[/verify-token]
-    Verify --> SetProfile[/set-profile]
+    Signup --> Verify["/verify-token"]
+    Verify --> SetProfile["/set-profile"]
     SetProfile --> Main
-    Main --> Home[Home / connections / chat]
-    Main --> Matches[Matches]
-    Main --> Search[Add connection / QR scanner]
-    Main --> Settings[Settings / profile]
-    Home --> Timeline[/time-line]
-    Home --> Album[/sharedAlbum]
-    Home --> Bucket[/sharedBucketList]
-    Home --> Call[/video-screen]
-    Home --> Voice[/voice]
-    Home --> Notifications[/notifications]
+    Main --> Home["Home / connections / chat"]
+    Main --> Matches["Matches"]
+    Main --> Search["Add connection / QR scanner"]
+    Main --> Settings["Settings / profile"]
+    Home --> Timeline["/time-line"]
+    Home --> Album["/sharedAlbum"]
+    Home --> Bucket["/sharedBucketList"]
+    Home --> Call["/video-screen"]
+    Home --> Voice["/voice"]
+    Home --> Notifications["/notifications"]
 ```
 
 Additional registered routes cover face verification, forgot/reset password, user profiles, quests, Think Alike partner sessions, legal pages, and the video-call surface. Route arguments are passed through `GoRouterState.extra`; examples include `ProfileRequestModel`, `ConnectionResponse`, `TimeLineScreenParams`, `VideoCallPageParams`, and `ThinkAlikePartnerArgs`.
